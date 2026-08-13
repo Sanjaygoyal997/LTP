@@ -283,9 +283,13 @@ namespace BodyPlyWebService.Repositories
         //no longer has to infer it from the bill of materials.
         //
         //The recipe read from the PLC is dbo.bom.plcbomname, while bomextrudermapping.bomcode
-        //holds dbo.bom.formulacode, so the name is translated in the statement. This is the
+        //holds dbo.bom.formulacode, so the name is translated through dbo.bom. This is the
         //same translation validaterecipebodyply performs before it checks the bill of
         //materials.
+        //
+        //The recipe is compared against either code, so a mapping row that carries the plc
+        //name in bomcode is still found. The join is left so such a row survives having no
+        //formulacode match.
         public DataTable GetExtruderForConsumeItem(string equipmentId, string sequenceNo,
                                                    string plcBomName, string consumeItemCode)
         {
@@ -312,10 +316,10 @@ namespace BodyPlyWebService.Repositories
                     "SELECT m.name AS extrudername " +
                     "FROM dbo.bomextrudermapping b " +
                     "JOIN dbo.master_extruder m ON m.id = b.extruderid " +
-                    "JOIN dbo.bom o ON o.formulacode = b.bomcode " +
+                    "LEFT JOIN dbo.bom o ON o.formulacode = b.bomcode " +
                     "WHERE b.equipmentid = '" + equipment + "' " +
                     "AND b.sequenceno = " + sequence + " " +
-                    "AND o.plcbomname = '" + plcBom + "' " +
+                    "AND (o.plcbomname = '" + plcBom + "' OR b.bomcode = '" + plcBom + "') " +
                     "AND b.consumeitemcode = '" + consumeItem + "' " +
                     "AND b.isactive = true AND m.isdeleted = false " +
                     "GROUP BY m.name";
