@@ -47,12 +47,16 @@ namespace BodyPlyWebService.Repositories
             _dBOperations = dBOperations;
         }
 
-        public string AddUpdateI_Material(string lot_No, string quantity, string item_Code, string feederName, string machine_Name, string machine_Code, string user_Id, string sync_Status)
+        //equipmentId and sequenceNo state where the scan was made, so the procedure can read
+        //the schema holding the production record from dbo.bomextrudermapping rather than
+        //deciding it from the feeder name. They travel inside the json like the rest, so the
+        //procedure signature is unchanged and one that does not read them behaves as before.
+        public string AddUpdateI_Material(string lot_No, string quantity, string item_Code, string feederName, string machine_Name, string machine_Code, string user_Id, string sync_Status, string equipmentId, string sequenceNo)
         {
             DataTable dt = new DataTable();
             try
             {
-                var paramObj = new { productionId = lot_No, qty = quantity, itemCode = item_Code, feeder = feederName, machineName = machine_Name, machineCode = machine_Code, userId = user_Id, syncStatus = sync_Status };
+                var paramObj = new { productionId = lot_No, qty = quantity, itemCode = item_Code, feeder = feederName, machineName = machine_Name, machineCode = machine_Code, userId = user_Id, syncStatus = sync_Status, equipmentId = equipmentId, sequenceNo = sequenceNo };
 
                 string jsonParams = JsonConvert.SerializeObject(paramObj);
 

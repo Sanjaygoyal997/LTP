@@ -884,7 +884,8 @@ namespace BodyPlyWebService.Services
                                   " bsObj.itemCode:" + bsObj.itemCode + " " + extruderName +
                                   " MachineName:" + MachineName + " UserName" + UserName);
                 _bodyPlyRepository.AddUpdateI_Material(bsObj.lot_No, bsObj.qty, bsObj.itemCode,
-                    extruderName, MachineName, MachineName, UserName, "R");
+                    extruderName, MachineName, MachineName, UserName, "R",
+                    equipment_id.ToString(), Feeder);
             }
             catch (Exception ex)
             {

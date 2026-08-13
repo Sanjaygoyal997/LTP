@@ -37,7 +37,7 @@ namespace BodyPlyWebService.Interfaces.IRepositories
         DataTable GetProduceItem(string recipeName);
         DataTable GetProduceItembom(string recipe);
         DataTable GetShift();
-        string AddUpdateI_Material(string lot_No, string qty, string itemCode, string feeder, string machineName, string machineCode, string userId, string syncStatus);
+        string AddUpdateI_Material(string lot_No, string qty, string itemCode, string feeder, string machineName, string machineCode, string userId, string syncStatus, string equipmentId, string sequenceNo);
         string AddUpdateI_Production();
         DataTable GetProductionDetails(string fromdate, string todate, string machineName);
         DataTable GetRawandCompoundProductionDetailbyProductionId(string qrCode);
