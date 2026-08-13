@@ -1013,7 +1013,8 @@ namespace BodyPlyWebService.Services
                        
 
                        
-                        string result = _bodyPlyRepository.ValidateRecipe(bsObj.itemCode, recipe, bsObj.lot_No);
+                        string result = _bodyPlyRepository.ValidateRecipe(bsObj.itemCode, recipe, bsObj.lot_No,
+                                                                          equipment_id.ToString(), Feeder);
                         Uitility.LogEvent("ScanningQrcodeService result: " + result);
                         if (result.IndexOf("Successfully") >= 0)
                         {
@@ -1125,7 +1126,8 @@ namespace BodyPlyWebService.Services
                         }
                         
 
-                        string result = _bodyPlyRepository.ValidateRecipe(bsObj.itemCode, recipe, bsObj.lot_No);
+                        string result = _bodyPlyRepository.ValidateRecipe(bsObj.itemCode, recipe, bsObj.lot_No,
+                                                                          equipment_id.ToString(), Feeder);
 
                         if (result.IndexOf("Successfully") >= 0)
                         {

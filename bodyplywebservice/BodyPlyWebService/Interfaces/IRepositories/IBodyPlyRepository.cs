@@ -31,7 +31,7 @@ namespace BodyPlyWebService.Interfaces.IRepositories
         string PrinterName { get; set; }
 
 
-        string ValidateRecipe(string itemName, string recipe, string productionId);
+        string ValidateRecipe(string itemName, string recipe, string productionId, string equipmentId, string sequenceNo);
         DataTable GetRecipe(string equipmentName);
         DataTable GetMachineConfig(string equipmentName);
         DataTable GetProduceItem(string recipeName);

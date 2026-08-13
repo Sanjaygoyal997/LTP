@@ -423,12 +423,18 @@ namespace BodyPlyWebService.Repositories
             throw new NotImplementedException();
         }
 
-        public string ValidateRecipe(string item_Name, string recipe_Name, string production_Id)
+        //equipmentId and sequenceNo state where the scan was made, so the procedure can check
+        //the material against dbo.bomextrudermapping as well as against the bill of materials.
+        //They travel inside the json like the rest, so the procedure signature is unchanged and
+        //a procedure that does not read them behaves exactly as before.
+        public string ValidateRecipe(string item_Name, string recipe_Name, string production_Id,
+                                     string equipmentId, string sequenceNo)
         {
             DataTable dt = new DataTable();
             try
             {
-                var paramObj = new { itemName = item_Name, recipe = recipe_Name, productionId = production_Id, };
+                var paramObj = new { itemName = item_Name, recipe = recipe_Name, productionId = production_Id,
+                                     equipmentId = equipmentId, sequenceNo = sequenceNo, };
 
                 string jsonParams = JsonConvert.SerializeObject(paramObj);
                 Uitility.LogEvent("bodyply.validaterecipebodyply:"+ jsonParams);
