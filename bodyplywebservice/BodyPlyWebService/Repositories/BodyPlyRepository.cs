@@ -273,6 +273,21 @@ namespace BodyPlyWebService.Repositories
             return dt;
         }
 
+        public DataTable GetEquipmentExtruder(string equipmentId)
+        {
+            DataTable dt = new DataTable();
+            try
+            {
+                dt = _dBOperations.OprationWithDB("StoredProcedure", "dbo.get_equipment_extruder", equipmentId);
+            }
+            catch (Exception exc)
+            {
+                // Log unexpected error in catch block and log into DB
+                LogError("BodyPlyRepository", "GetEquipmentExtruder", exc, _transaction_Id);
+            }
+            return dt;
+        }
+
         public string ReverceLotno(string lotNo)
         {
             DataTable dt = new DataTable();

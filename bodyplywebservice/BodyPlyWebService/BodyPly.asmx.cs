@@ -81,6 +81,35 @@ namespace BodyPlyWebService
             return "Hello World";
         }
 
+        //Clears the cached extruder/feeder configuration so changes to
+        //dbo.bomextrudermapping are picked up without recycling the application pool.
+        [WebMethod]
+        [ScriptMethod(UseHttpGet = true, ResponseFormat = ResponseFormat.Json)]
+        public string ReloadExtruderConfig()
+        {
+            string result = string.Empty;
+            try
+            {
+                ExtruderConfigProvider.Clear();
+                result = "OK";
+            }
+            catch (Exception exc)
+            {
+                _dBLogger.LogIntoDB(new LogInfo
+                {
+                    EquipmentId = "BodyPly",
+                    LogType = "Error",
+                    LogCode = "500",
+                    Message = $"Exception: {exc.Message}, Inner Exception: {exc.InnerException?.Message}",
+                    FolderName = "BodyPly",
+                    MethodInfo = "ReloadExtruderConfig",
+                    DateTime = DateTime.Now.ToString(),
+                    TransactionID = _transaction_Id
+                });
+            }
+            return result;
+        }
+
         [WebMethod]
         [ScriptMethod(UseHttpGet = true, ResponseFormat = ResponseFormat.Json)]
         //[XmlInclude(typeof(ResponceData))]

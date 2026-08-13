@@ -1,4 +1,5 @@
-﻿using BodyPlyWebService.Interfaces.ILogger;
+﻿using BodyPlyWebService.App_Data;
+using BodyPlyWebService.Interfaces.ILogger;
 using BodyPlyWebService.Interfaces.IRepositories;
 using BodyPlyWebService.Interfaces.IServices;
 using BodyPlyWebService.Models;
@@ -395,14 +396,83 @@ namespace BodyPlyWebService.Services
 
                             }
 
+                            //Feeder list is built from dbo.bomextrudermapping / dbo.master_extruder.
+                            //The hardcoded list below is kept as a fallback so a database or
+                            //configuration failure degrades to the previous behaviour instead of
+                            //returning an empty feeder list to the HMI.
+                            List<ExtruderConfig> configuredExtruders =
+                                ExtruderConfigProvider.Get(equipment_id.ToString(), _bodyPlyRepository);
+
+                            if (configuredExtruders != null && configuredExtruders.Count > 0)
+                            {
+                                foreach (ExtruderConfig configuredExtruder in configuredExtruders)
+                                {
+                                    string extruderItemValue;
+                                    if (!TryReadTag(AllTagStatus, inf, configuredExtruder.MesItemCountTag, out extruderItemValue))
+                                    {
+                                        extruderItemValue = "";
+                                    }
+
+                                    bool extruderAlarmStatus = false;
+                                    if (!string.IsNullOrEmpty(configuredExtruder.AlarmTag))
+                                    {
+                                        string extruderAlarmValue;
+                                        if (TryReadTag(AllTagStatus, inf, configuredExtruder.AlarmTag, out extruderAlarmValue))
+                                        {
+                                            try
+                                            { extruderAlarmStatus = Convert.ToBoolean(extruderAlarmValue); }
+                                            catch
+                                            { extruderAlarmStatus = false; }
+                                        }
+                                    }
+
+                                    List<Items> ItemsForExtruder = new List<Items>();
+
+                                    if (extruderItemValue != "" && extruderItemValue != "0")
+                                    {
+                                        ItemsForExtruder.Add(new Items
+                                        {
+                                            item_name = extruderItemValue,
+                                            scan_status = true,
+                                            Hooter = "Hooter",
+                                            Hooter_status = extruderAlarmStatus,
+                                            Setting_status = false,
+                                            blending_status = false,
+                                            Slitting_status = false,
+                                            blendCount = "0",
+                                            slittingCount = "0"
+
+                                        });
+                                    }
+                                    else
+                                    {
+                                        ItemsForExtruder.Add(new Items
+                                        {
+
+                                            item_name = extruderItemValue,
+                                            scan_status = false
+
+                                        });
+                                    }
+
+                                    Feeder.Add(new Feederlist
+                                    {
+                                        Feedername = configuredExtruder.ExtruderName,
+                                        ItemScanStatus = ItemsForExtruder
+
+                                    });
+                                }
+                            }
+                            else
+                            {
                             Feeder.Add(new Feederlist
                             {
                                 Feedername = "LetOff01",
                                 ItemScanStatus = ItemsCompound
 
                             });
-                           
-                           
+
+
                             if (machineName == "Bodyply01")
                             {
                                 Feeder.Add(new Feederlist
@@ -446,6 +516,7 @@ namespace BodyPlyWebService.Services
                                     ItemScanStatus = ItemsCompound2
 
                                 });
+                            }
                             }
 
 
@@ -2988,6 +3059,44 @@ PRINT KEY OFF
         }
 
         //Method for Logging Error
+        //Resolves an OPC friendly name against the tag list loaded from BodyPlyConfig.csv and
+        //returns the value cached by the SmartOPC DataChange callback. Uses exactly the same
+        //two calls as the inline reads, with guards for a tag that is absent from the csv
+        //(IndexOf returns -1) and for a value not yet delivered by the first callback.
+        private static bool TryReadTag(SmartLogic.SmartOPC opc, SmartLogic.loginformation inf,
+                                       string tagName, out string value)
+        {
+            value = "";
+
+            if (opc == null || inf == null || string.IsNullOrEmpty(tagName))
+            {
+                return false;
+            }
+
+            try
+            {
+                int tagIndex = inf.opcItemID.IndexOf(tagName.ToLower());
+                if (tagIndex < 0)
+                {
+                    return false;
+                }
+
+                object rawValue = opc.opcValue.GetValue(tagIndex);
+                if (rawValue == null)
+                {
+                    return false;
+                }
+
+                value = rawValue.ToString();
+                return true;
+            }
+            catch (Exception exc)
+            {
+                Uitility.LogEvent("TryReadTag :" + tagName + " :" + exc.ToString());
+                return false;
+            }
+        }
+
         private void LogError(string folderName, string methodInfo, Exception exc, string transactionId)
         {
             _dBLogger.LogIntoDB(new LogInfo

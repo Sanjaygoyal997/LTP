@@ -90,6 +90,19 @@ namespace BodyPlyWebService.Models
         public List<Items> ItemScanStatus { get; set; }
 
     }
+
+    //Extruder/feeder configuration read from dbo.bomextrudermapping joined with dbo.master_extruder.
+    //The tag properties hold OPC friendly names (the ItemName column of BodyPlyConfig.csv),
+    //never Kepware addresses.
+    public class ExtruderConfig
+    {
+        public string ExtruderName { get; set; }
+        public int SequenceNo { get; set; }
+        public string MesItemCountTag { get; set; }
+        public string ExtruderScanOkTag { get; set; }
+        public string ExtruderHooterTag { get; set; }
+        public string AlarmTag { get; set; }
+    }
     public class Feeder
     {
         public string feeder_name { get; set; }
