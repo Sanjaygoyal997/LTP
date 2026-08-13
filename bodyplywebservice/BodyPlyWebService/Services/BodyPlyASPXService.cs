@@ -830,6 +830,95 @@ namespace BodyPlyWebService.Services
             return json;
         }
 
+        //Records a scanned material against the extruder that the HMI feeder position refers
+        //to. The position is matched against sequenceno in the configuration, so the extruder
+        //name and the material group both come from the same rows UpdateHMIService and
+        //ResetExtruderMaterial read. Shared by the scanned and the manual paths, which differ
+        //only in how the QR data reaches bsObj.
+        private void RecordScannedMaterial(DataTable dtbom, QrcodeData bsObj, string Feeder,
+                                           int equipment_id, string MachineName, string UserName,
+                                           string result, ResultantDTO Result)
+        {
+            List<ExtruderConfig> configuredExtruders =
+                ExtruderConfigProvider.Get(equipment_id.ToString(), _bodyPlyRepository);
+
+            ExtruderConfig configuredExtruder = null;
+            if (configuredExtruders != null)
+            {
+                configuredExtruder = configuredExtruders.FirstOrDefault(
+                    e => e.SequenceNo.ToString() == Feeder);
+            }
+
+            //A position the configuration does not describe is reported rather than ignored.
+            //The feeder chain this replaced fell through such a scan without a message.
+            if (configuredExtruder == null)
+            {
+                Uitility.LogEvent("RecordScannedMaterial : feeder " + Feeder +
+                                  " is not configured for equipment " + equipment_id);
+                Result.Status = 0;
+                Result.Message = "Feeder " + Feeder + " is not configured on this machine";
+                Result.Data = "False";
+                return;
+            }
+
+            //The let off carries calendered roll and every strip feeder carries slitted
+            //material. IndexOf rather than equality so the match survives an extruder whose
+            //name has been suffixed in master_extruder.
+            string materialGroup =
+                configuredExtruder.ExtruderName.IndexOf("LetOff", StringComparison.OrdinalIgnoreCase) >= 0
+                    ? "CALANDARED ROLL"
+                    : "SLITTED MATERIAL";
+
+            Uitility.LogEvent("RecordScannedMaterial : feeder " + Feeder + " => " +
+                              configuredExtruder.ExtruderName + " (" + materialGroup + ")");
+
+            var DetailProduction = dtbom.AsEnumerable().Where(
+                r => r.Field<String>("MaterialGroup_IN").Contains(materialGroup) &&
+                     r.Field<String>("MaterialCodeGroup_IN").Contains(bsObj.itemCode)).Select(s => new
+                     {
+                         CompoundDetail = s.Field<string>("MaterialCodeGroup_IN"),
+
+                     }).ToList();
+
+            var items = DetailProduction.ToArray();
+            string compoundname = "";
+            for (int i = 0; i <= (items.Length - 1); i++) // Run loop until get all the quantities in the array
+            {
+                compoundname = items[i].CompoundDetail.ToString();
+            }
+
+            if (compoundname != "" && compoundname == bsObj.itemCode)
+            {
+                Uitility.LogEvent($"compoundname=  {compoundname}   Item code:   {bsObj.itemCode}");
+                Result.Status = 1;
+                Result.Message = "Sucess";
+                Result.Data = "True";
+
+                try
+                {
+                    Uitility.LogEvent("bsObj.lot_No:" + bsObj.lot_No + " bsObj.qty:" + bsObj.qty +
+                                      " bsObj.itemCode:" + bsObj.itemCode + " " + configuredExtruder.ExtruderName +
+                                      " MachineName:" + MachineName + " UserName" + UserName);
+                    _bodyPlyRepository.AddUpdateI_Material(bsObj.lot_No, bsObj.qty, bsObj.itemCode,
+                        configuredExtruder.ExtruderName, MachineName, MachineName, UserName, "R");
+                }
+                catch (Exception ex)
+                {
+                    Uitility.LogEvent("AddUpdateI_Material:" + ex.ToString());
+                    LogError("BodyPlyASPXService", "RecordScannedMaterial", ex, _transaction_Id);
+                }
+            }
+            else
+            {
+                Result.Status = 0;
+                Result.Message = result;
+                Result.Data = "False";
+            }
+
+            ResetExtruderMaterial(equipment_id);
+        }
+
+
         public string ScanningQrcodeService(string QrCode, string Feeder, string numberofscan, string itemnumber, string isManual, string UserName,  string _transaction_Id,string MachineName,int equipment_id)
         {
             //LogEvent("BodyPlyASPXService", "ScanningQrcodeService", $"{DateTime.Now.ToString()} Scan Data=>   QrCode : {QrCode} Feeder: {Feeder} numberofscan: {numberofscan} itemnumber: {itemnumber} isManual: {isManual} " ,_transaction_Id, "");
@@ -957,552 +1046,9 @@ namespace BodyPlyWebService.Services
                             DataTable dtbom = _bodyPlyRepository.GetProduceItembom(recipe);
                             Uitility.LogEvent($"dtbom available  { dtbom.Rows.Count} ");
                             // LogEvent("BodyPlyASPXService", "ScanningQrcodeService", $"dtbom available  { dtbom.Rows.Count} ", _transaction_Id, "");
-                            if (MachineName == "Bodyply01")
-                            {
-                                if (Feeder == "1")
-                                {
-                                    Uitility.LogEvent("ScanningQrcodeService" + "Feeder 1 Scan ");
-                                    // LogEvent("BodyPlyASPXService", "ScanningQrcodeService", "Feeder 1 Scan ", _transaction_Id, "");
-                                    // AllTagStatus.WriteData(numberofscan, inf.opcItemID[inf.opcItemID.IndexOf(("compoundscanqty").ToLower())]);
-                                    var DetailProduction = dtbom.AsEnumerable().Where(r => r.Field<String>("MaterialGroup_IN").Contains("CALANDARED ROLL") && r.Field<String>("MaterialCodeGroup_IN").Contains(bsObj.itemCode)).Select(s => new
-                                    {
-                                        CompoundDetail = s.Field<string>("MaterialCodeGroup_IN"),
-
-                                    }).ToList();
-
-                                    var items = DetailProduction.ToArray();
-                                    string compoundname = "";
-                                    for (int i = 0; i <= (items.Length - 1); i++) // Run loop until get all the quantities in the array
-                                    {
-                                        compoundname = items[i].CompoundDetail.ToString();
-                                    }
-
-                                    if (compoundname != "" && compoundname == bsObj.itemCode)
-                                    {
-                                        Uitility.LogEvent($"compoundname=  {compoundname}   Item code:   {bsObj.itemCode}");
-                                        //LogEvent("BodyPlyASPXService", "ScanningQrcodeService", $"compoundname=  {compoundname}   Item code:   {bsObj.itemCode}", _transaction_Id, "");
-                                        status = "True";
-                                        Result.Status = 1;
-                                        Result.Message = "Sucess";
-                                        Result.Data = status;
-
-                                        try
-                                        {
-                                            Uitility.LogEvent("bsObj.lot_No:" + bsObj.lot_No + " bsObj.qty:" + bsObj.qty + " bsObj.itemCode:" + bsObj.itemCode + "LetOff01" + " MachineName:" + MachineName + " UserName" + UserName);
-                                            _bodyPlyRepository.AddUpdateI_Material(bsObj.lot_No, bsObj.qty, bsObj.itemCode, "LetOff01", MachineName, MachineName, UserName, "R");
-
-                                            // LogEvent("BodyPlyASPXService", "ScanningQrcodeService", "Add material in I material", _transaction_Id, "");
-                                        }
-                                        catch (Exception ex)
-                                        {
-                                            Uitility.LogEvent("AddUpdateI_Material:" + ex.ToString());
-                                            //  LogError("BodyPlyASPXService", "ScanningQrcodeService", ex, _transaction_Id);
-                                        }
-
-
-                                    }
-                                    else
-                                    {
-                                        result = bsObj.itemCode+" Not Validate on this input feeder";
-                                        status = "False";
-                                        Result.Status = 0;
-                                        Result.Message = result;
-                                        Result.Data = status;
-                                    }
-                                }
-                               else if (Feeder == "2")
-                                {
-                                    Uitility.LogEvent("ScanningQrcodeService" + "Feeder 2 Scan ");
-                                    // LogEvent("BodyPlyASPXService", "ScanningQrcodeService", "Feeder 1 Scan ", _transaction_Id, "");
-                                    // AllTagStatus.WriteData(numberofscan, inf.opcItemID[inf.opcItemID.IndexOf(("compoundscanqty").ToLower())]);
-                                    var DetailProduction = dtbom.AsEnumerable().Where(r => r.Field<String>("MaterialGroup_IN").Contains("SLITTED MATERIAL") && r.Field<String>("MaterialCodeGroup_IN").Contains(bsObj.itemCode)).Select(s => new
-                                    {
-                                        CompoundDetail = s.Field<string>("MaterialCodeGroup_IN"),
-
-                                    }).ToList();
-
-                                    var items = DetailProduction.ToArray();
-                                    string compoundname = "";
-                                    for (int i = 0; i <= (items.Length - 1); i++) // Run loop until get all the quantities in the array
-                                    {
-                                        compoundname = items[i].CompoundDetail.ToString();
-                                    }
-
-                                    if (compoundname != "" && compoundname == bsObj.itemCode)
-                                    {
-                                        Uitility.LogEvent($"compoundname=  {compoundname}   Item code:   {bsObj.itemCode}");
-                                        //LogEvent("BodyPlyASPXService", "ScanningQrcodeService", $"compoundname=  {compoundname}   Item code:   {bsObj.itemCode}", _transaction_Id, "");
-                                        status = "True";
-                                        Result.Status = 1;
-                                        Result.Message = "Sucess";
-                                        Result.Data = status;
-
-                                        try
-                                        {
-                                            Uitility.LogEvent("bsObj.lot_No:"+ bsObj.lot_No+ " bsObj.qty:"+ bsObj.qty+ " bsObj.itemCode:"+ bsObj.itemCode + "GumStrip(L)" + " MachineName:"+ MachineName+ " UserName"+ UserName);
-                                            _bodyPlyRepository.AddUpdateI_Material(bsObj.lot_No, bsObj.qty, bsObj.itemCode, "GumStrip(L)", MachineName, MachineName, UserName, "R");
-
-                                            // LogEvent("BodyPlyASPXService", "ScanningQrcodeService", "Add material in I material", _transaction_Id, "");
-                                        }
-                                        catch (Exception ex)
-                                        {
-                                            Uitility.LogEvent("AddUpdateI_Material:" + ex.ToString());
-                                            //  LogError("BodyPlyASPXService", "ScanningQrcodeService", ex, _transaction_Id);
-                                        }
-
-
-                                    }
-                                    else
-                                    {
-                                        result = bsObj.itemCode + " Not Validate on this input feeder";
-                                        status = "False";
-                                        Result.Status = 0;
-                                        Result.Message = result;
-                                        Result.Data = status;
-                                    }
-                                }
-                               else if (Feeder == "3")
-                            {
-                                Uitility.LogEvent("ScanningQrcodeService" + "Feeder 2 Scan ");
-                                // LogEvent("BodyPlyASPXService", "ScanningQrcodeService", "Feeder 1 Scan ", _transaction_Id, "");
-                                // AllTagStatus.WriteData(numberofscan, inf.opcItemID[inf.opcItemID.IndexOf(("compoundscanqty").ToLower())]);
-                                var DetailProduction = dtbom.AsEnumerable().Where(r => r.Field<String>("MaterialGroup_IN").Contains("SLITTED MATERIAL") && r.Field<String>("MaterialCodeGroup_IN").Contains(bsObj.itemCode)).Select(s => new
-                                {
-                                    CompoundDetail = s.Field<string>("MaterialCodeGroup_IN"),
-
-                                }).ToList();
-
-                                var items = DetailProduction.ToArray();
-                                string compoundname = "";
-                                for (int i = 0; i <= (items.Length - 1); i++) // Run loop until get all the quantities in the array
-                                {
-                                    compoundname = items[i].CompoundDetail.ToString();
-                                }
-
-                                if (compoundname != "" && compoundname == bsObj.itemCode)
-                                {
-                                    Uitility.LogEvent($"compoundname=  {compoundname}   Item code:   {bsObj.itemCode}");
-                                    //LogEvent("BodyPlyASPXService", "ScanningQrcodeService", $"compoundname=  {compoundname}   Item code:   {bsObj.itemCode}", _transaction_Id, "");
-                                    status = "True";
-                                    Result.Status = 1;
-                                    Result.Message = "Sucess";
-                                    Result.Data = status;
-
-                                    try
-                                        {
-                                            Uitility.LogEvent("bsObj.lot_No:" + bsObj.lot_No + " bsObj.qty:" + bsObj.qty + " bsObj.itemCode:" + bsObj.itemCode + "GumStrip(R)" + " MachineName:" + MachineName + " UserName" + UserName);
-                                            _bodyPlyRepository.AddUpdateI_Material(bsObj.lot_No, bsObj.qty, bsObj.itemCode, "GumStrip(R)", MachineName, MachineName, UserName, "R");
-
-                                        // LogEvent("BodyPlyASPXService", "ScanningQrcodeService", "Add material in I material", _transaction_Id, "");
-                                    }
-                                    catch (Exception ex)
-                                    {
-                                        Uitility.LogEvent("AddUpdateI_Material:" + ex.ToString());
-                                        //  LogError("BodyPlyASPXService", "ScanningQrcodeService", ex, _transaction_Id);
-                                    }
-
-
-                                }
-                                else
-                                {
-                                        result = bsObj.itemCode + " Not Validate on this input feeder";
-                                        status = "False";
-                                    Result.Status = 0;
-                                    Result.Message = result;
-                                    Result.Data = status;
-                                }
-                            }
-                               else if (Feeder == "4")
-                                {
-                                    Uitility.LogEvent("ScanningQrcodeService" + "Feeder 2 Scan ");
-                                    // LogEvent("BodyPlyASPXService", "ScanningQrcodeService", "Feeder 1 Scan ", _transaction_Id, "");
-                                    // AllTagStatus.WriteData(numberofscan, inf.opcItemID[inf.opcItemID.IndexOf(("compoundscanqty").ToLower())]);
-                                    var DetailProduction = dtbom.AsEnumerable().Where(r => r.Field<String>("MaterialGroup_IN").Contains("SLITTED MATERIAL") && r.Field<String>("MaterialCodeGroup_IN").Contains(bsObj.itemCode)).Select(s => new
-                                    {
-                                        CompoundDetail = s.Field<string>("MaterialCodeGroup_IN"),
-
-                                    }).ToList();
-
-                                    var items = DetailProduction.ToArray();
-                                    string compoundname = "";
-                                    for (int i = 0; i <= (items.Length - 1); i++) // Run loop until get all the quantities in the array
-                                    {
-                                        compoundname = items[i].CompoundDetail.ToString();
-                                    }
-
-                                    if (compoundname != "" && compoundname == bsObj.itemCode)
-                                    {
-                                        Uitility.LogEvent($"compoundname=  {compoundname}   Item code:   {bsObj.itemCode}");
-                                        //LogEvent("BodyPlyASPXService", "ScanningQrcodeService", $"compoundname=  {compoundname}   Item code:   {bsObj.itemCode}", _transaction_Id, "");
-                                        status = "True";
-                                        Result.Status = 1;
-                                        Result.Message = "Sucess";
-                                        Result.Data = status;
-
-                                        try
-                                        {
-                                            Uitility.LogEvent("bsObj.lot_No:" + bsObj.lot_No + " bsObj.qty:" + bsObj.qty + " bsObj.itemCode:" + bsObj.itemCode + "WideStrip(L)" + " MachineName:" + MachineName + " UserName" + UserName);
-                                            _bodyPlyRepository.AddUpdateI_Material(bsObj.lot_No, bsObj.qty, bsObj.itemCode, "WideStrip(L)", MachineName, MachineName, UserName, "R");
-
-                                            // LogEvent("BodyPlyASPXService", "ScanningQrcodeService", "Add material in I material", _transaction_Id, "");
-                                        }
-                                        catch (Exception ex)
-                                        {
-                                            Uitility.LogEvent("AddUpdateI_Material:" + ex.ToString());
-                                            //  LogError("BodyPlyASPXService", "ScanningQrcodeService", ex, _transaction_Id);
-                                        }
-
-
-                                    }
-                                    else
-                                    {
-                                        result = bsObj.itemCode + " Not Validate on this input feeder";
-                                        status = "False";
-                                        Result.Status = 0;
-                                        Result.Message = result;
-                                        Result.Data = status;
-                                    }
-                                }
-                               else if (Feeder == "5")
-                                {
-                                    Uitility.LogEvent("ScanningQrcodeService" + "Feeder 2 Scan ");
-                                    // LogEvent("BodyPlyASPXService", "ScanningQrcodeService", "Feeder 1 Scan ", _transaction_Id, "");
-                                    // AllTagStatus.WriteData(numberofscan, inf.opcItemID[inf.opcItemID.IndexOf(("compoundscanqty").ToLower())]);
-                                    var DetailProduction = dtbom.AsEnumerable().Where(r => r.Field<String>("MaterialGroup_IN").Contains("SLITTED MATERIAL") && r.Field<String>("MaterialCodeGroup_IN").Contains(bsObj.itemCode)).Select(s => new
-                                    {
-                                        CompoundDetail = s.Field<string>("MaterialCodeGroup_IN"),
-
-                                    }).ToList();
-
-                                    var items = DetailProduction.ToArray();
-                                    string compoundname = "";
-                                    for (int i = 0; i <= (items.Length - 1); i++) // Run loop until get all the quantities in the array
-                                    {
-                                        compoundname = items[i].CompoundDetail.ToString();
-                                    }
-
-                                    if (compoundname != "" && compoundname == bsObj.itemCode)
-                                    {
-                                        Uitility.LogEvent($"compoundname=  {compoundname}   Item code:   {bsObj.itemCode}");
-                                        //LogEvent("BodyPlyASPXService", "ScanningQrcodeService", $"compoundname=  {compoundname}   Item code:   {bsObj.itemCode}", _transaction_Id, "");
-                                        status = "True";
-                                        Result.Status = 1;
-                                        Result.Message = "Sucess";
-                                        Result.Data = status;
-
-                                        try
-                                        {
-                                            Uitility.LogEvent("bsObj.lot_No:" + bsObj.lot_No + " bsObj.qty:" + bsObj.qty + " bsObj.itemCode:" + bsObj.itemCode + "WideStrip(R)" + " MachineName:" + MachineName + " UserName" + UserName);
-                                            _bodyPlyRepository.AddUpdateI_Material(bsObj.lot_No, bsObj.qty, bsObj.itemCode, "WideStrip(R)", MachineName, MachineName, UserName, "R");
-
-                                            // LogEvent("BodyPlyASPXService", "ScanningQrcodeService", "Add material in I material", _transaction_Id, "");
-                                        }
-                                        catch (Exception ex)
-                                        {
-                                            Uitility.LogEvent("AddUpdateI_Material:" + ex.ToString());
-                                            //  LogError("BodyPlyASPXService", "ScanningQrcodeService", ex, _transaction_Id);
-                                        }
-
-
-                                    }
-                                    else
-                                    {
-                                        result = bsObj.itemCode + " Not Validate on this input feeder";
-                                        status = "False";
-                                        Result.Status = 0;
-                                        Result.Message = result;
-                                        Result.Data = status;
-                                    }
-                                }
-                                ResetExtruderMaterial(equipment_id);
-                            }
-                          else  if (MachineName == "Bodyply02")
-                            {
-                                if (Feeder == "1")
-                                {
-                                    Uitility.LogEvent("ScanningQrcodeService" + "Feeder 1 Scan ");
-                                    // LogEvent("BodyPlyASPXService", "ScanningQrcodeService", "Feeder 1 Scan ", _transaction_Id, "");
-                                    // AllTagStatus.WriteData(numberofscan, inf.opcItemID[inf.opcItemID.IndexOf(("compoundscanqty").ToLower())]);
-                                    var DetailProduction = dtbom.AsEnumerable().Where(r => r.Field<String>("MaterialGroup_IN").Contains("CALANDARED ROLL") && r.Field<String>("MaterialCodeGroup_IN").Contains(bsObj.itemCode)).Select(s => new
-                                    {
-                                        CompoundDetail = s.Field<string>("MaterialCodeGroup_IN"),
-
-                                    }).ToList();
-
-                                    var items = DetailProduction.ToArray();
-                                    string compoundname = "";
-                                    for (int i = 0; i <= (items.Length - 1); i++) // Run loop until get all the quantities in the array
-                                    {
-                                        compoundname = items[i].CompoundDetail.ToString();
-                                    }
-
-                                    if (compoundname != "" && compoundname == bsObj.itemCode)
-                                    {
-                                        Uitility.LogEvent($"compoundname=  {compoundname}   Item code:   {bsObj.itemCode}");
-                                        //LogEvent("BodyPlyASPXService", "ScanningQrcodeService", $"compoundname=  {compoundname}   Item code:   {bsObj.itemCode}", _transaction_Id, "");
-                                        status = "True";
-                                        Result.Status = 1;
-                                        Result.Message = "Sucess";
-                                        Result.Data = status;
-
-                                        try
-                                        {
-                                            Uitility.LogEvent("bsObj.lot_No:" + bsObj.lot_No + " bsObj.qty:" + bsObj.qty + " bsObj.itemCode:" + bsObj.itemCode + "LetOff01" + " MachineName:" + MachineName + " UserName" + UserName);
-                                            _bodyPlyRepository.AddUpdateI_Material(bsObj.lot_No, bsObj.qty, bsObj.itemCode, "LetOff01", MachineName, MachineName, UserName, "R");
-
-                                            // LogEvent("BodyPlyASPXService", "ScanningQrcodeService", "Add material in I material", _transaction_Id, "");
-                                        }
-                                        catch (Exception ex)
-                                        {
-                                            Uitility.LogEvent("AddUpdateI_Material:" + ex.ToString());
-                                            //  LogError("BodyPlyASPXService", "ScanningQrcodeService", ex, _transaction_Id);
-                                        }
-
-
-                                    }
-                                    else
-                                    {
-                                        status = "False";
-                                        Result.Status = 0;
-                                        Result.Message = result;
-                                        Result.Data = status;
-                                    }
-                                }
-                                else if (Feeder == "2")
-                                {
-                                    Uitility.LogEvent("ScanningQrcodeService" + "Feeder 2 Scan ");
-                                    // LogEvent("BodyPlyASPXService", "ScanningQrcodeService", "Feeder 1 Scan ", _transaction_Id, "");
-                                    // AllTagStatus.WriteData(numberofscan, inf.opcItemID[inf.opcItemID.IndexOf(("compoundscanqty").ToLower())]);
-                                    var DetailProduction = dtbom.AsEnumerable().Where(r => r.Field<String>("MaterialGroup_IN").Contains("SLITTED MATERIAL") && r.Field<String>("MaterialCodeGroup_IN").Contains(bsObj.itemCode)).Select(s => new
-                                    {
-                                        CompoundDetail = s.Field<string>("MaterialCodeGroup_IN"),
-
-                                    }).ToList();
-
-                                    var items = DetailProduction.ToArray();
-                                    string compoundname = "";
-                                    for (int i = 0; i <= (items.Length - 1); i++) // Run loop until get all the quantities in the array
-                                    {
-                                        compoundname = items[i].CompoundDetail.ToString();
-                                    }
-
-                                    if (compoundname != "" && compoundname == bsObj.itemCode)
-                                    {
-                                        Uitility.LogEvent($"compoundname=  {compoundname}   Item code:   {bsObj.itemCode}");
-                                        //LogEvent("BodyPlyASPXService", "ScanningQrcodeService", $"compoundname=  {compoundname}   Item code:   {bsObj.itemCode}", _transaction_Id, "");
-                                        status = "True";
-                                        Result.Status = 1;
-                                        Result.Message = "Sucess";
-                                        Result.Data = status;
-
-                                        try
-                                        {
-                                            Uitility.LogEvent("bsObj.lot_No:" + bsObj.lot_No + " bsObj.qty:" + bsObj.qty + " bsObj.itemCode:" + bsObj.itemCode + "GumStrip" + " MachineName:" + MachineName + " UserName" + UserName);
-                                            _bodyPlyRepository.AddUpdateI_Material(bsObj.lot_No, bsObj.qty, bsObj.itemCode, "GumStrip", MachineName, MachineName, UserName, "R");
-
-                                            // LogEvent("BodyPlyASPXService", "ScanningQrcodeService", "Add material in I material", _transaction_Id, "");
-                                        }
-                                        catch (Exception ex)
-                                        {
-                                            Uitility.LogEvent("AddUpdateI_Material:" + ex.ToString());
-                                            //  LogError("BodyPlyASPXService", "ScanningQrcodeService", ex, _transaction_Id);
-                                        }
-
-
-                                    }
-                                    else
-                                    {
-                                        status = "False";
-                                        Result.Status = 0;
-                                        Result.Message = result;
-                                        Result.Data = status;
-                                    }
-                                }
-                                else if (Feeder == "3")
-                                {
-                                    Uitility.LogEvent("ScanningQrcodeService" + "Feeder 2 Scan ");
-                                    // LogEvent("BodyPlyASPXService", "ScanningQrcodeService", "Feeder 1 Scan ", _transaction_Id, "");
-                                    // AllTagStatus.WriteData(numberofscan, inf.opcItemID[inf.opcItemID.IndexOf(("compoundscanqty").ToLower())]);
-                                    var DetailProduction = dtbom.AsEnumerable().Where(r => r.Field<String>("MaterialGroup_IN").Contains("SLITTED MATERIAL") && r.Field<String>("MaterialCodeGroup_IN").Contains(bsObj.itemCode)).Select(s => new
-                                    {
-                                        CompoundDetail = s.Field<string>("MaterialCodeGroup_IN"),
-
-                                    }).ToList();
-
-                                    var items = DetailProduction.ToArray();
-                                    string compoundname = "";
-                                    for (int i = 0; i <= (items.Length - 1); i++) // Run loop until get all the quantities in the array
-                                    {
-                                        compoundname = items[i].CompoundDetail.ToString();
-                                    }
-
-                                    if (compoundname != "" && compoundname == bsObj.itemCode)
-                                    {
-                                        Uitility.LogEvent($"compoundname=  {compoundname}   Item code:   {bsObj.itemCode}");
-                                        //LogEvent("BodyPlyASPXService", "ScanningQrcodeService", $"compoundname=  {compoundname}   Item code:   {bsObj.itemCode}", _transaction_Id, "");
-                                        status = "True";
-                                        Result.Status = 1;
-                                        Result.Message = "Sucess";
-                                        Result.Data = status;
-
-                                        try
-                                        {
-                                            Uitility.LogEvent("bsObj.lot_No:" + bsObj.lot_No + " bsObj.qty:" + bsObj.qty + " bsObj.itemCode:" + bsObj.itemCode + "WideStrip" + " MachineName:" + MachineName + " UserName" + UserName);
-                                            _bodyPlyRepository.AddUpdateI_Material(bsObj.lot_No, bsObj.qty, bsObj.itemCode, "WideStrip", MachineName, MachineName, UserName, "R");
-
-                                            // LogEvent("BodyPlyASPXService", "ScanningQrcodeService", "Add material in I material", _transaction_Id, "");
-                                        }
-                                        catch (Exception ex)
-                                        {
-                                            Uitility.LogEvent("AddUpdateI_Material:" + ex.ToString());
-                                            //  LogError("BodyPlyASPXService", "ScanningQrcodeService", ex, _transaction_Id);
-                                        }
-
-
-                                    }
-                                    else
-                                    {
-                                        status = "False";
-                                        Result.Status = 0;
-                                        Result.Message = result;
-                                        Result.Data = status;
-                                    }
-                                }
-
-                                ResetExtruderMaterial(equipment_id);
-                            }
-
-                            //DataTable dtscan = _bodyPlyRepository.GetTotalBodyPlyScan(MachineName);
-                            //if (dtscan != null && dtscan.Rows.Count > 0)
-                            //{
-                                
-                            //    if (MachineName == "Bodyply01")
-                            //    {
-                            //        int letOffCount = dtscan.AsEnumerable()
-                            //        .Count(r => string.Equals(
-                            //            r.Field<string>("FeederCode"),
-                            //            "LetOff01",
-                            //            StringComparison.OrdinalIgnoreCase));
-                                    
-                            //        AllTagStatus.WriteData(letOffCount, inf.opcItemID[inf.opcItemID.IndexOf(("MesCompoundItem").ToLower())]);
-                                    
-                            //        if (letOffCount > 0)
-                            //        {
-                            //            AllTagStatus.WriteData(1, inf.opcItemID[inf.opcItemID.IndexOf(("inputmaterial_scanok1").ToLower())]);
-                            //            AllTagStatus.WriteData(0, inf.opcItemID[inf.opcItemID.IndexOf(("INPUTMaterial_SCANOK1Hooter").ToLower())]);
-                            //        }
-                            //        else { AllTagStatus.WriteData(0, inf.opcItemID[inf.opcItemID.IndexOf(("inputmaterial_scanok1").ToLower())]);
-                            //            AllTagStatus.WriteData(1, inf.opcItemID[inf.opcItemID.IndexOf(("INPUTMaterial_SCANOK1Hooter").ToLower())]);
-                            //        }
-
-
-                            //            int edgeGumRCount = dtscan.AsEnumerable()
-                            //        .Count(r => string.Equals(
-                            //            r.Field<string>("FeederCode"),
-                            //            "EdgeGum(R)",
-                            //            StringComparison.OrdinalIgnoreCase));
-
-
-                            //        if (edgeGumRCount > 0)
-                            //        {
-                            //            AllTagStatus.WriteData(1, inf.opcItemID[inf.opcItemID.IndexOf(("inputmaterial_scanok1").ToLower())]);
-                            //            AllTagStatus.WriteData(0, inf.opcItemID[inf.opcItemID.IndexOf(("INPUTMaterial_SCANOK1Hooter").ToLower())]);
-                            //        }
-                            //        else
-                            //        {
-                            //            AllTagStatus.WriteData(0, inf.opcItemID[inf.opcItemID.IndexOf(("inputmaterial_scanok1").ToLower())]);
-                            //            AllTagStatus.WriteData(1, inf.opcItemID[inf.opcItemID.IndexOf(("INPUTMaterial_SCANOK1Hooter").ToLower())]);
-                            //        }
-
-                            //        int edgeGumLCount = dtscan.AsEnumerable()
-                            //            .Count(r => string.Equals(
-                            //                r.Field<string>("FeederCode"),
-                            //                "EdgeGum(L)",
-                            //                StringComparison.OrdinalIgnoreCase));
-                            //        if (edgeGumLCount > 0 && edgeGumRCount>0)
-                            //        {
-                            //            AllTagStatus.WriteData(1, inf.opcItemID[inf.opcItemID.IndexOf(("inputmaterial_scanok2").ToLower())]);
-                            //            AllTagStatus.WriteData(0, inf.opcItemID[inf.opcItemID.IndexOf(("INPUTMaterial_SCANOK2Hooter").ToLower())]);
-                            //        }
-                            //        else { AllTagStatus.WriteData(0, inf.opcItemID[inf.opcItemID.IndexOf(("inputmaterial_scanok2").ToLower())]);
-                            //            AllTagStatus.WriteData(1, inf.opcItemID[inf.opcItemID.IndexOf(("INPUTMaterial_SCANOK2Hooter").ToLower())]);
-                            //        }
-
-
-                            //        int WideStripLCount = dtscan.AsEnumerable()
-                            //          .Count(r => string.Equals(
-                            //              r.Field<string>("FeederCode"),
-                            //              "WideStrip(L)",
-                            //              StringComparison.OrdinalIgnoreCase));
-                            //        int WideStripRCount = dtscan.AsEnumerable()
-                            //          .Count(r => string.Equals(
-                            //              r.Field<string>("FeederCode"),
-                            //              "WideStrip(R)",
-                            //              StringComparison.OrdinalIgnoreCase));
-                            //        if (WideStripLCount > 0 && WideStripRCount > 0)
-                            //        {
-                            //            AllTagStatus.WriteData(1, inf.opcItemID[inf.opcItemID.IndexOf(("inputmaterial_scanok3").ToLower())]);
-                            //            AllTagStatus.WriteData(0, inf.opcItemID[inf.opcItemID.IndexOf(("INPUTMaterial_SCANOK3Hooter").ToLower())]);
-                            //        }
-                            //        else { AllTagStatus.WriteData(0, inf.opcItemID[inf.opcItemID.IndexOf(("inputmaterial_scanok3").ToLower())]);
-                            //            AllTagStatus.WriteData(1, inf.opcItemID[inf.opcItemID.IndexOf(("INPUTMaterial_SCANOK3Hooter").ToLower())]);
-                            //        }
-
-
-                            //    }
-
-                            //    if (MachineName == "Bodyply02")
-                            //    {
-                            //        int letOffCount = dtscan.AsEnumerable()
-                            //        .Count(r => string.Equals(
-                            //            r.Field<string>("FeederCode"),
-                            //            "LetOff01",
-                            //            StringComparison.OrdinalIgnoreCase));
-                            //        AllTagStatus.WriteData(letOffCount, inf.opcItemID[inf.opcItemID.IndexOf(("MesCompoundItem").ToLower())]);
-                            //        AllTagStatus.WriteData(1, inf.opcItemID[inf.opcItemID.IndexOf(("FeederCompoundItemIntrlk").ToLower())]);
-
-                            //        int gumStripCount = dtscan.AsEnumerable()
-                            //            .Count(r => string.Equals(
-                            //                r.Field<string>("FeederCode"),
-                            //                "GumStrip",
-                            //                StringComparison.OrdinalIgnoreCase));
-
-                            //        int wideStripCount = dtscan.AsEnumerable()
-                            //            .Count(r => string.Equals(
-                            //                r.Field<string>("FeederCode"),
-                            //                "WideStrip",
-                            //                StringComparison.OrdinalIgnoreCase));
-                            //    }
-
-
-                            //}
-                            //else {
-                            //    if (MachineName == "Bodyply01")
-                            //    {
-                            //        AllTagStatus.WriteData(dtscan.Rows.Count, inf.opcItemID[inf.opcItemID.IndexOf(("MesCompoundItem").ToLower())]);
-                            //        AllTagStatus.WriteData(0, inf.opcItemID[inf.opcItemID.IndexOf(("FeederCompoundItemIntrlk").ToLower())]); 
-                            //    }
-                            //    else if (MachineName == "Bodyply02")
-                            //    {
-                            //        AllTagStatus.WriteData(dtscan.Rows.Count, inf.opcItemID[inf.opcItemID.IndexOf(("MesCompoundItem").ToLower())]);
-                            //        AllTagStatus.WriteData(0, inf.opcItemID[inf.opcItemID.IndexOf(("FeederCompoundItemIntrlk").ToLower())]);
-                            //    }
-                            //}
-                                //if (dtscan.Rows.Count > 0)
-                                //{
-
-                                //    AllTagStatus.WriteData(dtscan.Rows.Count, inf.opcItemID[inf.opcItemID.IndexOf(("MesCompoundItem").ToLower())]);
-                                //    AllTagStatus.WriteData(1, inf.opcItemID[inf.opcItemID.IndexOf(("FeederCompoundItemIntrlk").ToLower())]);
-                                //}
-                                //else
-                                //{
-                                //    AllTagStatus.WriteData(dtscan.Rows.Count, inf.opcItemID[inf.opcItemID.IndexOf(("MesCompoundItem").ToLower())]);
-                                //    AllTagStatus.WriteData(0, inf.opcItemID[inf.opcItemID.IndexOf(("FeederCompoundItemIntrlk").ToLower())]);
-                                //}
-
-
-
-                            }
+                            RecordScannedMaterial(dtbom, bsObj, Feeder, equipment_id,
+                                                  MachineName, UserName, result, Result);
+                        }
                         else
                         {
                             if (result.IndexOf("Reversal") >= 0)
@@ -1616,126 +1162,8 @@ namespace BodyPlyWebService.Services
                             Uitility.LogEvent("ScanningQrcodeService"+ $"dtbom available  { dtbom.Rows.Count} ");
                             //LogEvent("BodyPlyASPXService", "ScanningQrcodeService", $"dtbom available  { dtbom.Rows.Count} ", _transaction_Id, "");
 
-                            if (Feeder == "1")
-                            {
-                                Uitility.LogEvent("ScanningQrcodeService"+ "Feeder 1 Scan ");
-                                // LogEvent("BodyPlyASPXService", "ScanningQrcodeService", "Feeder 1 Scan ", _transaction_Id, "");
-                                // AllTagStatus.WriteData(numberofscan, inf.opcItemID[inf.opcItemID.IndexOf(("compoundscanqty").ToLower())]);
-                                var DetailProduction = dtbom.AsEnumerable().Where(r => r.Field<String>("MaterialGroup_IN").Contains("CALANDARED ROLL")).Select(s => new
-                                {
-                                    CompoundDetail = s.Field<string>("MaterialCodeGroup_IN"),
-
-                                }).ToList();
-
-                                var items = DetailProduction.ToArray();
-                                string compoundname = "";
-                                for (int i = 0; i <= (items.Length - 1); i++) // Run loop until get all the quantities in the array
-                                {
-                                    compoundname = items[i].CompoundDetail.ToString();
-                                }
-
-                                if (compoundname != "" && compoundname == bsObj.itemCode)
-                                {
-                                    Uitility.LogEvent("ScanningQrcodeService"+ $"compoundname=  {compoundname}   Item code:   {bsObj.itemCode}");
-                                    //  LogEvent("BodyPlyASPXService", "ScanningQrcodeService", $"compoundname=  {compoundname}   Item code:   {bsObj.itemCode}", _transaction_Id, "");
-                                    status = "True";
-                                    Result.Status = 1;
-                                    Result.Message = "Sucess";
-                                    Result.Data = status;
-
-                                    try
-                                    {
-                                        _bodyPlyRepository.AddUpdateI_Material(bsObj.lot_No, bsObj.qty, bsObj.itemCode, "LetOff01", MachineName, MachineName, UserName, "R");
-                                        Uitility.LogEvent("ScanningQrcodeService Manual"+ "Add material in I material");
-                                        //LogEvent("BodyPlyASPXService", "ScanningQrcodeService", "Add material in I material", _transaction_Id, "");
-                                    }
-                                    catch (Exception ex)
-                                    {
-                                        Uitility.LogEvent("ScanningQrcodeService:"+ ex.ToString());
-                                        //  LogError("BodyPlyASPXService", "ScanningQrcodeService", ex, _transaction_Id);
-                                    }
-                                }
-                                else
-                                {
-                                    status = "False";
-                                    Result.Status = 0;
-                                    Result.Message = result;
-                                    Result.Data = status;
-                                }
-                            }
-                            
-
-                            
-
-                            //DataTable dtscan = _bodyPlyRepository.GetTotalBodyPlyScan(MachineName);
-                            //if (dtscan != null && dtscan.Rows.Count > 0)
-                            //{
-                            //    int letOffCount = dtscan.AsEnumerable()
-                            //        .Count(r => string.Equals(
-                            //            r.Field<string>("FeederCode"),
-                            //            "LetOff01",
-                            //            StringComparison.OrdinalIgnoreCase));
-                            //    AllTagStatus.WriteData(letOffCount, inf.opcItemID[inf.opcItemID.IndexOf(("MesCompoundItem").ToLower())]);
-                            //    AllTagStatus.WriteData(1, inf.opcItemID[inf.opcItemID.IndexOf(("FeederCompoundItemIntrlk").ToLower())]);
-                            //    if (MachineName == "Bodyply01")
-                            //    {
-                            //        int edgeGumRCount = dtscan.AsEnumerable()
-                            //        .Count(r => string.Equals(
-                            //            r.Field<string>("FeederCode"),
-                            //            "EdgeGum(R)",
-                            //            StringComparison.OrdinalIgnoreCase));
-                            //        int edgeGumLCount = dtscan.AsEnumerable()
-                            //            .Count(r => string.Equals(
-                            //                r.Field<string>("FeederCode"),
-                            //                "EdgeGum(L)",
-                            //                StringComparison.OrdinalIgnoreCase));
-
-                            //        int WideStripLCount = dtscan.AsEnumerable()
-                            //          .Count(r => string.Equals(
-                            //              r.Field<string>("FeederCode"),
-                            //              "WideStrip(L)",
-                            //              StringComparison.OrdinalIgnoreCase));
-                            //        int WideStripRCount = dtscan.AsEnumerable()
-                            //          .Count(r => string.Equals(
-                            //              r.Field<string>("FeederCode"),
-                            //              "WideStrip(R)",
-                            //              StringComparison.OrdinalIgnoreCase));
-
-
-                            //    }
-
-                            //    if (MachineName == "Bodyply02")
-                            //    {
-                            //        int gumStripCount = dtscan.AsEnumerable()
-                            //            .Count(r => string.Equals(
-                            //                r.Field<string>("FeederCode"),
-                            //                "GumStrip",
-                            //                StringComparison.OrdinalIgnoreCase));
-
-                            //        int wideStripCount = dtscan.AsEnumerable()
-                            //            .Count(r => string.Equals(
-                            //                r.Field<string>("FeederCode"),
-                            //                "WideStrip",
-                            //                StringComparison.OrdinalIgnoreCase));
-                            //    }
-
-
-                            //}
-                            //else
-                            //{
-                            //    if (MachineName == "Bodyply01")
-                            //    {
-                            //        AllTagStatus.WriteData(dtscan.Rows.Count, inf.opcItemID[inf.opcItemID.IndexOf(("MesCompoundItem").ToLower())]);
-                            //        AllTagStatus.WriteData(0, inf.opcItemID[inf.opcItemID.IndexOf(("FeederCompoundItemIntrlk").ToLower())]);
-                            //    }
-                            //    else if (MachineName == "Bodyply02")
-                            //    {
-                            //        AllTagStatus.WriteData(dtscan.Rows.Count, inf.opcItemID[inf.opcItemID.IndexOf(("MesCompoundItem").ToLower())]);
-                            //        AllTagStatus.WriteData(0, inf.opcItemID[inf.opcItemID.IndexOf(("FeederCompoundItemIntrlk").ToLower())]);
-                            //    }
-                            //}
-
-
+                            RecordScannedMaterial(dtbom, bsObj, Feeder, equipment_id,
+                                                  MachineName, UserName, result, Result);
                         }
                         else
                         {
