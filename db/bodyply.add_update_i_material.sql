@@ -122,21 +122,18 @@ BEGIN
     -- stay bound parameters.
     -------------------------------------------------------------------------
     IF _schemaname IS NOT NULL THEN
-        EXECUTE format(
-            'SELECT lot_id FROM %I.o_production WHERE production_id = $1 LIMIT 1',
-            _schemaname)
-           INTO _lono
-          USING _productionid;
-
+        --One statement: the lot the scanned production id belongs to, and every
+        --production record making up that lot, both from the named schema.
         EXECUTE format(
             'INSERT INTO temp_tbl (productionid, qty, itemcode, machinename, dtandtime, '
             '                      username, producedmachinename, produceddatetime, producedusername) '
             'SELECT p.production_id, p.quantity, $1, em.name, now(), '
             '       p.user_id1, em.name, p.dtandtime, p.user_id1 '
-            '  FROM %I.o_production p '
+            '  FROM %1$I.o_production p '
             '  INNER JOIN master.equipment_master em ON p.equipment_id = em.local_equipment_id '
-            ' WHERE p.lot_id = $2', _schemaname)
-          USING _itemcode, _lono;
+            ' WHERE p.lot_id = (SELECT lot_id FROM %1$I.o_production '
+            '                    WHERE production_id = $2 LIMIT 1)', _schemaname)
+          USING _itemcode, _productionid;
     ELSE
         SELECT p.lot_id
           INTO _lono
