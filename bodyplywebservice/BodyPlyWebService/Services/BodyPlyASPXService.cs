@@ -36,7 +36,7 @@ namespace BodyPlyWebService.Services
             _transaction_Id = transaction_Id;
             _oPCManagerRepository = new OPCManagerRepository(_logInfo, _dBLogger, _transaction_Id);
         }
-        string recipe = "", winder1, winder2, itemcode1, itemcode2 = "", itemcode3="", itemcode4="", itemcode5="",
+        string recipe = "", winder1, winder2,
             mESProgresswidth, poolingStart, length, print, status, progressLength, mHEScan = "", mHEScan2 = "",
             windUp_1 = "0", windUp_2 = "0", windupHooter = "0", porkChop1InputOk = "", inputInterlock = "False",
             recipeChangeEvent, recipeChangeEventOperatorconfirm, readRecipeLength = "", setLength, runningSetLength = "0",
@@ -95,27 +95,11 @@ namespace BodyPlyWebService.Services
                     LogError("BodyPlyASPXService", "UpdateHMIService", exc, _transaction_Id);
                 }
 
-                List<Items> ItemsCompound = new List<Items>();
-                List<Items> ItemsCompound1 = new List<Items>();
-                List<Items> ItemsCompound2 = new List<Items>();
-                List<Items> ItemsCompound3 = new List<Items>();
-                List<Items> ItemsCompound4 = new List<Items>();
-                List<Items> ItemsCompound5 = new List<Items>();
-
                 List<Feederlist> Feeder = new List<Feederlist>();
                 List<MHElist> MHE = new List<MHElist>();
                 List<MHE> MHEScanTag = new List<MHE>();
                 List<MHE> MHEScanTag2 = new List<MHE>();
                 List<List<Feederlist>> Feederlist = new List<List<Feederlist>>();
-
-                ItemsCompound.Clear();
-                ItemsCompound1.Clear();
-                ItemsCompound2.Clear();
-                ItemsCompound3.Clear();
-                ItemsCompound4.Clear();
-                ItemsCompound5.Clear();
-               
-               
 
                 int x = 0;
 
@@ -151,11 +135,6 @@ namespace BodyPlyWebService.Services
 
 
                         mESProgresswidth = AllTagStatus.opcValue.GetValue(inf.opcItemID.IndexOf(("width").ToLower())).ToString();
-                        itemcode1 = AllTagStatus.opcValue.GetValue(inf.opcItemID.IndexOf(("MesCompoundItem").ToLower())).ToString();
-                        itemcode2 = AllTagStatus.opcValue.GetValue(inf.opcItemID.IndexOf(("MesCompoundItem1").ToLower())).ToString();
-                        itemcode3 = AllTagStatus.opcValue.GetValue(inf.opcItemID.IndexOf(("MesCompoundItem2").ToLower())).ToString();
-                        itemcode4 = AllTagStatus.opcValue.GetValue(inf.opcItemID.IndexOf(("MesCompoundItem3").ToLower())).ToString();
-                        itemcode5 = AllTagStatus.opcValue.GetValue(inf.opcItemID.IndexOf(("MesCompoundItem4").ToLower())).ToString();
                         poolingStart = AllTagStatus.opcValue.GetValue(inf.opcItemID.IndexOf(("Production_Start_Stop").ToLower())).ToString();
 
                        
@@ -258,152 +237,13 @@ namespace BodyPlyWebService.Services
 
                             
 
-                            if (itemcode1 != "" && itemcode1 != "0")
-                            {
-                                ItemsCompound.Add(new Items
-                                {
-                                    item_name = itemcode1,
-                                    scan_status = true,
-                                    Hooter = "Hooter",
-                                    Hooter_status = Convert.ToBoolean(windupHooter),
-                                    Setting_status = false,
-                                    blending_status = false,
-                                    Slitting_status = false,
-                                    blendCount = "0",
-                                    slittingCount = "0"
-
-                                });
-                            }
-                            else
-                            {
-                                ItemsCompound.Add(new Items
-                                {
-
-                                    item_name = itemcode1,
-                                    scan_status = false
-
-                                });
-
-                            }
-                            if (itemcode2 != "" && itemcode2 != "0")
-                            {
-                                ItemsCompound1.Add(new Items
-                                {
-                                    item_name = itemcode2,
-                                    scan_status = true,
-                                    Hooter = "Hooter",
-                                    Hooter_status = Convert.ToBoolean(false),
-                                    Setting_status = false,
-                                    blending_status = false,
-                                    Slitting_status = false,
-                                    blendCount = "0",
-                                    slittingCount = "0"
-
-                                });
-                            }
-                            else
-                            {
-                                ItemsCompound1.Add(new Items
-                                {
-
-                                    item_name = itemcode2,
-                                    scan_status = false
-
-                                });
-
-                            }
-                            if (itemcode3 != "" && itemcode3 != "0")
-                            {
-                                ItemsCompound2.Add(new Items
-                                {
-                                    item_name = itemcode3,
-                                    scan_status = true,
-                                    Hooter = "Hooter",
-                                    Hooter_status = Convert.ToBoolean(false),
-                                    Setting_status = false,
-                                    blending_status = false,
-                                    Slitting_status = false,
-                                    blendCount = "0",
-                                    slittingCount = "0"
-
-                                });
-                            }
-                            else
-                            {
-                                ItemsCompound2.Add(new Items
-                                {
-
-                                    item_name = itemcode3,
-                                    scan_status = false
-
-                                });
-
-                            }
-
-                            if (itemcode4 != "" && itemcode4 != "0")
-                            {
-                                ItemsCompound3.Add(new Items
-                                {
-                                    item_name = itemcode4,
-                                    scan_status = true,
-                                    Hooter = "Hooter",
-                                    Hooter_status = Convert.ToBoolean(false),
-                                    Setting_status = false,
-                                    blending_status = false,
-                                    Slitting_status = false,
-                                    blendCount = "0",
-                                    slittingCount = "0"
-
-                                });
-                            }
-                            else
-                            {
-                                ItemsCompound3.Add(new Items
-                                {
-
-                                    item_name = itemcode4,
-                                    scan_status = false
-
-                                });
-
-                            }
-
-                            if (itemcode5 != "" && itemcode5 != "0")
-                            {
-                                ItemsCompound4.Add(new Items
-                                {
-                                    item_name = itemcode5,
-                                    scan_status = true,
-                                    Hooter = "Hooter",
-                                    Hooter_status = Convert.ToBoolean(false),
-                                    Setting_status = false,
-                                    blending_status = false,
-                                    Slitting_status = false,
-                                    blendCount = "0",
-                                    slittingCount = "0"
-
-                                });
-                            }
-                            else
-                            {
-                                ItemsCompound4.Add(new Items
-                                {
-
-                                    item_name = itemcode5,
-                                    scan_status = false
-
-                                });
-
-                            }
-
-                            //Feeder list is built from dbo.bomextrudermapping / dbo.master_extruder.
-                            //The hardcoded list below is kept as a fallback so a database or
-                            //configuration failure degrades to the previous behaviour instead of
-                            //returning an empty feeder list to the HMI.
+                            //Feeder list is built from dbo.bomextrudermapping joined to
+                            //dbo.master_extruder. Adding, removing or renaming an extruder is a
+                            //configuration change, so nothing here is specific to a machine.
                             List<ExtruderConfig> configuredExtruders =
                                 ExtruderConfigProvider.Get(equipment_id.ToString(), _bodyPlyRepository);
 
-                            if (configuredExtruders != null && configuredExtruders.Count > 0)
+                            if (configuredExtruders != null)
                             {
                                 foreach (ExtruderConfig configuredExtruder in configuredExtruders)
                                 {
@@ -462,61 +302,6 @@ namespace BodyPlyWebService.Services
 
                                     });
                                 }
-                            }
-                            else
-                            {
-                            Feeder.Add(new Feederlist
-                            {
-                                Feedername = "LetOff01",
-                                ItemScanStatus = ItemsCompound
-
-                            });
-
-
-                            if (machineName == "Bodyply01")
-                            {
-                                Feeder.Add(new Feederlist
-                                {
-                                    Feedername = "GumStrip(L)",
-                                    ItemScanStatus = ItemsCompound1
-
-                                });
-                                Feeder.Add(new Feederlist
-                                {
-                                    Feedername = "GumStrip(R)",
-                                    ItemScanStatus = ItemsCompound2
-
-                                });
-                                Feeder.Add(new Feederlist
-                                {
-                                    Feedername = "WideStrip(L)",
-                                    ItemScanStatus = ItemsCompound3
-
-                                });
-                                Feeder.Add(new Feederlist
-                                {
-                                    Feedername = "WideStrip(R)",
-                                    ItemScanStatus = ItemsCompound4
-
-                                });
-
-                            }
-                            else if (machineName == "Bodyply02")
-                            {
-                                Feeder.Add(new Feederlist
-                                {
-                                    Feedername = "GumStrip",
-                                    ItemScanStatus = ItemsCompound1
-
-                                });
-                                
-                                Feeder.Add(new Feederlist
-                                {
-                                    Feedername = "WideStrip",
-                                    ItemScanStatus = ItemsCompound2
-
-                                });
-                            }
                             }
 
 
