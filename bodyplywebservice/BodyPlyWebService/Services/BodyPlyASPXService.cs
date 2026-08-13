@@ -285,7 +285,7 @@ namespace BodyPlyWebService.Services
                                             scan_status = true,
                                             Hooter = "Hooter",
                                             Hooter_status = extruderHooterStatus,
-                                            Extruder_name = configuredExtruder.ExtruderName,
+                                            Extruder_name = configuredExtruder.ExtruderName + " status",
                                             Extruder_status = extruderScanOkStatus,
                                             Setting_status = false,
                                             blending_status = false,
@@ -304,7 +304,7 @@ namespace BodyPlyWebService.Services
                                             scan_status = false,
                                             Hooter = "Hooter",
                                             Hooter_status = extruderHooterStatus,
-                                            Extruder_name = configuredExtruder.ExtruderName,
+                                            Extruder_name = configuredExtruder.ExtruderName + " status",
                                             Extruder_status = extruderScanOkStatus
 
                                         });
