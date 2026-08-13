@@ -1,0 +1,55 @@
+[2025-08-21 11:58:24] [TransactionID: ecb63f60-924d-44bb-8832-722ba5970e7d] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: 21-08-2025 17:28:24 Scan Data=>   QrCode : "1036S34500@202562610506435535_2_1@1223.000@26/06/2025@13/11/2025@STEEL TYRE CORD  - S335@PRN" Feeder: 1 numberofscan:  itemnumber:  isManual: false
+Data: 
+---
+
+[2025-08-21 11:58:41] [TransactionID: ecb63f60-924d-44bb-8832-722ba5970e7d] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: OPC Reconnect..1
+Data: 
+---
+
+[2025-08-21 11:59:02] [TransactionID: d6525c12-7c86-4ba2-a88e-a83ef5d77c1c] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: 21-08-2025 17:29:02 Scan Data=>   QrCode : "1036S34500@202562610506435535_2_1@1223.000@26/06/2025@13/11/2025@STEEL TYRE CORD  - S335@PRN" Feeder: 1 numberofscan:  itemnumber:  isManual: 0
+Data: 
+---
+
+[2025-08-21 11:59:25] [TransactionID: d6525c12-7c86-4ba2-a88e-a83ef5d77c1c] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: raw type
+Data: 
+---
+
+[2025-08-21 12:14:16] [TransactionID: 96b1f0df-e13e-4e4b-b0f4-23eb22e6ddf2] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: 21-08-2025 17:44:13 Scan Data=>   QrCode : 1036S34500@202562610506435535_2_1@1223.000@26/06/2025@13/11/2025@STEEL TYRE CORD  - S335@PRN Feeder: 1 numberofscan:  itemnumber:  isManual: 0
+Data: 
+---
+
+[2025-08-21 12:14:25] [TransactionID: 96b1f0df-e13e-4e4b-b0f4-23eb22e6ddf2] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: OPC Reconnect..1
+Data: 
+---
+
+[2025-08-21 12:14:31] [TransactionID: 96b1f0df-e13e-4e4b-b0f4-23eb22e6ddf2] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: raw type
+Data: 
+---
+
+[2025-08-21 12:46:27] [TransactionID: 2a3392a6-0abf-49da-b719-028532230958] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: 21-08-2025 18:16:21 Scan Data=>   QrCode : 1036S34500@202562610506435535_2_1@1223.000@26/06/2025@13/11/2025@STEEL TYRE CORD  - S335@PRN Feeder: 1 numberofscan:  itemnumber:  isManual: 0
+Data: 
+---
+
+[2025-08-21 12:46:37] [TransactionID: 2a3392a6-0abf-49da-b719-028532230958] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: OPC Reconnect..1
+Data: 
+---
+
+[2025-08-21 12:46:53] [TransactionID: 2a3392a6-0abf-49da-b719-028532230958] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: raw type
+Data: 
+---
+
+[2025-08-21 12:49:12] [TransactionID: 2a3392a6-0abf-49da-b719-028532230958] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: ValidateRecipe complete verify
+Data: 
+---
+

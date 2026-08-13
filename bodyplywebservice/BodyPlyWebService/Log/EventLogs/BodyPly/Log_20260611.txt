@@ -1,0 +1,20 @@
+[2026-06-11 04:28:54] [TransactionID: 8ffa5ad8-9927-4261-938c-28309464696f] [EquipmentId: BodyPly] [LogType: Event] [LogCode: 200] [FolderName: BodyPlyASPXService]
+Message: OPC Reconnect..1
+Data: 
+---
+
+[2026-06-11 04:29:05] [TransactionID: 8ffa5ad8-9927-4261-938c-28309464696f] [EquipmentId: BodyPly] [LogType: Event] [LogCode: 200] [FolderName: BodyPlyASPXService]
+Message: OPC Reconnect..1
+Data: 
+---
+
+[2026-06-11 04:29:10] [TransactionID: 8ffa5ad8-9927-4261-938c-28309464696f] [EquipmentId: BodyPly] [LogType: Event] [LogCode: 200] [FolderName: BodyPlyASPXService]
+Message: RecipeChange status true
+Data: 
+---
+
+[2026-06-11 04:29:12] [TransactionID: 8ffa5ad8-9927-4261-938c-28309464696f] [EquipmentId: BodyPly] [LogType: Event] [LogCode: 200] [FolderName: BodyPlyASPXService]
+Message: RecipeChange status Complete
+Data: 
+---
+

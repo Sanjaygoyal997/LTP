@@ -1,0 +1,84 @@
+## .NET Core / .NET 5+ ##
+bin/
+obj/
+out/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.dbmdl
+*.pdb
+*.cache
+*.log
+*.vspscc
+*.vssscc
+*.ncb
+*.sdf
+*.opensdf
+*.v12.suo
+*.psess
+*.vsp
+*.vspx
+*.tmp
+*.bak
+
+# Rider
+.idea/
+
+# Visual Studio
+.vs/
+*.csproj.user
+*.dbmdl
+
+# ASP.NET Scaffolding
+ScaffoldingReadMe.txt
+
+# Tye
+.tye/
+
+# Azure Functions local settings
+local.settings.json
+
+# Test results
+TestResults/
+*.trx
+*.coverage
+*.coveragexml
+*.codecoverage
+
+# Publish
+publish/
+
+# NuGet
+*.nupkg
+*.snupkg
+*.nuspec
+*.psmdcp
+packages/
+.nuget/
+project.lock.json
+project.fragment.lock.json
+
+# DotCover
+.idea/.dotCover
+
+# Resharper
+_ReSharper*/
+*.[Rr]e[Ss]harper
+*.DotSettings.user
+
+# StyleCop
+StyleCopReport.xml
+
+# JetBrains Rider
+.idea/
+
+# Backup & reports
+*.orig
+*.report.json
+
+# Mac files
+.DS_Store
+
+# Windows Thumbnail cache
+Thumbs.db

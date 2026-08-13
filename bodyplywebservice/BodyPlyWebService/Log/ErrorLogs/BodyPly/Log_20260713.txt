@@ -1,0 +1,5 @@
+[2026-07-13 11:19:29] [TransactionID: 7fe27f7f-26a6-45a0-92f6-b3819e586844] [EquipmentId: BodyPly] [LogType: Error] [LogCode: 500] [FolderName: BodyPlyASPXService]
+Message: Exception: Column 'MaterialGroup_IN' does not belong to table ., Inner Exception: 
+Data: 
+---
+

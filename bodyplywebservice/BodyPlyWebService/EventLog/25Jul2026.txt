@@ -1,0 +1,5 @@
+25-07-2026 14:05:22	UpdateHMIServiceError in WidthActual conversion System.FormatException: Input string was not in a correct format.
+   at System.Number.StringToNumber(String str, NumberStyles options, NumberBuffer& number, NumberFormatInfo info, Boolean parseDecimal)
+   at System.Number.ParseDecimal(String value, NumberStyles options, NumberFormatInfo numfmt)
+   at System.Convert.ToDecimal(String value)
+   at BodyPlyWebService.Services.BodyPlyASPXService.UpdateHMIService(String machineName, Int32 equipment_id, String transaction_Id) in C:\Smart\LTP\BodyPly1\bodyplywebservice\BodyPlyWebService\Services\BodyPlyASPXService.cs:line 622

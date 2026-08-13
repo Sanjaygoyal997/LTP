@@ -1,0 +1,1 @@
+OPCServer_Connected	28-07-2026 13:21:02	OPC Start DATA	OPCServerGroup	-

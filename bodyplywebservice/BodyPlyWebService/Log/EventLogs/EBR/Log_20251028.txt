@@ -1,0 +1,335 @@
+[2025-10-28 11:29:58] [TransactionID: 7cfb3444-86f6-4a65-8c0e-bfcfa4384045] [EquipmentId: EBR] [LogType: Event] [LogCode: 200] [FolderName: EBRASPXService]
+Message: OPC Reconnect..1
+Data: 
+---
+
+[2025-10-28 11:31:48] [TransactionID: 6b142040-fb04-48db-a7fe-fe80fbbdb0bf] [EquipmentId: EBR] [LogType: Event] [LogCode: 200] [FolderName: EBRASPXService]
+Message: OPC Reconnect..1
+Data: 
+---
+
+[2025-10-28 11:39:39] [TransactionID: 6b142040-fb04-48db-a7fe-fe80fbbdb0bf] [EquipmentId: EBR] [LogType: Event] [LogCode: 200] [FolderName: EBRASPXService]
+Message: EBR 120
+Data: 
+---
+
+[2025-10-28 11:41:00] [TransactionID: 1a6a8a7a-50d8-4242-ba52-b7a93f883953] [EquipmentId: EBR] [LogType: Event] [LogCode: 200] [FolderName: EBRASPXService]
+Message: OPC Reconnect..1
+Data: 
+---
+
+[2025-10-28 11:41:04] [TransactionID: 1a6a8a7a-50d8-4242-ba52-b7a93f883953] [EquipmentId: EBR] [LogType: Event] [LogCode: 200] [FolderName: EBRASPXService]
+Message: EBR 120
+Data: 
+---
+
+[2025-10-28 11:42:38] [TransactionID: 1a6a8a7a-50d8-4242-ba52-b7a93f883953] [EquipmentId: EBR] [LogType: Event] [LogCode: 200] [FolderName: EBRASPXService]
+Message: EBR 120
+Data: 
+---
+
+[2025-10-28 12:11:48] [TransactionID: 2c43410d-a989-49e1-ad3b-f0f632235b07] [EquipmentId: EBR] [LogType: Event] [LogCode: 200] [FolderName: EBRASPXService]
+Message: OPC Reconnect..1
+Data: 
+---
+
+[2025-10-28 12:38:15] [TransactionID: 696f89f0-b43d-4e92-8114-c94cb8dd15ca] [EquipmentId: EBR] [LogType: Event] [LogCode: 200] [FolderName: EBRASPXService]
+Message: OPC Reconnect..1
+Data: 
+---
+
+[2025-10-28 12:38:15] [TransactionID: 696f89f0-b43d-4e92-8114-c94cb8dd15ca] [EquipmentId: EBR] [LogType: Event] [LogCode: 200] [FolderName: EBRASPXService]
+Message: EBR 120
+Data: 
+---
+
+[2025-10-28 12:41:30] [TransactionID: f5636495-b47d-4939-8683-7addb7dd7b30] [EquipmentId: EBR] [LogType: Event] [LogCode: 200] [FolderName: EBRASPXService]
+Message: OPC Reconnect..1
+Data: 
+---
+
+[2025-10-28 12:41:30] [TransactionID: f5636495-b47d-4939-8683-7addb7dd7b30] [EquipmentId: EBR] [LogType: Event] [LogCode: 200] [FolderName: EBRASPXService]
+Message: EBR 120
+Data: 
+---
+
+[2025-10-28 12:44:14] [TransactionID: ] [EquipmentId: EBR] [LogType: Event] [LogCode: 200] [FolderName: EBRASPXService]
+Message: Error in winduphooter  System.FormatException: String was not recognized as a valid Boolean.
+   at System.Boolean.Parse(String value)
+   at System.Convert.ToBoolean(String value)
+   at EBRWebService.Services.EBRASPXService.UpdateHMIService(String transaction_Id)
+Data: 
+---
+
+[2025-10-28 12:55:25] [TransactionID: b0cc70ee-69ae-4165-99d0-bdfba8c1097a] [EquipmentId: EBR] [LogType: Event] [LogCode: 200] [FolderName: EBRASPXService]
+Message: 28-10-2025 18:25:25 Scan Data=>   QrCode : {   "lot_no": "4R07092025102116",   "recipe_code": "CPJ 120",   "batch_number": 1,   "qty": 200,   "itemcode": "CPJ 120",   "domfg": "2025-07-04T10:50:04",   "shift": "A",   "revNO": "1" } Feeder: 1 numberofscan:  itemnumber:  isManual: 0 isAdvance:True
+Data: 
+---
+
+[2025-10-28 12:55:31] [TransactionID: b0cc70ee-69ae-4165-99d0-bdfba8c1097a] [EquipmentId: EBR] [LogType: Event] [LogCode: 200] [FolderName: EBRASPXService]
+Message: OPC Reconnect..1
+Data: 
+---
+
+[2025-10-28 12:55:31] [TransactionID: b0cc70ee-69ae-4165-99d0-bdfba8c1097a] [EquipmentId: EBR] [LogType: Event] [LogCode: 200] [FolderName: EBRASPXService]
+Message: compound type
+Data: 
+---
+
+[2025-10-28 12:56:52] [TransactionID: 294609c8-636f-4e59-b638-0d2b662b4614] [EquipmentId: EBR] [LogType: Event] [LogCode: 200] [FolderName: EBRASPXService]
+Message: 28-10-2025 18:26:51 Scan Data=>   QrCode : {   "lot_no": "4R07092025102116",   "recipe_code": "CPJ 120",   "batch_number": 1,   "qty": 200,   "itemcode": "CPJ 120",   "domfg": "2025-07-04T10:50:04",   "shift": "A",   "revNO": "1" } Feeder: 1 numberofscan:  itemnumber:  isManual: 0 
+Data: 
+---
+
+[2025-10-28 12:56:57] [TransactionID: 294609c8-636f-4e59-b638-0d2b662b4614] [EquipmentId: EBR] [LogType: Event] [LogCode: 200] [FolderName: EBRASPXService]
+Message: OPC Reconnect..1
+Data: 
+---
+
+[2025-10-28 12:56:57] [TransactionID: 294609c8-636f-4e59-b638-0d2b662b4614] [EquipmentId: EBR] [LogType: Event] [LogCode: 200] [FolderName: EBRASPXService]
+Message: compound type
+Data: 
+---
+
+[2025-10-28 12:57:13] [TransactionID: 3750f261-5bb6-4c84-8d3f-241d8333c481] [EquipmentId: EBR] [LogType: Event] [LogCode: 200] [FolderName: EBRASPXService]
+Message: 28-10-2025 18:27:13Scan Data 
+ QrCode :{   "lot_no": "4R07092025102116",   "recipe_code": "CPJ 120",   "batch_number": 1,   "qty": 200,   "itemcode": "CPJ 120",   "domfg": "2025-07-04T10:50:04",   "shift": "A",   "revNO": "1" }
+ Feeder :1 isManual:0
+Data: 
+---
+
+[2025-10-28 12:57:13] [TransactionID: 3750f261-5bb6-4c84-8d3f-241d8333c481] [EquipmentId: EBR] [LogType: Event] [LogCode: 200] [FolderName: EBRASPXService]
+Message: ReverceLotno result[{"status":"success","message":"Material Reversal Successfully!","ProductionID":"4R07092025102116"}]
+Data: 
+---
+
+[2025-10-28 12:57:44] [TransactionID: ] [EquipmentId: EBR] [LogType: Event] [LogCode: 200] [FolderName: EBRASPXService]
+Message: Error in winduphooter  System.FormatException: String was not recognized as a valid Boolean.
+   at System.Boolean.Parse(String value)
+   at System.Convert.ToBoolean(String value)
+   at EBRWebService.Services.EBRASPXService.UpdateHMIService(String transaction_Id) in D:\ASP Code\JK\LTP\EBR\EBRWebService\EBRWebService\Services\EBRASPXService.cs:line 498
+Data: 
+---
+
+[2025-10-28 12:57:56] [TransactionID: f7a9a1dd-f74d-4716-b455-b2c1b4bbe5d5] [EquipmentId: EBR] [LogType: Event] [LogCode: 200] [FolderName: EBRASPXService]
+Message: 28-10-2025 18:27:56 Scan Data=>   QrCode : {   "lot_no": "4R07092025102116",   "recipe_code": "CPJ 120",   "batch_number": 1,   "qty": 200,   "itemcode": "CPJ 120",   "domfg": "2025-07-04T10:50:04",   "shift": "A",   "revNO": "1" } Feeder: 1 numberofscan:  itemnumber:  isManual: 0 
+Data: 
+---
+
+[2025-10-28 12:57:56] [TransactionID: f7a9a1dd-f74d-4716-b455-b2c1b4bbe5d5] [EquipmentId: EBR] [LogType: Event] [LogCode: 200] [FolderName: EBRASPXService]
+Message: compound type
+Data: 
+---
+
+[2025-10-28 12:57:56] [TransactionID: f7a9a1dd-f74d-4716-b455-b2c1b4bbe5d5] [EquipmentId: EBR] [LogType: Event] [LogCode: 200] [FolderName: EBRASPXService]
+Message: ValidateRecipe complete verify
+Data: 
+---
+
+[2025-10-28 12:57:56] [TransactionID: f7a9a1dd-f74d-4716-b455-b2c1b4bbe5d5] [EquipmentId: EBR] [LogType: Event] [LogCode: 200] [FolderName: EBRASPXService]
+Message: dtbom available  1 
+Data: 
+---
+
+[2025-10-28 12:57:56] [TransactionID: f7a9a1dd-f74d-4716-b455-b2c1b4bbe5d5] [EquipmentId: EBR] [LogType: Event] [LogCode: 200] [FolderName: EBRASPXService]
+Message: Feeder 1 Scan 
+Data: 
+---
+
+[2025-10-28 12:57:56] [TransactionID: f7a9a1dd-f74d-4716-b455-b2c1b4bbe5d5] [EquipmentId: EBR] [LogType: Event] [LogCode: 200] [FolderName: EBRASPXService]
+Message: compoundname=  CPJ 120   Item code:   CPJ 120
+Data: 
+---
+
+[2025-10-28 12:57:56] [TransactionID: f7a9a1dd-f74d-4716-b455-b2c1b4bbe5d5] [EquipmentId: EBR] [LogType: Event] [LogCode: 200] [FolderName: EBRASPXService]
+Message: Add material in I material
+Data: 
+---
+
+[2025-10-28 12:58:16] [TransactionID: 61f79896-c92d-42cf-983a-143461224b0a] [EquipmentId: EBR] [LogType: Event] [LogCode: 200] [FolderName: EBRASPXService]
+Message: 28-10-2025 18:28:16 Scan Data=>   QrCode : {   "lot_no": "4R07092025102116",   "recipe_code": "CPJ 120",   "batch_number": 1,   "qty": 200,   "itemcode": "CPJ 120",   "domfg": "2025-07-04T10:50:04",   "shift": "A",   "revNO": "1" } Feeder: 1 numberofscan:  itemnumber:  isManual: 0 
+Data: 
+---
+
+[2025-10-28 12:58:16] [TransactionID: 61f79896-c92d-42cf-983a-143461224b0a] [EquipmentId: EBR] [LogType: Event] [LogCode: 200] [FolderName: EBRASPXService]
+Message: compound type
+Data: 
+---
+
+[2025-10-28 12:58:16] [TransactionID: 61f79896-c92d-42cf-983a-143461224b0a] [EquipmentId: EBR] [LogType: Event] [LogCode: 200] [FolderName: EBRASPXService]
+Message: ValidateRecipe complete verify
+Data: 
+---
+
+[2025-10-28 12:58:16] [TransactionID: 61f79896-c92d-42cf-983a-143461224b0a] [EquipmentId: EBR] [LogType: Event] [LogCode: 200] [FolderName: EBRASPXService]
+Message: dtbom available  1 
+Data: 
+---
+
+[2025-10-28 12:58:16] [TransactionID: 61f79896-c92d-42cf-983a-143461224b0a] [EquipmentId: EBR] [LogType: Event] [LogCode: 200] [FolderName: EBRASPXService]
+Message: Feeder 1 Scan 
+Data: 
+---
+
+[2025-10-28 12:58:16] [TransactionID: 61f79896-c92d-42cf-983a-143461224b0a] [EquipmentId: EBR] [LogType: Event] [LogCode: 200] [FolderName: EBRASPXService]
+Message: compoundname=  CPJ 120   Item code:   CPJ 120
+Data: 
+---
+
+[2025-10-28 12:58:16] [TransactionID: 61f79896-c92d-42cf-983a-143461224b0a] [EquipmentId: EBR] [LogType: Event] [LogCode: 200] [FolderName: EBRASPXService]
+Message: Add material in I material
+Data: 
+---
+
+[2025-10-28 12:58:54] [TransactionID: 339ede19-9d4a-4212-bfe1-54fb8eab5a78] [EquipmentId: EBR] [LogType: Event] [LogCode: 200] [FolderName: EBRASPXService]
+Message: 28-10-2025 18:28:54 Scan Data=>   QrCode : {   "lot_no": "4R07092025102116",   "recipe_code": "CPJ 120",   "batch_number": 1,   "qty": 200,   "itemcode": "CPJ 120",   "domfg": "2025-07-04T10:50:04",   "shift": "A",   "revNO": "1" } Feeder: 1 numberofscan:  itemnumber:  isManual: 0 
+Data: 
+---
+
+[2025-10-28 12:58:54] [TransactionID: 339ede19-9d4a-4212-bfe1-54fb8eab5a78] [EquipmentId: EBR] [LogType: Event] [LogCode: 200] [FolderName: EBRASPXService]
+Message: compound type
+Data: 
+---
+
+[2025-10-28 12:59:23] [TransactionID: 339ede19-9d4a-4212-bfe1-54fb8eab5a78] [EquipmentId: EBR] [LogType: Event] [LogCode: 200] [FolderName: EBRASPXService]
+Message: ValidateRecipe complete verify
+Data: 
+---
+
+[2025-10-28 12:59:23] [TransactionID: 339ede19-9d4a-4212-bfe1-54fb8eab5a78] [EquipmentId: EBR] [LogType: Event] [LogCode: 200] [FolderName: EBRASPXService]
+Message: dtbom available  1 
+Data: 
+---
+
+[2025-10-28 12:59:24] [TransactionID: 339ede19-9d4a-4212-bfe1-54fb8eab5a78] [EquipmentId: EBR] [LogType: Event] [LogCode: 200] [FolderName: EBRASPXService]
+Message: Feeder 1 Scan 
+Data: 
+---
+
+[2025-10-28 12:59:36] [TransactionID: 339ede19-9d4a-4212-bfe1-54fb8eab5a78] [EquipmentId: EBR] [LogType: Event] [LogCode: 200] [FolderName: EBRASPXService]
+Message: compoundname=  CPJ 120   Item code:   CPJ 120
+Data: 
+---
+
+[2025-10-28 13:01:20] [TransactionID: 339ede19-9d4a-4212-bfe1-54fb8eab5a78] [EquipmentId: EBR] [LogType: Event] [LogCode: 200] [FolderName: EBRASPXService]
+Message: Add material in I material
+Data: 
+---
+
+[2025-10-28 13:01:40] [TransactionID: aa0faa7d-c955-42c4-9b4b-3274f9108230] [EquipmentId: EBR] [LogType: Event] [LogCode: 200] [FolderName: EBRASPXService]
+Message: 28-10-2025 18:31:40Scan Data 
+ QrCode :{   "lot_no": "4R07092025102116",   "recipe_code": "CPJ 120",   "batch_number": 1,   "qty": 200,   "itemcode": "CPJ 120",   "domfg": "2025-07-04T10:50:04",   "shift": "A",   "revNO": "1" }
+ Feeder :1 isManual:0
+Data: 
+---
+
+[2025-10-28 13:01:40] [TransactionID: aa0faa7d-c955-42c4-9b4b-3274f9108230] [EquipmentId: EBR] [LogType: Event] [LogCode: 200] [FolderName: EBRASPXService]
+Message: ReverceLotno result[{"status":"success","message":"Material Reversal Successfully!","ProductionID":"4R07092025102116"}]
+Data: 
+---
+
+[2025-10-28 13:01:48] [TransactionID: b765bc91-b43c-478a-bf95-600a8f77485a] [EquipmentId: EBR] [LogType: Event] [LogCode: 200] [FolderName: EBRASPXService]
+Message: 28-10-2025 18:31:48 Scan Data=>   QrCode : {   "lot_no": "4R07092025102116",   "recipe_code": "CPJ 120",   "batch_number": 1,   "qty": 200,   "itemcode": "CPJ 120",   "domfg": "2025-07-04T10:50:04",   "shift": "A",   "revNO": "1" } Feeder: 1 numberofscan:  itemnumber:  isManual: 0 
+Data: 
+---
+
+[2025-10-28 13:01:48] [TransactionID: b765bc91-b43c-478a-bf95-600a8f77485a] [EquipmentId: EBR] [LogType: Event] [LogCode: 200] [FolderName: EBRASPXService]
+Message: compound type
+Data: 
+---
+
+[2025-10-28 13:01:51] [TransactionID: b765bc91-b43c-478a-bf95-600a8f77485a] [EquipmentId: EBR] [LogType: Event] [LogCode: 200] [FolderName: EBRASPXService]
+Message: ValidateRecipe complete verify
+Data: 
+---
+
+[2025-10-28 13:01:51] [TransactionID: b765bc91-b43c-478a-bf95-600a8f77485a] [EquipmentId: EBR] [LogType: Event] [LogCode: 200] [FolderName: EBRASPXService]
+Message: dtbom available  1 
+Data: 
+---
+
+[2025-10-28 13:01:51] [TransactionID: b765bc91-b43c-478a-bf95-600a8f77485a] [EquipmentId: EBR] [LogType: Event] [LogCode: 200] [FolderName: EBRASPXService]
+Message: Feeder 1 Scan 
+Data: 
+---
+
+[2025-10-28 13:01:51] [TransactionID: b765bc91-b43c-478a-bf95-600a8f77485a] [EquipmentId: EBR] [LogType: Event] [LogCode: 200] [FolderName: EBRASPXService]
+Message: compoundname=  CPJ 120   Item code:   CPJ 120
+Data: 
+---
+
+[2025-10-28 13:01:51] [TransactionID: b765bc91-b43c-478a-bf95-600a8f77485a] [EquipmentId: EBR] [LogType: Event] [LogCode: 200] [FolderName: EBRASPXService]
+Message: Add material in I material
+Data: 
+---
+
+[2025-10-28 13:02:05] [TransactionID: caa761c6-44a1-4ca0-ac1f-9a7f1ed5ec88] [EquipmentId: EBR] [LogType: Event] [LogCode: 200] [FolderName: EBRASPXService]
+Message: 28-10-2025 18:32:05 Scan Data=>   QrCode : {   "lot_no": "4R07092025102116",   "recipe_code": "CPJ 120",   "batch_number": 1,   "qty": 200,   "itemcode": "CPJ 120",   "domfg": "2025-07-04T10:50:04",   "shift": "A",   "revNO": "1" } Feeder: 1 numberofscan:  itemnumber:  isManual: 0 
+Data: 
+---
+
+[2025-10-28 13:02:05] [TransactionID: caa761c6-44a1-4ca0-ac1f-9a7f1ed5ec88] [EquipmentId: EBR] [LogType: Event] [LogCode: 200] [FolderName: EBRASPXService]
+Message: compound type
+Data: 
+---
+
+[2025-10-28 13:02:05] [TransactionID: caa761c6-44a1-4ca0-ac1f-9a7f1ed5ec88] [EquipmentId: EBR] [LogType: Event] [LogCode: 200] [FolderName: EBRASPXService]
+Message: ValidateRecipe complete verify
+Data: 
+---
+
+[2025-10-28 13:02:06] [TransactionID: caa761c6-44a1-4ca0-ac1f-9a7f1ed5ec88] [EquipmentId: EBR] [LogType: Event] [LogCode: 200] [FolderName: EBRASPXService]
+Message: dtbom available  1 
+Data: 
+---
+
+[2025-10-28 13:02:06] [TransactionID: caa761c6-44a1-4ca0-ac1f-9a7f1ed5ec88] [EquipmentId: EBR] [LogType: Event] [LogCode: 200] [FolderName: EBRASPXService]
+Message: Feeder 1 Scan 
+Data: 
+---
+
+[2025-10-28 13:02:06] [TransactionID: caa761c6-44a1-4ca0-ac1f-9a7f1ed5ec88] [EquipmentId: EBR] [LogType: Event] [LogCode: 200] [FolderName: EBRASPXService]
+Message: compoundname=  CPJ 120   Item code:   CPJ 120
+Data: 
+---
+
+[2025-10-28 13:02:06] [TransactionID: caa761c6-44a1-4ca0-ac1f-9a7f1ed5ec88] [EquipmentId: EBR] [LogType: Event] [LogCode: 200] [FolderName: EBRASPXService]
+Message: Add material in I material
+Data: 
+---
+
+[2025-10-28 13:02:47] [TransactionID: 9dc7eced-97ab-44db-98e6-49495c504412] [EquipmentId: EBR] [LogType: Event] [LogCode: 200] [FolderName: EBRASPXService]
+Message: 28-10-2025 18:32:47 Scan Data=>   QrCode : {   "lot_no": "4R07092025102116",   "recipe_code": "CPJ 120",   "batch_number": 1,   "qty": 200,   "itemcode": "CPJ 120",   "domfg": "2025-07-04T10:50:04",   "shift": "A",   "revNO": "1" } Feeder: 1 numberofscan:  itemnumber:  isManual: 0 
+Data: 
+---
+
+[2025-10-28 13:02:47] [TransactionID: 9dc7eced-97ab-44db-98e6-49495c504412] [EquipmentId: EBR] [LogType: Event] [LogCode: 200] [FolderName: EBRASPXService]
+Message: compound type
+Data: 
+---
+
+[2025-10-28 13:02:47] [TransactionID: 9dc7eced-97ab-44db-98e6-49495c504412] [EquipmentId: EBR] [LogType: Event] [LogCode: 200] [FolderName: EBRASPXService]
+Message: ValidateRecipe complete verify
+Data: 
+---
+
+[2025-10-28 13:02:47] [TransactionID: 9dc7eced-97ab-44db-98e6-49495c504412] [EquipmentId: EBR] [LogType: Event] [LogCode: 200] [FolderName: EBRASPXService]
+Message: dtbom available  1 
+Data: 
+---
+
+[2025-10-28 13:02:47] [TransactionID: 9dc7eced-97ab-44db-98e6-49495c504412] [EquipmentId: EBR] [LogType: Event] [LogCode: 200] [FolderName: EBRASPXService]
+Message: Feeder 1 Scan 
+Data: 
+---
+
+[2025-10-28 13:02:47] [TransactionID: 9dc7eced-97ab-44db-98e6-49495c504412] [EquipmentId: EBR] [LogType: Event] [LogCode: 200] [FolderName: EBRASPXService]
+Message: compoundname=  CPJ 120   Item code:   CPJ 120
+Data: 
+---
+
+[2025-10-28 13:02:47] [TransactionID: 9dc7eced-97ab-44db-98e6-49495c504412] [EquipmentId: EBR] [LogType: Event] [LogCode: 200] [FolderName: EBRASPXService]
+Message: Add material in I material
+Data: 
+---
+

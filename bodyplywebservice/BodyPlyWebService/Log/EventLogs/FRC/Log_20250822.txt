@@ -1,0 +1,15 @@
+[2025-08-22 11:58:37] [TransactionID: a327d4f1-30c1-4b11-b932-a25ccdab0466] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: OPC Reconnect..1
+Data: 
+---
+
+[2025-08-22 12:00:41] [TransactionID: cf9bb575-7bd4-44bc-a8d2-b1e6915832e2] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: OPC Reconnect..1
+Data: 
+---
+
+[2025-08-22 12:01:46] [TransactionID: 4a3f5bdb-146b-4fa9-837e-d2f606031b08] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: OPC Reconnect..1
+Data: 
+---
+

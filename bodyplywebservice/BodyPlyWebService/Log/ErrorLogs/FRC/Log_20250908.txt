@@ -1,0 +1,25 @@
+[2025-09-08 10:02:02] [TransactionID: 4ed0c088-46c2-41b8-8059-4e56acf275b8] [EquipmentId: FRC] [LogType: Error] [LogCode: 500] [FolderName: FourRollCalenderASPXService]
+Message: Exception: String was not recognized as a valid Boolean., Inner Exception: 
+Data: 
+---
+
+[2025-09-08 10:02:21] [TransactionID: 4efb97cc-51b5-402b-b193-246a5517da95] [EquipmentId: FRC] [LogType: Error] [LogCode: 500] [FolderName: FourRollCalenderASPXService]
+Message: Exception: String was not recognized as a valid Boolean., Inner Exception: 
+Data: 
+---
+
+[2025-09-08 10:03:18] [TransactionID: 0d82c75a-19f1-4359-842e-2522eb0267e2] [EquipmentId: FRC] [LogType: Error] [LogCode: 500] [FolderName: FourRollCalenderASPXService]
+Message: Exception: String was not recognized as a valid Boolean., Inner Exception: 
+Data: 
+---
+
+[2025-09-08 10:03:36] [TransactionID: d25a5f8f-a2b9-4eb0-9253-7291807e2ceb] [EquipmentId: FRC] [LogType: Error] [LogCode: 500] [FolderName: FourRollCalenderASPXService]
+Message: Exception: String was not recognized as a valid Boolean., Inner Exception: 
+Data: 
+---
+
+[2025-09-08 10:04:04] [TransactionID: 2ddd5772-529b-4abf-bea2-90b51c928993] [EquipmentId: FRC] [LogType: Error] [LogCode: 500] [FolderName: FourRollCalenderASPXService]
+Message: Exception: String was not recognized as a valid Boolean., Inner Exception: 
+Data: 
+---
+

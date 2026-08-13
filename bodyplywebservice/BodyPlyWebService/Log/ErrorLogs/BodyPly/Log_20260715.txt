@@ -1,0 +1,10 @@
+[2026-07-15 12:56:51] [TransactionID: 589a193e-185a-4aed-aa39-57819e2379f5] [EquipmentId: BodyPly] [LogType: Error] [LogCode: 500] [FolderName: BodyPlyASPXService]
+Message: Exception: Column 'Lot_Id' does not belong to table ., Inner Exception: 
+Data: 
+---
+
+[2026-07-15 13:00:19] [TransactionID: 589a193e-185a-4aed-aa39-57819e2379f5] [EquipmentId: BodyPly] [LogType: Error] [LogCode: 500] [FolderName: BodyPlyASPXService]
+Message: Exception: Column 'Lot_Id' does not belong to table ., Inner Exception: 
+Data: 
+---
+

@@ -1,0 +1,25 @@
+[2026-07-02 09:19:17] [TransactionID: 13f25a1d-a6aa-460d-ac7a-5b4de30fa19f] [EquipmentId: BodyPly] [LogType: Error] [LogCode: 500] [FolderName: BodyPly]
+Message: Exception: Could not find a part of the path 'C:\Smart\LTP\BodyPly1\bodyplywebservice\BodyPlyWebService\EventLog\02Jul2026.txt'., Inner Exception: 
+Data: 
+---
+
+[2026-07-02 09:19:38] [TransactionID: 7c966c03-374b-45a4-b825-c2f650250c52] [EquipmentId: BodyPly] [LogType: Error] [LogCode: 500] [FolderName: BodyPly]
+Message: Exception: Could not find a part of the path 'C:\Smart\LTP\BodyPly1\bodyplywebservice\BodyPlyWebService\EventLog\02Jul2026.txt'., Inner Exception: 
+Data: 
+---
+
+[2026-07-02 09:19:59] [TransactionID: 7b9d47c5-024e-4dd3-ab4e-8e354cda83d7] [EquipmentId: BodyPly] [LogType: Error] [LogCode: 500] [FolderName: BodyPly]
+Message: Exception: Could not find a part of the path 'C:\Smart\LTP\BodyPly1\bodyplywebservice\BodyPlyWebService\EventLog\02Jul2026.txt'., Inner Exception: 
+Data: 
+---
+
+[2026-07-02 09:21:20] [TransactionID: c50cd77e-9a5e-437d-90a5-bc9d07372c4a] [EquipmentId: BodyPly] [LogType: Error] [LogCode: 500] [FolderName: BodyPlyASPXService]
+Message: Exception: Column 'LotNo' does not belong to table ., Inner Exception: 
+Data: 
+---
+
+[2026-07-02 09:23:25] [TransactionID: c50cd77e-9a5e-437d-90a5-bc9d07372c4a] [EquipmentId: BodyPly] [LogType: Error] [LogCode: 500] [FolderName: BodyPlyASPXService]
+Message: Exception: Column 'LotNo' does not belong to table ., Inner Exception: 
+Data: 
+---
+

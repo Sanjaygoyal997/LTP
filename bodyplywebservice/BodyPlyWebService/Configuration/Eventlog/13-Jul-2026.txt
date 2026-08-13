@@ -1,0 +1,6 @@
+OPCServer_Connected	13-07-2026 16:37:20	OPC Start DATA	OPCServerGroup	-
+OPCServer_Connected	13-07-2026 17:02:33	OPC Start DATA	OPCServerGroup	-
+OPCServer_Connected	13-07-2026 17:09:32	OPC Start DATA	OPCServerGroup	-
+OPCServer_Connected	13-07-2026 17:17:41	OPC Start DATA	OPCServerGroup	-
+OPCServer_Connected	13-07-2026 17:43:47	OPC Start DATA	OPCServerGroup	-
+OPCServer_Connected	13-07-2026 18:46:08	OPC Start DATA	OPCServerGroup	-

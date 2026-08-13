@@ -1,0 +1,215 @@
+[2026-07-13 11:07:28] [TransactionID: 64d9d035-9e69-4e7a-809e-8ea83a4e5607] [EquipmentId: BodyPly] [LogType: Event] [LogCode: 200] [FolderName: BodyPlyASPXService]
+Message: OPC Reconnect..1
+Data: 
+---
+
+[2026-07-13 11:07:52] [TransactionID: 64d9d035-9e69-4e7a-809e-8ea83a4e5607] [EquipmentId: BodyPly] [LogType: Event] [LogCode: 200] [FolderName: BodyPlyASPXService]
+Message: dtbom available  10 
+Data: 
+---
+
+[2026-07-13 11:19:26] [TransactionID: 7fe27f7f-26a6-45a0-92f6-b3819e586844] [EquipmentId: BodyPly] [LogType: Event] [LogCode: 200] [FolderName: BodyPlyASPXService]
+Message: dtbom available  1 
+Data: 
+---
+
+[2026-07-13 11:23:28] [TransactionID: 8fd0dcb5-45d9-408b-b2dc-86642b52b689] [EquipmentId: BodyPly] [LogType: Event] [LogCode: 200] [FolderName: BodyPlyASPXService]
+Message: dtbom available  10 
+Data: 
+---
+
+[2026-07-13 11:24:02] [TransactionID: ca3fec1a-fd44-405b-87fc-a04bdadad744] [EquipmentId: BodyPly] [LogType: Event] [LogCode: 200] [FolderName: BodyPlyASPXService]
+Message: dtbom available  10 
+Data: 
+---
+
+[2026-07-13 11:32:51] [TransactionID: 9675d04e-ae4e-46bd-8317-4388e12b1f42] [EquipmentId: BodyPly] [LogType: Event] [LogCode: 200] [FolderName: BodyPlyASPXService]
+Message: OPC Reconnect..1
+Data: 
+---
+
+[2026-07-13 11:34:26] [TransactionID: 9675d04e-ae4e-46bd-8317-4388e12b1f42] [EquipmentId: BodyPly] [LogType: Event] [LogCode: 200] [FolderName: BodyPlyASPXService]
+Message: dtbom available  10 
+Data: 
+---
+
+[2026-07-13 11:39:42] [TransactionID: 74be541c-d539-4b20-9613-2236bc0f62ec] [EquipmentId: BodyPly] [LogType: Event] [LogCode: 200] [FolderName: BodyPlyASPXService]
+Message: OPC Reconnect..1
+Data: 
+---
+
+[2026-07-13 11:39:50] [TransactionID: 74be541c-d539-4b20-9613-2236bc0f62ec] [EquipmentId: BodyPly] [LogType: Event] [LogCode: 200] [FolderName: BodyPlyASPXService]
+Message: dtbom available  10 
+Data: 
+---
+
+[2026-07-13 11:47:52] [TransactionID: 1cc15e87-68a5-4174-9e13-f177885c08b4] [EquipmentId: BodyPly] [LogType: Event] [LogCode: 200] [FolderName: BodyPlyASPXService]
+Message: OPC Reconnect..1
+Data: 
+---
+
+[2026-07-13 11:48:05] [TransactionID: 1cc15e87-68a5-4174-9e13-f177885c08b4] [EquipmentId: BodyPly] [LogType: Event] [LogCode: 200] [FolderName: BodyPlyASPXService]
+Message: dtbom available  10 
+Data: 
+---
+
+[2026-07-13 12:14:03] [TransactionID: c082ee5e-286d-4627-88ad-bd1121923296] [EquipmentId: BodyPly] [LogType: Event] [LogCode: 200] [FolderName: BodyPlyASPXService]
+Message: OPC Reconnect..1
+Data: 
+---
+
+[2026-07-13 12:16:19] [TransactionID: c082ee5e-286d-4627-88ad-bd1121923296] [EquipmentId: BodyPly] [LogType: Event] [LogCode: 200] [FolderName: BodyPlyASPXService]
+Message: 0_4r-s-07708_2026
+Data: 
+---
+
+[2026-07-13 12:19:27] [TransactionID: c082ee5e-286d-4627-88ad-bd1121923296] [EquipmentId: BodyPly] [LogType: Event] [LogCode: 200] [FolderName: BodyPlyASPXService]
+Message: Detail Not Found
+Data: 
+---
+
+[2026-07-13 12:19:58] [TransactionID: e5b53579-1a5f-4700-a3ec-5bca6d39487a] [EquipmentId: BodyPly] [LogType: Event] [LogCode: 200] [FolderName: BodyPlyASPXService]
+Message: 0_4r-s-07708_2026
+Data: 
+---
+
+[2026-07-13 12:25:29] [TransactionID: e5b53579-1a5f-4700-a3ec-5bca6d39487a] [EquipmentId: BodyPly] [LogType: Event] [LogCode: 200] [FolderName: BodyPlyASPXService]
+Message: Detail Not Found
+Data: 
+---
+
+[2026-07-13 12:25:39] [TransactionID: c55edec7-7c26-419a-a1c0-52a7903d2c9a] [EquipmentId: BodyPly] [LogType: Event] [LogCode: 200] [FolderName: BodyPlyASPXService]
+Message: 1_4r-s-07708_2026
+Data: 
+---
+
+[2026-07-13 12:25:40] [TransactionID: c55edec7-7c26-419a-a1c0-52a7903d2c9a] [EquipmentId: BodyPly] [LogType: Event] [LogCode: 200] [FolderName: BodyPlyASPXService]
+Message: Data Found
+Data: 
+---
+
+[2026-07-13 12:25:42] [TransactionID: c55edec7-7c26-419a-a1c0-52a7903d2c9a] [EquipmentId: BodyPly] [LogType: Event] [LogCode: 200] [FolderName: BodyPlyASPXService]
+Message: CWBP60_5825.76
+Data: 
+---
+
+[2026-07-13 12:25:44] [TransactionID: c55edec7-7c26-419a-a1c0-52a7903d2c9a] [EquipmentId: BodyPly] [LogType: Event] [LogCode: 200] [FolderName: BodyPlyASPXService]
+Message: ValidateRecipe complete verify
+Data: 
+---
+
+[2026-07-13 12:25:46] [TransactionID: c55edec7-7c26-419a-a1c0-52a7903d2c9a] [EquipmentId: BodyPly] [LogType: Event] [LogCode: 200] [FolderName: BodyPlyASPXService]
+Message: dtbom available  10 
+Data: 
+---
+
+[2026-07-13 12:25:47] [TransactionID: c55edec7-7c26-419a-a1c0-52a7903d2c9a] [EquipmentId: BodyPly] [LogType: Event] [LogCode: 200] [FolderName: BodyPlyASPXService]
+Message: Feeder 1 Scan 
+Data: 
+---
+
+[2026-07-13 12:25:48] [TransactionID: c55edec7-7c26-419a-a1c0-52a7903d2c9a] [EquipmentId: BodyPly] [LogType: Event] [LogCode: 200] [FolderName: BodyPlyASPXService]
+Message: compoundname=  CWBP60   Item code:   CWBP60
+Data: 
+---
+
+[2026-07-13 12:25:55] [TransactionID: c55edec7-7c26-419a-a1c0-52a7903d2c9a] [EquipmentId: BodyPly] [LogType: Event] [LogCode: 200] [FolderName: BodyPlyASPXService]
+Message: Add material in I material
+Data: 
+---
+
+[2026-07-13 12:27:26] [TransactionID: b6914f8b-bb4b-4f12-8d50-4ba11e211093] [EquipmentId: BodyPly] [LogType: Event] [LogCode: 200] [FolderName: BodyPlyASPXService]
+Message: 1_4r-s-07708_2026
+Data: 
+---
+
+[2026-07-13 12:27:26] [TransactionID: b6914f8b-bb4b-4f12-8d50-4ba11e211093] [EquipmentId: BodyPly] [LogType: Event] [LogCode: 200] [FolderName: BodyPlyASPXService]
+Message: Data Found
+Data: 
+---
+
+[2026-07-13 12:27:26] [TransactionID: b6914f8b-bb4b-4f12-8d50-4ba11e211093] [EquipmentId: BodyPly] [LogType: Event] [LogCode: 200] [FolderName: BodyPlyASPXService]
+Message: CWBP60_5825.76
+Data: 
+---
+
+[2026-07-13 12:27:35] [TransactionID: b6914f8b-bb4b-4f12-8d50-4ba11e211093] [EquipmentId: BodyPly] [LogType: Event] [LogCode: 200] [FolderName: BodyPlyASPXService]
+Message: ValidateRecipe complete verify
+Data: 
+---
+
+[2026-07-13 12:27:36] [TransactionID: b6914f8b-bb4b-4f12-8d50-4ba11e211093] [EquipmentId: BodyPly] [LogType: Event] [LogCode: 200] [FolderName: BodyPlyASPXService]
+Message: dtbom available  10 
+Data: 
+---
+
+[2026-07-13 12:27:38] [TransactionID: b6914f8b-bb4b-4f12-8d50-4ba11e211093] [EquipmentId: BodyPly] [LogType: Event] [LogCode: 200] [FolderName: BodyPlyASPXService]
+Message: Feeder 1 Scan 
+Data: 
+---
+
+[2026-07-13 12:27:46] [TransactionID: b6914f8b-bb4b-4f12-8d50-4ba11e211093] [EquipmentId: BodyPly] [LogType: Event] [LogCode: 200] [FolderName: BodyPlyASPXService]
+Message: compoundname=  CWBP60   Item code:   CWBP60
+Data: 
+---
+
+[2026-07-13 12:28:18] [TransactionID: b6914f8b-bb4b-4f12-8d50-4ba11e211093] [EquipmentId: BodyPly] [LogType: Event] [LogCode: 200] [FolderName: BodyPlyASPXService]
+Message: Add material in I material
+Data: 
+---
+
+[2026-07-13 12:32:30] [TransactionID: 1371ab46-4b22-4753-a003-29d82d1fc6cb] [EquipmentId: BodyPly] [LogType: Event] [LogCode: 200] [FolderName: BodyPlyASPXService]
+Message: 1_4r-s-07708_2026
+Data: 
+---
+
+[2026-07-13 12:32:33] [TransactionID: 1371ab46-4b22-4753-a003-29d82d1fc6cb] [EquipmentId: BodyPly] [LogType: Event] [LogCode: 200] [FolderName: BodyPlyASPXService]
+Message: Data Found
+Data: 
+---
+
+[2026-07-13 12:32:34] [TransactionID: 1371ab46-4b22-4753-a003-29d82d1fc6cb] [EquipmentId: BodyPly] [LogType: Event] [LogCode: 200] [FolderName: BodyPlyASPXService]
+Message: CWBP60_5825.76
+Data: 
+---
+
+[2026-07-13 12:33:09] [TransactionID: 1371ab46-4b22-4753-a003-29d82d1fc6cb] [EquipmentId: BodyPly] [LogType: Event] [LogCode: 200] [FolderName: BodyPlyASPXService]
+Message: ValidateRecipe complete verify
+Data: 
+---
+
+[2026-07-13 12:33:11] [TransactionID: 1371ab46-4b22-4753-a003-29d82d1fc6cb] [EquipmentId: BodyPly] [LogType: Event] [LogCode: 200] [FolderName: BodyPlyASPXService]
+Message: dtbom available  10 
+Data: 
+---
+
+[2026-07-13 12:33:13] [TransactionID: 1371ab46-4b22-4753-a003-29d82d1fc6cb] [EquipmentId: BodyPly] [LogType: Event] [LogCode: 200] [FolderName: BodyPlyASPXService]
+Message: Feeder 1 Scan 
+Data: 
+---
+
+[2026-07-13 12:33:22] [TransactionID: 1371ab46-4b22-4753-a003-29d82d1fc6cb] [EquipmentId: BodyPly] [LogType: Event] [LogCode: 200] [FolderName: BodyPlyASPXService]
+Message: compoundname=  CWBP60   Item code:   CWBP60
+Data: 
+---
+
+[2026-07-13 12:35:17] [TransactionID: 1371ab46-4b22-4753-a003-29d82d1fc6cb] [EquipmentId: BodyPly] [LogType: Event] [LogCode: 200] [FolderName: BodyPlyASPXService]
+Message: Add material in I material
+Data: 
+---
+
+[2026-07-13 13:16:15] [TransactionID: a4c0d28e-ba7b-410b-adeb-89ebf9eac7ab] [EquipmentId: BodyPly] [LogType: Event] [LogCode: 200] [FolderName: BodyPlyASPXService]
+Message: OPC Reconnect..1
+Data: 
+---
+
+[2026-07-13 13:16:15] [TransactionID: a4c0d28e-ba7b-410b-adeb-89ebf9eac7ab] [EquipmentId: BodyPly] [LogType: Event] [LogCode: 200] [FolderName: BodyPlyASPXService]
+Message: 
+Data: 
+---
+
+[2026-07-13 13:16:44] [TransactionID: a4c0d28e-ba7b-410b-adeb-89ebf9eac7ab] [EquipmentId: BodyPly] [LogType: Event] [LogCode: 200] [FolderName: BodyPlyASPXService]
+Message: 
+Data: 
+---
+

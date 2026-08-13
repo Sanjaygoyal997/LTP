@@ -1,0 +1,581 @@
+[2025-09-08 07:13:57] [TransactionID: fe08eb6c-58a7-4661-82ec-2fa29894d7e4] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: 08-09-2025 12:43:56 Scan Data=>   QrCode : {   "lot_no": "F0120231018031038_21",   "recipe_code": "B460",   "batch_number": 1,   "qty": 200,   "itemcode": "B460",   "domfg": "2025-07-04T10:50:04",   "shift": "A",   "revNO": "24" } Feeder: 1 numberofscan:  itemnumber:  isManual: 0 isAdvance:False
+Data: 
+---
+
+[2025-09-08 07:14:02] [TransactionID: fe08eb6c-58a7-4661-82ec-2fa29894d7e4] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: OPC Reconnect..1
+Data: 
+---
+
+[2025-09-08 07:14:05] [TransactionID: fe08eb6c-58a7-4661-82ec-2fa29894d7e4] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: compound type
+Data: 
+---
+
+[2025-09-08 07:14:51] [TransactionID: fe213a95-ac83-45af-808e-a753360d61ea] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: 08-09-2025 12:44:51 Scan Data=>   QrCode : {   "lot_no": "F0120231018031038_21",   "recipe_code": "B460",   "batch_number": 1,   "qty": 200,   "itemcode": "B460",   "domfg": "2025-07-04T10:50:04",   "shift": "A",   "revNO": "24" } Feeder: 1 numberofscan:  itemnumber:  isManual: 0 isAdvance:False
+Data: 
+---
+
+[2025-09-08 07:14:52] [TransactionID: fe213a95-ac83-45af-808e-a753360d61ea] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: compound type
+Data: 
+---
+
+[2025-09-08 07:14:57] [TransactionID: fe213a95-ac83-45af-808e-a753360d61ea] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: ValidateRecipe complete verify
+Data: 
+---
+
+[2025-09-08 07:14:57] [TransactionID: fe213a95-ac83-45af-808e-a753360d61ea] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: dtbom available  2 
+Data: 
+---
+
+[2025-09-08 07:14:57] [TransactionID: fe213a95-ac83-45af-808e-a753360d61ea] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: Feeder 1 Scan 
+Data: 
+---
+
+[2025-09-08 07:14:57] [TransactionID: fe213a95-ac83-45af-808e-a753360d61ea] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: compoundname=  B460   Item code:   B460
+Data: 
+---
+
+[2025-09-08 07:17:20] [TransactionID: fe213a95-ac83-45af-808e-a753360d61ea] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: Add material in I material
+Data: 
+---
+
+[2025-09-08 07:18:46] [TransactionID: f7e13301-8fcb-4d57-a4ad-e0853210e688] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: 08-09-2025 12:48:46Scan Data 
+ QrCode :{   "lot_no": "F0120231018031038_21",   "recipe_code": "B460",   "batch_number": 1,   "qty": 200,   "itemcode": "B460",   "domfg": "2025-07-04T10:50:04",   "shift": "A",   "revNO": "24" }
+ Feeder :1 isManual:0
+Data: 
+---
+
+[2025-09-08 07:18:46] [TransactionID: f7e13301-8fcb-4d57-a4ad-e0853210e688] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: ReverceLotno result[{"status":"success","message":"Material Reversal Successfully!","ProductionID":"F0120231018031038_21"}]
+Data: 
+---
+
+[2025-09-08 07:19:17] [TransactionID: a0360e53-a70f-4625-8d53-84ed34df64b6] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: 08-09-2025 12:49:17 Scan Data=>   QrCode : {   "lot_no": "F0120231018031038_21",   "recipe_code": "B460",   "batch_number": 1,   "qty": 200,   "itemcode": "B460",   "domfg": "2025-07-04T10:50:04",   "shift": "A",   "revNO": "24" } Feeder: 1 numberofscan:  itemnumber:  isManual: 0 isAdvance:False
+Data: 
+---
+
+[2025-09-08 07:19:19] [TransactionID: a0360e53-a70f-4625-8d53-84ed34df64b6] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: compound type
+Data: 
+---
+
+[2025-09-08 07:19:22] [TransactionID: a0360e53-a70f-4625-8d53-84ed34df64b6] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: ValidateRecipe complete verify
+Data: 
+---
+
+[2025-09-08 07:19:22] [TransactionID: a0360e53-a70f-4625-8d53-84ed34df64b6] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: dtbom available  2 
+Data: 
+---
+
+[2025-09-08 07:19:22] [TransactionID: a0360e53-a70f-4625-8d53-84ed34df64b6] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: Feeder 1 Scan 
+Data: 
+---
+
+[2025-09-08 07:19:22] [TransactionID: a0360e53-a70f-4625-8d53-84ed34df64b6] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: compoundname=  B460   Item code:   B460
+Data: 
+---
+
+[2025-09-08 07:27:58] [TransactionID: a0360e53-a70f-4625-8d53-84ed34df64b6] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: Add material in I material
+Data: 
+---
+
+[2025-09-08 07:28:01] [TransactionID: 73b5ae27-e74e-4ca2-bb68-cc6e70c70242] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: 08-09-2025 12:58:01 Scan Data=>   QrCode : {   "lot_no": "F0120231018031038_21",   "recipe_code": "B460",   "batch_number": 1,   "qty": 200,   "itemcode": "B460",   "domfg": "2025-07-04T10:50:04",   "shift": "A",   "revNO": "24" } Feeder: 1 numberofscan:  itemnumber:  isManual: 0 isAdvance:False
+Data: 
+---
+
+[2025-09-08 07:28:01] [TransactionID: 73b5ae27-e74e-4ca2-bb68-cc6e70c70242] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: compound type
+Data: 
+---
+
+[2025-09-08 07:28:01] [TransactionID: 73b5ae27-e74e-4ca2-bb68-cc6e70c70242] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: ValidateRecipe complete verify
+Data: 
+---
+
+[2025-09-08 07:28:01] [TransactionID: 73b5ae27-e74e-4ca2-bb68-cc6e70c70242] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: dtbom available  2 
+Data: 
+---
+
+[2025-09-08 07:28:01] [TransactionID: 73b5ae27-e74e-4ca2-bb68-cc6e70c70242] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: Feeder 1 Scan 
+Data: 
+---
+
+[2025-09-08 07:28:01] [TransactionID: 73b5ae27-e74e-4ca2-bb68-cc6e70c70242] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: compoundname=  B460   Item code:   B460
+Data: 
+---
+
+[2025-09-08 07:28:01] [TransactionID: 73b5ae27-e74e-4ca2-bb68-cc6e70c70242] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: Add material in I material
+Data: 
+---
+
+[2025-09-08 07:28:34] [TransactionID: f7e13301-8fcb-4d57-a4ad-e0853210e688] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: 08-09-2025 12:58:34Scan Data 
+ QrCode :{   "lot_no": "F0120231018031038_21",   "recipe_code": "B460",   "batch_number": 1,   "qty": 200,   "itemcode": "B460",   "domfg": "2025-07-04T10:50:04",   "shift": "A",   "revNO": "24" }
+ Feeder :1 isManual:0
+Data: 
+---
+
+[2025-09-08 07:28:34] [TransactionID: f7e13301-8fcb-4d57-a4ad-e0853210e688] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: ReverceLotno result[{"status":"success","message":"Material Reversal Successfully!","ProductionID":"F0120231018031038_21"}]
+Data: 
+---
+
+[2025-09-08 07:53:27] [TransactionID: f8d79d05-a991-4228-b122-9be23f910288] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: 08-09-2025 13:23:24 Scan Data=>   QrCode : {   "lot_no": "F0120231018031038_21",   "recipe_code": "B460",   "batch_number": 1,   "qty": 200,   "itemcode": "B460",   "domfg": "2025-07-04T10:50:04",   "shift": "A",   "revNO": "24" } Feeder: 1 numberofscan:  itemnumber:  isManual: 0 isAdvance:False
+Data: 
+---
+
+[2025-09-08 07:53:32] [TransactionID: f8d79d05-a991-4228-b122-9be23f910288] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: OPC Reconnect..1
+Data: 
+---
+
+[2025-09-08 07:53:32] [TransactionID: f8d79d05-a991-4228-b122-9be23f910288] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: compound type
+Data: 
+---
+
+[2025-09-08 07:53:32] [TransactionID: f8d79d05-a991-4228-b122-9be23f910288] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: ValidateRecipe complete verify
+Data: 
+---
+
+[2025-09-08 07:53:32] [TransactionID: f8d79d05-a991-4228-b122-9be23f910288] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: dtbom available  2 
+Data: 
+---
+
+[2025-09-08 07:53:32] [TransactionID: f8d79d05-a991-4228-b122-9be23f910288] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: Feeder 1 Scan 
+Data: 
+---
+
+[2025-09-08 07:53:32] [TransactionID: f8d79d05-a991-4228-b122-9be23f910288] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: compoundname=  B460   Item code:   B460
+Data: 
+---
+
+[2025-09-08 07:55:22] [TransactionID: f8d79d05-a991-4228-b122-9be23f910288] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: Add material in I material
+Data: 
+---
+
+[2025-09-08 07:55:40] [TransactionID: 15f19b8a-9af4-48e3-8804-5da9a5ac13e9] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: 08-09-2025 13:25:40Scan Data 
+ QrCode :{   "lot_no": "F0120231018031038_21",   "recipe_code": "B460",   "batch_number": 1,   "qty": 200,   "itemcode": "B460",   "domfg": "2025-07-04T10:50:04",   "shift": "A",   "revNO": "24" }
+ Feeder :1 isManual:0
+Data: 
+---
+
+[2025-09-08 07:55:40] [TransactionID: 15f19b8a-9af4-48e3-8804-5da9a5ac13e9] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: ReverceLotno result[{"status":"success","message":"Material Reversal Successfully!","ProductionID":"F0120231018031038_21"}]
+Data: 
+---
+
+[2025-09-08 07:55:47] [TransactionID: 482c0526-48fd-4459-ad33-087ad106cfd5] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: 08-09-2025 13:25:47 Scan Data=>   QrCode : {   "lot_no": "F0120231018031038_21",   "recipe_code": "B460",   "batch_number": 1,   "qty": 200,   "itemcode": "B460",   "domfg": "2025-07-04T10:50:04",   "shift": "A",   "revNO": "24" } Feeder: 1 numberofscan:  itemnumber:  isManual: 0 isAdvance:False
+Data: 
+---
+
+[2025-09-08 07:55:47] [TransactionID: 482c0526-48fd-4459-ad33-087ad106cfd5] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: compound type
+Data: 
+---
+
+[2025-09-08 07:55:47] [TransactionID: 482c0526-48fd-4459-ad33-087ad106cfd5] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: ValidateRecipe complete verify
+Data: 
+---
+
+[2025-09-08 07:55:47] [TransactionID: 482c0526-48fd-4459-ad33-087ad106cfd5] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: dtbom available  2 
+Data: 
+---
+
+[2025-09-08 07:55:47] [TransactionID: 482c0526-48fd-4459-ad33-087ad106cfd5] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: Feeder 1 Scan 
+Data: 
+---
+
+[2025-09-08 07:55:47] [TransactionID: 482c0526-48fd-4459-ad33-087ad106cfd5] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: compoundname=  B460   Item code:   B460
+Data: 
+---
+
+[2025-09-08 07:55:47] [TransactionID: 482c0526-48fd-4459-ad33-087ad106cfd5] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: Add material in I material
+Data: 
+---
+
+[2025-09-08 09:59:52] [TransactionID: 18bb2b54-6bbb-4029-938f-1699b6b1af9b] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: OPC Reconnect..1
+Data: 
+---
+
+[2025-09-08 09:59:52] [TransactionID: 18bb2b54-6bbb-4029-938f-1699b6b1af9b] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: 
+Data: 
+---
+
+[2025-09-08 10:00:00] [TransactionID: 18bb2b54-6bbb-4029-938f-1699b6b1af9b] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: CPJ 120
+Data: 
+---
+
+[2025-09-08 10:11:53] [TransactionID: 96a493a8-447e-4929-9ba8-c28191493afc] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: OPC Reconnect..1
+Data: 
+---
+
+[2025-09-08 10:11:58] [TransactionID: ] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: Printer Not Configure!
+Data: 
+---
+
+[2025-09-08 10:11:58] [TransactionID: ] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: Error in RunningSetLength conversion System.FormatException: Input string was not in a correct format.
+   at System.Number.StringToNumber(String str, NumberStyles options, NumberBuffer& number, NumberFormatInfo info, Boolean parseDecimal)
+   at System.Number.ParseDecimal(String value, NumberStyles options, NumberFormatInfo numfmt)
+   at System.Convert.ToDecimal(String value)
+   at FourRollCalenderWebService.Services.FourRollCalenderASPXService.UpdateHMIService(String transaction_Id) in D:\ASP Code\JK\LTP\4RC\GitLab\FourRollCalenderWebService\FourRollCalenderWebService\Services\FourRollCalenderASPXService.cs:line 520
+Data: 
+---
+
+[2025-09-08 10:11:58] [TransactionID: ] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: Error in Runningrecipesetlength conversion  System.FormatException: Input string was not in a correct format.
+   at System.Number.StringToNumber(String str, NumberStyles options, NumberBuffer& number, NumberFormatInfo info, Boolean parseDecimal)
+   at System.Number.ParseDecimal(String value, NumberStyles options, NumberFormatInfo numfmt)
+   at System.Convert.ToDecimal(String value)
+   at FourRollCalenderWebService.Services.FourRollCalenderASPXService.UpdateHMIService(String transaction_Id) in D:\ASP Code\JK\LTP\4RC\GitLab\FourRollCalenderWebService\FourRollCalenderWebService\Services\FourRollCalenderASPXService.cs:line 549
+Data: 
+---
+
+[2025-09-08 10:11:58] [TransactionID: ] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: Error in WidthActual conversion System.FormatException: Input string was not in a correct format.
+   at System.Number.StringToNumber(String str, NumberStyles options, NumberBuffer& number, NumberFormatInfo info, Boolean parseDecimal)
+   at System.Number.ParseDecimal(String value, NumberStyles options, NumberFormatInfo numfmt)
+   at System.Convert.ToDecimal(String value)
+   at FourRollCalenderWebService.Services.FourRollCalenderASPXService.UpdateHMIService(String transaction_Id) in D:\ASP Code\JK\LTP\4RC\GitLab\FourRollCalenderWebService\FourRollCalenderWebService\Services\FourRollCalenderASPXService.cs:line 573
+Data: 
+---
+
+[2025-09-08 10:13:15] [TransactionID: ] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: Printer Not Configure!
+Data: 
+---
+
+[2025-09-08 10:13:15] [TransactionID: ] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: Error in RunningSetLength conversion System.FormatException: Input string was not in a correct format.
+   at System.Number.StringToNumber(String str, NumberStyles options, NumberBuffer& number, NumberFormatInfo info, Boolean parseDecimal)
+   at System.Number.ParseDecimal(String value, NumberStyles options, NumberFormatInfo numfmt)
+   at System.Convert.ToDecimal(String value)
+   at FourRollCalenderWebService.Services.FourRollCalenderASPXService.UpdateHMIService(String transaction_Id) in D:\ASP Code\JK\LTP\4RC\GitLab\FourRollCalenderWebService\FourRollCalenderWebService\Services\FourRollCalenderASPXService.cs:line 520
+Data: 
+---
+
+[2025-09-08 10:13:15] [TransactionID: ] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: Error in Runningrecipesetlength conversion  System.FormatException: Input string was not in a correct format.
+   at System.Number.StringToNumber(String str, NumberStyles options, NumberBuffer& number, NumberFormatInfo info, Boolean parseDecimal)
+   at System.Number.ParseDecimal(String value, NumberStyles options, NumberFormatInfo numfmt)
+   at System.Convert.ToDecimal(String value)
+   at FourRollCalenderWebService.Services.FourRollCalenderASPXService.UpdateHMIService(String transaction_Id) in D:\ASP Code\JK\LTP\4RC\GitLab\FourRollCalenderWebService\FourRollCalenderWebService\Services\FourRollCalenderASPXService.cs:line 549
+Data: 
+---
+
+[2025-09-08 10:13:15] [TransactionID: ] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: Error in WidthActual conversion System.FormatException: Input string was not in a correct format.
+   at System.Number.StringToNumber(String str, NumberStyles options, NumberBuffer& number, NumberFormatInfo info, Boolean parseDecimal)
+   at System.Number.ParseDecimal(String value, NumberStyles options, NumberFormatInfo numfmt)
+   at System.Convert.ToDecimal(String value)
+   at FourRollCalenderWebService.Services.FourRollCalenderASPXService.UpdateHMIService(String transaction_Id) in D:\ASP Code\JK\LTP\4RC\GitLab\FourRollCalenderWebService\FourRollCalenderWebService\Services\FourRollCalenderASPXService.cs:line 573
+Data: 
+---
+
+[2025-09-08 10:14:08] [TransactionID: ] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: Printer Not Configure!
+Data: 
+---
+
+[2025-09-08 10:14:08] [TransactionID: ] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: Error in RunningSetLength conversion System.FormatException: Input string was not in a correct format.
+   at System.Number.StringToNumber(String str, NumberStyles options, NumberBuffer& number, NumberFormatInfo info, Boolean parseDecimal)
+   at System.Number.ParseDecimal(String value, NumberStyles options, NumberFormatInfo numfmt)
+   at System.Convert.ToDecimal(String value)
+   at FourRollCalenderWebService.Services.FourRollCalenderASPXService.UpdateHMIService(String transaction_Id) in D:\ASP Code\JK\LTP\4RC\GitLab\FourRollCalenderWebService\FourRollCalenderWebService\Services\FourRollCalenderASPXService.cs:line 520
+Data: 
+---
+
+[2025-09-08 10:14:08] [TransactionID: ] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: Error in Runningrecipesetlength conversion  System.FormatException: Input string was not in a correct format.
+   at System.Number.StringToNumber(String str, NumberStyles options, NumberBuffer& number, NumberFormatInfo info, Boolean parseDecimal)
+   at System.Number.ParseDecimal(String value, NumberStyles options, NumberFormatInfo numfmt)
+   at System.Convert.ToDecimal(String value)
+   at FourRollCalenderWebService.Services.FourRollCalenderASPXService.UpdateHMIService(String transaction_Id) in D:\ASP Code\JK\LTP\4RC\GitLab\FourRollCalenderWebService\FourRollCalenderWebService\Services\FourRollCalenderASPXService.cs:line 549
+Data: 
+---
+
+[2025-09-08 10:14:08] [TransactionID: ] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: Error in WidthActual conversion System.FormatException: Input string was not in a correct format.
+   at System.Number.StringToNumber(String str, NumberStyles options, NumberBuffer& number, NumberFormatInfo info, Boolean parseDecimal)
+   at System.Number.ParseDecimal(String value, NumberStyles options, NumberFormatInfo numfmt)
+   at System.Convert.ToDecimal(String value)
+   at FourRollCalenderWebService.Services.FourRollCalenderASPXService.UpdateHMIService(String transaction_Id) in D:\ASP Code\JK\LTP\4RC\GitLab\FourRollCalenderWebService\FourRollCalenderWebService\Services\FourRollCalenderASPXService.cs:line 573
+Data: 
+---
+
+[2025-09-08 10:14:39] [TransactionID: ] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: Printer Not Configure!
+Data: 
+---
+
+[2025-09-08 10:14:39] [TransactionID: ] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: Error in RunningSetLength conversion System.FormatException: Input string was not in a correct format.
+   at System.Number.StringToNumber(String str, NumberStyles options, NumberBuffer& number, NumberFormatInfo info, Boolean parseDecimal)
+   at System.Number.ParseDecimal(String value, NumberStyles options, NumberFormatInfo numfmt)
+   at System.Convert.ToDecimal(String value)
+   at FourRollCalenderWebService.Services.FourRollCalenderASPXService.UpdateHMIService(String transaction_Id) in D:\ASP Code\JK\LTP\4RC\GitLab\FourRollCalenderWebService\FourRollCalenderWebService\Services\FourRollCalenderASPXService.cs:line 520
+Data: 
+---
+
+[2025-09-08 10:14:39] [TransactionID: ] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: Error in Runningrecipesetlength conversion  System.FormatException: Input string was not in a correct format.
+   at System.Number.StringToNumber(String str, NumberStyles options, NumberBuffer& number, NumberFormatInfo info, Boolean parseDecimal)
+   at System.Number.ParseDecimal(String value, NumberStyles options, NumberFormatInfo numfmt)
+   at System.Convert.ToDecimal(String value)
+   at FourRollCalenderWebService.Services.FourRollCalenderASPXService.UpdateHMIService(String transaction_Id) in D:\ASP Code\JK\LTP\4RC\GitLab\FourRollCalenderWebService\FourRollCalenderWebService\Services\FourRollCalenderASPXService.cs:line 549
+Data: 
+---
+
+[2025-09-08 10:14:39] [TransactionID: ] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: Error in WidthActual conversion System.FormatException: Input string was not in a correct format.
+   at System.Number.StringToNumber(String str, NumberStyles options, NumberBuffer& number, NumberFormatInfo info, Boolean parseDecimal)
+   at System.Number.ParseDecimal(String value, NumberStyles options, NumberFormatInfo numfmt)
+   at System.Convert.ToDecimal(String value)
+   at FourRollCalenderWebService.Services.FourRollCalenderASPXService.UpdateHMIService(String transaction_Id) in D:\ASP Code\JK\LTP\4RC\GitLab\FourRollCalenderWebService\FourRollCalenderWebService\Services\FourRollCalenderASPXService.cs:line 573
+Data: 
+---
+
+[2025-09-08 10:27:34] [TransactionID: 7170d7d6-856f-491b-a883-54d316e92346] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: OPC Reconnect..1
+Data: 
+---
+
+[2025-09-08 10:27:34] [TransactionID: 7170d7d6-856f-491b-a883-54d316e92346] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: CPJ 120
+Data: 
+---
+
+[2025-09-08 10:27:40] [TransactionID: ] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: Printer Not Configure!
+Data: 
+---
+
+[2025-09-08 10:27:40] [TransactionID: ] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: Error in RunningSetLength conversion System.FormatException: Input string was not in a correct format.
+   at System.Number.StringToNumber(String str, NumberStyles options, NumberBuffer& number, NumberFormatInfo info, Boolean parseDecimal)
+   at System.Number.ParseDecimal(String value, NumberStyles options, NumberFormatInfo numfmt)
+   at System.Convert.ToDecimal(String value)
+   at FourRollCalenderWebService.Services.FourRollCalenderASPXService.UpdateHMIService(String transaction_Id) in D:\ASP Code\JK\LTP\4RC\GitLab\FourRollCalenderWebService\FourRollCalenderWebService\Services\FourRollCalenderASPXService.cs:line 520
+Data: 
+---
+
+[2025-09-08 10:27:40] [TransactionID: ] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: Error in Runningrecipesetlength conversion  System.FormatException: Input string was not in a correct format.
+   at System.Number.StringToNumber(String str, NumberStyles options, NumberBuffer& number, NumberFormatInfo info, Boolean parseDecimal)
+   at System.Number.ParseDecimal(String value, NumberStyles options, NumberFormatInfo numfmt)
+   at System.Convert.ToDecimal(String value)
+   at FourRollCalenderWebService.Services.FourRollCalenderASPXService.UpdateHMIService(String transaction_Id) in D:\ASP Code\JK\LTP\4RC\GitLab\FourRollCalenderWebService\FourRollCalenderWebService\Services\FourRollCalenderASPXService.cs:line 549
+Data: 
+---
+
+[2025-09-08 10:27:40] [TransactionID: ] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: Error in WidthActual conversion System.FormatException: Input string was not in a correct format.
+   at System.Number.StringToNumber(String str, NumberStyles options, NumberBuffer& number, NumberFormatInfo info, Boolean parseDecimal)
+   at System.Number.ParseDecimal(String value, NumberStyles options, NumberFormatInfo numfmt)
+   at System.Convert.ToDecimal(String value)
+   at FourRollCalenderWebService.Services.FourRollCalenderASPXService.UpdateHMIService(String transaction_Id) in D:\ASP Code\JK\LTP\4RC\GitLab\FourRollCalenderWebService\FourRollCalenderWebService\Services\FourRollCalenderASPXService.cs:line 573
+Data: 
+---
+
+[2025-09-08 10:28:31] [TransactionID: ] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: Printer Not Configure!
+Data: 
+---
+
+[2025-09-08 10:28:31] [TransactionID: ] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: Error in RunningSetLength conversion System.FormatException: Input string was not in a correct format.
+   at System.Number.StringToNumber(String str, NumberStyles options, NumberBuffer& number, NumberFormatInfo info, Boolean parseDecimal)
+   at System.Number.ParseDecimal(String value, NumberStyles options, NumberFormatInfo numfmt)
+   at System.Convert.ToDecimal(String value)
+   at FourRollCalenderWebService.Services.FourRollCalenderASPXService.UpdateHMIService(String transaction_Id) in D:\ASP Code\JK\LTP\4RC\GitLab\FourRollCalenderWebService\FourRollCalenderWebService\Services\FourRollCalenderASPXService.cs:line 520
+Data: 
+---
+
+[2025-09-08 10:28:31] [TransactionID: ] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: Error in Runningrecipesetlength conversion  System.FormatException: Input string was not in a correct format.
+   at System.Number.StringToNumber(String str, NumberStyles options, NumberBuffer& number, NumberFormatInfo info, Boolean parseDecimal)
+   at System.Number.ParseDecimal(String value, NumberStyles options, NumberFormatInfo numfmt)
+   at System.Convert.ToDecimal(String value)
+   at FourRollCalenderWebService.Services.FourRollCalenderASPXService.UpdateHMIService(String transaction_Id) in D:\ASP Code\JK\LTP\4RC\GitLab\FourRollCalenderWebService\FourRollCalenderWebService\Services\FourRollCalenderASPXService.cs:line 549
+Data: 
+---
+
+[2025-09-08 10:28:31] [TransactionID: ] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: Error in WidthActual conversion System.FormatException: Input string was not in a correct format.
+   at System.Number.StringToNumber(String str, NumberStyles options, NumberBuffer& number, NumberFormatInfo info, Boolean parseDecimal)
+   at System.Number.ParseDecimal(String value, NumberStyles options, NumberFormatInfo numfmt)
+   at System.Convert.ToDecimal(String value)
+   at FourRollCalenderWebService.Services.FourRollCalenderASPXService.UpdateHMIService(String transaction_Id) in D:\ASP Code\JK\LTP\4RC\GitLab\FourRollCalenderWebService\FourRollCalenderWebService\Services\FourRollCalenderASPXService.cs:line 573
+Data: 
+---
+
+[2025-09-08 10:29:05] [TransactionID: ] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: Printer Not Configure!
+Data: 
+---
+
+[2025-09-08 10:29:05] [TransactionID: ] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: Error in RunningSetLength conversion System.FormatException: Input string was not in a correct format.
+   at System.Number.StringToNumber(String str, NumberStyles options, NumberBuffer& number, NumberFormatInfo info, Boolean parseDecimal)
+   at System.Number.ParseDecimal(String value, NumberStyles options, NumberFormatInfo numfmt)
+   at System.Convert.ToDecimal(String value)
+   at FourRollCalenderWebService.Services.FourRollCalenderASPXService.UpdateHMIService(String transaction_Id) in D:\ASP Code\JK\LTP\4RC\GitLab\FourRollCalenderWebService\FourRollCalenderWebService\Services\FourRollCalenderASPXService.cs:line 520
+Data: 
+---
+
+[2025-09-08 10:29:05] [TransactionID: ] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: Error in Runningrecipesetlength conversion  System.FormatException: Input string was not in a correct format.
+   at System.Number.StringToNumber(String str, NumberStyles options, NumberBuffer& number, NumberFormatInfo info, Boolean parseDecimal)
+   at System.Number.ParseDecimal(String value, NumberStyles options, NumberFormatInfo numfmt)
+   at System.Convert.ToDecimal(String value)
+   at FourRollCalenderWebService.Services.FourRollCalenderASPXService.UpdateHMIService(String transaction_Id) in D:\ASP Code\JK\LTP\4RC\GitLab\FourRollCalenderWebService\FourRollCalenderWebService\Services\FourRollCalenderASPXService.cs:line 549
+Data: 
+---
+
+[2025-09-08 10:29:05] [TransactionID: ] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: Error in WidthActual conversion System.FormatException: Input string was not in a correct format.
+   at System.Number.StringToNumber(String str, NumberStyles options, NumberBuffer& number, NumberFormatInfo info, Boolean parseDecimal)
+   at System.Number.ParseDecimal(String value, NumberStyles options, NumberFormatInfo numfmt)
+   at System.Convert.ToDecimal(String value)
+   at FourRollCalenderWebService.Services.FourRollCalenderASPXService.UpdateHMIService(String transaction_Id) in D:\ASP Code\JK\LTP\4RC\GitLab\FourRollCalenderWebService\FourRollCalenderWebService\Services\FourRollCalenderASPXService.cs:line 573
+Data: 
+---
+
+[2025-09-08 10:29:27] [TransactionID: ] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: Printer Not Configure!
+Data: 
+---
+
+[2025-09-08 10:29:28] [TransactionID: ] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: Error in RunningSetLength conversion System.FormatException: Input string was not in a correct format.
+   at System.Number.StringToNumber(String str, NumberStyles options, NumberBuffer& number, NumberFormatInfo info, Boolean parseDecimal)
+   at System.Number.ParseDecimal(String value, NumberStyles options, NumberFormatInfo numfmt)
+   at System.Convert.ToDecimal(String value)
+   at FourRollCalenderWebService.Services.FourRollCalenderASPXService.UpdateHMIService(String transaction_Id) in D:\ASP Code\JK\LTP\4RC\GitLab\FourRollCalenderWebService\FourRollCalenderWebService\Services\FourRollCalenderASPXService.cs:line 520
+Data: 
+---
+
+[2025-09-08 10:29:28] [TransactionID: ] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: Error in Runningrecipesetlength conversion  System.FormatException: Input string was not in a correct format.
+   at System.Number.StringToNumber(String str, NumberStyles options, NumberBuffer& number, NumberFormatInfo info, Boolean parseDecimal)
+   at System.Number.ParseDecimal(String value, NumberStyles options, NumberFormatInfo numfmt)
+   at System.Convert.ToDecimal(String value)
+   at FourRollCalenderWebService.Services.FourRollCalenderASPXService.UpdateHMIService(String transaction_Id) in D:\ASP Code\JK\LTP\4RC\GitLab\FourRollCalenderWebService\FourRollCalenderWebService\Services\FourRollCalenderASPXService.cs:line 549
+Data: 
+---
+
+[2025-09-08 10:29:28] [TransactionID: ] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: Error in WidthActual conversion System.FormatException: Input string was not in a correct format.
+   at System.Number.StringToNumber(String str, NumberStyles options, NumberBuffer& number, NumberFormatInfo info, Boolean parseDecimal)
+   at System.Number.ParseDecimal(String value, NumberStyles options, NumberFormatInfo numfmt)
+   at System.Convert.ToDecimal(String value)
+   at FourRollCalenderWebService.Services.FourRollCalenderASPXService.UpdateHMIService(String transaction_Id) in D:\ASP Code\JK\LTP\4RC\GitLab\FourRollCalenderWebService\FourRollCalenderWebService\Services\FourRollCalenderASPXService.cs:line 573
+Data: 
+---
+
+[2025-09-08 10:34:07] [TransactionID: ] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: Printer Not Configure!
+Data: 
+---
+
+[2025-09-08 10:34:07] [TransactionID: ] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: Error in RunningSetLength conversion System.FormatException: Input string was not in a correct format.
+   at System.Number.StringToNumber(String str, NumberStyles options, NumberBuffer& number, NumberFormatInfo info, Boolean parseDecimal)
+   at System.Number.ParseDecimal(String value, NumberStyles options, NumberFormatInfo numfmt)
+   at System.Convert.ToDecimal(String value)
+   at FourRollCalenderWebService.Services.FourRollCalenderASPXService.UpdateHMIService(String transaction_Id) in D:\ASP Code\JK\LTP\4RC\GitLab\FourRollCalenderWebService\FourRollCalenderWebService\Services\FourRollCalenderASPXService.cs:line 520
+Data: 
+---
+
+[2025-09-08 10:34:07] [TransactionID: ] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: Error in Runningrecipesetlength conversion  System.FormatException: Input string was not in a correct format.
+   at System.Number.StringToNumber(String str, NumberStyles options, NumberBuffer& number, NumberFormatInfo info, Boolean parseDecimal)
+   at System.Number.ParseDecimal(String value, NumberStyles options, NumberFormatInfo numfmt)
+   at System.Convert.ToDecimal(String value)
+   at FourRollCalenderWebService.Services.FourRollCalenderASPXService.UpdateHMIService(String transaction_Id) in D:\ASP Code\JK\LTP\4RC\GitLab\FourRollCalenderWebService\FourRollCalenderWebService\Services\FourRollCalenderASPXService.cs:line 549
+Data: 
+---
+
+[2025-09-08 10:34:07] [TransactionID: ] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: Error in WidthActual conversion System.FormatException: Input string was not in a correct format.
+   at System.Number.StringToNumber(String str, NumberStyles options, NumberBuffer& number, NumberFormatInfo info, Boolean parseDecimal)
+   at System.Number.ParseDecimal(String value, NumberStyles options, NumberFormatInfo numfmt)
+   at System.Convert.ToDecimal(String value)
+   at FourRollCalenderWebService.Services.FourRollCalenderASPXService.UpdateHMIService(String transaction_Id) in D:\ASP Code\JK\LTP\4RC\GitLab\FourRollCalenderWebService\FourRollCalenderWebService\Services\FourRollCalenderASPXService.cs:line 573
+Data: 
+---
+
+[2025-09-08 10:34:33] [TransactionID: ] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: Printer Not Configure!
+Data: 
+---
+
+[2025-09-08 10:34:34] [TransactionID: ] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: Error in RunningSetLength conversion System.FormatException: Input string was not in a correct format.
+   at System.Number.StringToNumber(String str, NumberStyles options, NumberBuffer& number, NumberFormatInfo info, Boolean parseDecimal)
+   at System.Number.ParseDecimal(String value, NumberStyles options, NumberFormatInfo numfmt)
+   at System.Convert.ToDecimal(String value)
+   at FourRollCalenderWebService.Services.FourRollCalenderASPXService.UpdateHMIService(String transaction_Id) in D:\ASP Code\JK\LTP\4RC\GitLab\FourRollCalenderWebService\FourRollCalenderWebService\Services\FourRollCalenderASPXService.cs:line 520
+Data: 
+---
+
+[2025-09-08 10:34:34] [TransactionID: ] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: Error in Runningrecipesetlength conversion  System.FormatException: Input string was not in a correct format.
+   at System.Number.StringToNumber(String str, NumberStyles options, NumberBuffer& number, NumberFormatInfo info, Boolean parseDecimal)
+   at System.Number.ParseDecimal(String value, NumberStyles options, NumberFormatInfo numfmt)
+   at System.Convert.ToDecimal(String value)
+   at FourRollCalenderWebService.Services.FourRollCalenderASPXService.UpdateHMIService(String transaction_Id) in D:\ASP Code\JK\LTP\4RC\GitLab\FourRollCalenderWebService\FourRollCalenderWebService\Services\FourRollCalenderASPXService.cs:line 549
+Data: 
+---
+
+[2025-09-08 10:34:34] [TransactionID: ] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: Error in WidthActual conversion System.FormatException: Input string was not in a correct format.
+   at System.Number.StringToNumber(String str, NumberStyles options, NumberBuffer& number, NumberFormatInfo info, Boolean parseDecimal)
+   at System.Number.ParseDecimal(String value, NumberStyles options, NumberFormatInfo numfmt)
+   at System.Convert.ToDecimal(String value)
+   at FourRollCalenderWebService.Services.FourRollCalenderASPXService.UpdateHMIService(String transaction_Id) in D:\ASP Code\JK\LTP\4RC\GitLab\FourRollCalenderWebService\FourRollCalenderWebService\Services\FourRollCalenderASPXService.cs:line 573
+Data: 
+---
+

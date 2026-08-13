@@ -1,0 +1,12 @@
+[2026-07-13 11:19:24] [TransactionID: 57c9ba55-98d9-4e0a-8734-33afce78082e] [EquipmentId: DBOperation] [LogType: Error] [LogCode: 500] [FolderName: DBOperations]
+Message: Exception: Exception while writing to stream, Inner Exception: Unable to write data to the transport connection: An existing connection was forcibly closed by the remote host.
+Data: NA
+---
+
+[2026-07-13 11:19:28] [TransactionID: 57c9ba55-98d9-4e0a-8734-33afce78082e] [EquipmentId: DBOperation] [LogType: Error] [LogCode: 500] [FolderName: DBOperations]
+Message: Exception: 23502: null value in column "data" of relation "logs" violates not-null constraint
+
+DETAIL: Detail redacted as it may contain sensitive data. Specify 'Include Error Detail' in the connection string to include this information., Inner Exception: 
+Data: NA
+---
+

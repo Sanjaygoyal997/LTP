@@ -1,0 +1,195 @@
+[2025-08-19 09:52:45] [TransactionID: de2ab1ed-7f8c-491a-b598-8de417807433] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: OPC Reconnect..1
+Data: 
+---
+
+[2025-08-19 09:53:59] [TransactionID: aecd3916-ad4d-4263-b274-1fd805db6f97] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: OPC Reconnect..1
+Data: 
+---
+
+[2025-08-19 09:54:30] [TransactionID: 06065f2d-6be0-488a-a42d-4dc440b71eef] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: OPC Reconnect..1
+Data: 
+---
+
+[2025-08-19 09:56:52] [TransactionID: 8feebda9-31da-4076-9ac1-24485c3ad889] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: OPC Reconnect..1
+Data: 
+---
+
+[2025-08-19 10:03:14] [TransactionID: 0d903f03-9b71-4126-97bc-e29bfa4baf97] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: OPC Reconnect..1
+Data: 
+---
+
+[2025-08-19 10:03:18] [TransactionID: aff45b71-747b-4670-b766-4eac2d4aea22] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: OPC Reconnect..1
+Data: 
+---
+
+[2025-08-19 10:03:22] [TransactionID: 7b72a22c-5d30-43b2-9f6f-4889fc789b7a] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: OPC Reconnect..1
+Data: 
+---
+
+[2025-08-19 10:04:52] [TransactionID: daacafb5-95dc-4824-b996-36c540fb7fb0] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: OPC Reconnect..1
+Data: 
+---
+
+[2025-08-19 10:04:59] [TransactionID: df3f33bb-d2f0-468e-955b-764cde63d5ea] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: OPC Reconnect..1
+Data: 
+---
+
+[2025-08-19 10:07:29] [TransactionID: dd80de71-fbca-4b04-8206-205a2bd0790e] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: OPC Reconnect..1
+Data: 
+---
+
+[2025-08-19 10:45:29] [TransactionID: 3c4b5734-d70e-404f-b605-e6992de2b933] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: OPC Reconnect..1
+Data: 
+---
+
+[2025-08-19 10:59:28] [TransactionID: f4751081-85f8-4986-a2d7-6d73a0c02a7a] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: OPC Reconnect..1
+Data: 
+---
+
+[2025-08-19 11:10:53] [TransactionID: d2357559-0b95-405b-a603-4760a9456867] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: OPC Reconnect..1
+Data: 
+---
+
+[2025-08-19 11:15:07] [TransactionID: 3eb35521-deae-4d11-88a6-f4a4ce639e41] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: OPC Reconnect..1
+Data: 
+---
+
+[2025-08-19 11:46:04] [TransactionID: 2d250ad7-43f2-4991-97be-4fc711b577ef] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: OPC Reconnect..1
+Data: 
+---
+
+[2025-08-19 11:46:58] [TransactionID: 5496eb46-c5f3-4220-b36d-ff435826c579] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: OPC Reconnect..1
+Data: 
+---
+
+[2025-08-19 11:47:12] [TransactionID: aaffeb44-884c-41c3-82f6-c04a2040ea3e] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: OPC Reconnect..1
+Data: 
+---
+
+[2025-08-19 11:48:01] [TransactionID: 9e982588-801e-49d8-b9c4-bfaf413bc60f] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: OPC Reconnect..1
+Data: 
+---
+
+[2025-08-19 11:48:14] [TransactionID: 05f06336-21d5-4158-a3bc-67a068fa395c] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: OPC Reconnect..1
+Data: 
+---
+
+[2025-08-19 11:49:30] [TransactionID: c2e05b91-b595-42e1-8566-c6722c42b45c] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: OPC Reconnect..1
+Data: 
+---
+
+[2025-08-19 11:49:46] [TransactionID: edabd7d5-be7a-4f35-9b33-cbf7cf6c84aa] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: OPC Reconnect..1
+Data: 
+---
+
+[2025-08-19 11:51:22] [TransactionID: ce1fcc93-5b39-4c53-ac68-c7e273b70677] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: OPC Reconnect..1
+Data: 
+---
+
+[2025-08-19 11:51:35] [TransactionID: fb77b2e8-0c30-4ba8-8833-3fdf1a32bb1a] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: OPC Reconnect..1
+Data: 
+---
+
+[2025-08-19 11:52:46] [TransactionID: 4d4b09c6-30ff-439f-9990-66fcf813d220] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: OPC Reconnect..1
+Data: 
+---
+
+[2025-08-19 11:53:49] [TransactionID: 0e1bcc8d-decb-4584-b668-d80786e8920d] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: OPC Reconnect..1
+Data: 
+---
+
+[2025-08-19 11:54:06] [TransactionID: 252c800d-018f-4661-91a4-12f7b1ab585f] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: OPC Reconnect..1
+Data: 
+---
+
+[2025-08-19 11:58:34] [TransactionID: edd98683-1ca0-4ce5-bd0d-ba37fdc4ff5d] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: OPC Reconnect..1
+Data: 
+---
+
+[2025-08-19 12:02:55] [TransactionID: ea5aa8f6-4531-4975-8480-c51b30a6c42d] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: OPC Reconnect..1
+Data: 
+---
+
+[2025-08-19 12:03:42] [TransactionID: 0d2cb8bd-1454-4169-88ca-9cf687a6ac13] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: OPC Reconnect..1
+Data: 
+---
+
+[2025-08-19 12:03:52] [TransactionID: 33e42451-d2f7-4de5-a5bb-7e27febc1c9f] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: OPC Reconnect..1
+Data: 
+---
+
+[2025-08-19 12:08:38] [TransactionID: 707ab7a1-396e-491b-946c-54f726f44e1e] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: OPC Reconnect..1
+Data: 
+---
+
+[2025-08-19 12:10:19] [TransactionID: 8843993d-c9f5-451d-b139-e4977d964b44] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: OPC Reconnect..1
+Data: 
+---
+
+[2025-08-19 12:16:01] [TransactionID: 905709a8-eefd-48ba-b349-30d048083137] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: OPC Reconnect..1
+Data: 
+---
+
+[2025-08-19 12:20:12] [TransactionID: c7f52317-8dfe-440c-ad73-4b9f0283954b] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: OPC Reconnect..1
+Data: 
+---
+
+[2025-08-19 12:20:45] [TransactionID: 4b3e3970-6890-4d93-8d23-5acee1571af2] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: OPC Reconnect..1
+Data: 
+---
+
+[2025-08-19 12:28:03] [TransactionID: f5b0e876-2aaf-4a59-9f93-bf8cf0056b2a] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: OPC Reconnect..1
+Data: 
+---
+
+[2025-08-19 12:30:02] [TransactionID: bbe69612-c3a3-4ece-82c8-d6b9842238c9] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: OPC Reconnect..1
+Data: 
+---
+
+[2025-08-19 12:37:37] [TransactionID: 93e3c7e1-483f-435f-9cde-bda353bf03ff] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: OPC Reconnect..1
+Data: 
+---
+
+[2025-08-19 12:39:11] [TransactionID: bcc4d34d-1623-4ce0-9623-0fcbdbece171] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: OPC Reconnect..1
+Data: 
+---
+

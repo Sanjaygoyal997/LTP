@@ -1,0 +1,80 @@
+[2026-06-10 11:38:47] [TransactionID: 00b72e24-4797-49ba-9e72-c84072dfed9d] [EquipmentId: BodyPly] [LogType: Event] [LogCode: 200] [FolderName: BodyPlyASPXService]
+Message: OPC Reconnect..1
+Data: 
+---
+
+[2026-06-10 11:39:14] [TransactionID: ] [EquipmentId: BodyPly] [LogType: Event] [LogCode: 200] [FolderName: BodyPlyASPXService]
+Message: Printer Not Configure!
+Data: 
+---
+
+[2026-06-10 11:39:23] [TransactionID: ] [EquipmentId: BodyPly] [LogType: Event] [LogCode: 200] [FolderName: BodyPlyASPXService]
+Message: Error in WidthActual conversion System.FormatException: Input string was not in a correct format.
+   at System.Number.StringToNumber(String str, NumberStyles options, NumberBuffer& number, NumberFormatInfo info, Boolean parseDecimal)
+   at System.Number.ParseDecimal(String value, NumberStyles options, NumberFormatInfo numfmt)
+   at System.Convert.ToDecimal(String value)
+   at BodyPlyWebService.Services.BodyPlyASPXService.UpdateHMIService(String machineName, Int32 equipment_id, String transaction_Id) in C:\Smart\LTP\BodyPly1\bodyplywebservice\BodyPlyWebService\Services\BodyPlyASPXService.cs:line 453
+Data: 
+---
+
+[2026-06-10 12:02:08] [TransactionID: 91885993-acd9-4716-bfd6-6800a2b34764] [EquipmentId: BodyPly] [LogType: Event] [LogCode: 200] [FolderName: BodyPlyASPXService]
+Message: OPC Reconnect..1
+Data: 
+---
+
+[2026-06-10 12:02:09] [TransactionID: ] [EquipmentId: BodyPly] [LogType: Event] [LogCode: 200] [FolderName: BodyPlyASPXService]
+Message: Printer Not Configure!
+Data: 
+---
+
+[2026-06-10 12:02:09] [TransactionID: ] [EquipmentId: BodyPly] [LogType: Event] [LogCode: 200] [FolderName: BodyPlyASPXService]
+Message: Error in WidthActual conversion System.FormatException: Input string was not in a correct format.
+   at System.Number.StringToNumber(String str, NumberStyles options, NumberBuffer& number, NumberFormatInfo info, Boolean parseDecimal)
+   at System.Number.ParseDecimal(String value, NumberStyles options, NumberFormatInfo numfmt)
+   at System.Convert.ToDecimal(String value)
+   at BodyPlyWebService.Services.BodyPlyASPXService.UpdateHMIService(String machineName, Int32 equipment_id, String transaction_Id) in C:\Smart\LTP\BodyPly1\bodyplywebservice\BodyPlyWebService\Services\BodyPlyASPXService.cs:line 453
+Data: 
+---
+
+[2026-06-10 12:02:30] [TransactionID: ] [EquipmentId: BodyPly] [LogType: Event] [LogCode: 200] [FolderName: BodyPlyASPXService]
+Message: Printer Not Configure!
+Data: 
+---
+
+[2026-06-10 12:02:31] [TransactionID: ] [EquipmentId: BodyPly] [LogType: Event] [LogCode: 200] [FolderName: BodyPlyASPXService]
+Message: Error in WidthActual conversion System.FormatException: Input string was not in a correct format.
+   at System.Number.StringToNumber(String str, NumberStyles options, NumberBuffer& number, NumberFormatInfo info, Boolean parseDecimal)
+   at System.Number.ParseDecimal(String value, NumberStyles options, NumberFormatInfo numfmt)
+   at System.Convert.ToDecimal(String value)
+   at BodyPlyWebService.Services.BodyPlyASPXService.UpdateHMIService(String machineName, Int32 equipment_id, String transaction_Id) in C:\Smart\LTP\BodyPly1\bodyplywebservice\BodyPlyWebService\Services\BodyPlyASPXService.cs:line 453
+Data: 
+---
+
+[2026-06-10 12:03:49] [TransactionID: ] [EquipmentId: BodyPly] [LogType: Event] [LogCode: 200] [FolderName: BodyPlyASPXService]
+Message: Printer Not Configure!
+Data: 
+---
+
+[2026-06-10 12:03:50] [TransactionID: ] [EquipmentId: BodyPly] [LogType: Event] [LogCode: 200] [FolderName: BodyPlyASPXService]
+Message: Error in WidthActual conversion System.FormatException: Input string was not in a correct format.
+   at System.Number.StringToNumber(String str, NumberStyles options, NumberBuffer& number, NumberFormatInfo info, Boolean parseDecimal)
+   at System.Number.ParseDecimal(String value, NumberStyles options, NumberFormatInfo numfmt)
+   at System.Convert.ToDecimal(String value)
+   at BodyPlyWebService.Services.BodyPlyASPXService.UpdateHMIService(String machineName, Int32 equipment_id, String transaction_Id) in C:\Smart\LTP\BodyPly1\bodyplywebservice\BodyPlyWebService\Services\BodyPlyASPXService.cs:line 453
+Data: 
+---
+
+[2026-06-10 12:05:57] [TransactionID: ] [EquipmentId: BodyPly] [LogType: Event] [LogCode: 200] [FolderName: BodyPlyASPXService]
+Message: Printer Not Configure!
+Data: 
+---
+
+[2026-06-10 12:05:57] [TransactionID: ] [EquipmentId: BodyPly] [LogType: Event] [LogCode: 200] [FolderName: BodyPlyASPXService]
+Message: Error in WidthActual conversion System.FormatException: Input string was not in a correct format.
+   at System.Number.StringToNumber(String str, NumberStyles options, NumberBuffer& number, NumberFormatInfo info, Boolean parseDecimal)
+   at System.Number.ParseDecimal(String value, NumberStyles options, NumberFormatInfo numfmt)
+   at System.Convert.ToDecimal(String value)
+   at BodyPlyWebService.Services.BodyPlyASPXService.UpdateHMIService(String machineName, Int32 equipment_id, String transaction_Id) in C:\Smart\LTP\BodyPly1\bodyplywebservice\BodyPlyWebService\Services\BodyPlyASPXService.cs:line 453
+Data: 
+---
+

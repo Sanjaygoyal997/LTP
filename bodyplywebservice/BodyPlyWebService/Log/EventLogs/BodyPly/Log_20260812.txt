@@ -1,0 +1,10 @@
+[2026-08-12 12:27:23] [TransactionID: 01684d7e-174d-4531-aa81-33b44283b164] [EquipmentId: BodyPly] [LogType: Event] [LogCode: 200] [FolderName: BodyPlyASPXService]
+Message: OPC Reconnect..1
+Data: 
+---
+
+[2026-08-12 12:29:14] [TransactionID: 0c110f1b-828e-4e33-b1a3-b4a96b37c69c] [EquipmentId: BodyPly] [LogType: Event] [LogCode: 200] [FolderName: BodyPlyASPXService]
+Message: OPC Reconnect..1
+Data: 
+---
+

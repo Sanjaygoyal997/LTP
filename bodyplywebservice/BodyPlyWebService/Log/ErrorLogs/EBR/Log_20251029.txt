@@ -1,0 +1,5 @@
+[2025-10-29 10:06:49] [TransactionID: 688eb98d-09a3-4745-83ed-739dc4e0589f] [EquipmentId: EBR] [LogType: Error] [LogCode: 500] [FolderName: EBRASPXService]
+Message: Exception: Index was outside the bounds of the array., Inner Exception: 
+Data: 
+---
+

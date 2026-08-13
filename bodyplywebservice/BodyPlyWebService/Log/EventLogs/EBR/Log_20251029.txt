@@ -1,0 +1,45 @@
+[2025-10-29 06:29:39] [TransactionID: 67535d1b-f377-4fb1-8e34-1aa3b8acbe60] [EquipmentId: EBR] [LogType: Event] [LogCode: 200] [FolderName: EBRASPXService]
+Message: OPC Reconnect..1
+Data: 
+---
+
+[2025-10-29 06:31:58] [TransactionID: 18932a59-214a-4d0d-a942-188058389755] [EquipmentId: EBR] [LogType: Event] [LogCode: 200] [FolderName: EBRASPXService]
+Message: OPC Reconnect..1
+Data: 
+---
+
+[2025-10-29 06:46:26] [TransactionID: 5f23dc2e-f795-4b5b-b726-60c1b137199b] [EquipmentId: EBR] [LogType: Event] [LogCode: 200] [FolderName: EBRASPXService]
+Message: OPC Reconnect..1
+Data: 
+---
+
+[2025-10-29 06:47:55] [TransactionID: 4d64c4fc-19a8-4ce2-9fda-976ec0b3bffb] [EquipmentId: EBR] [LogType: Event] [LogCode: 200] [FolderName: EBRASPXService]
+Message: OPC Reconnect..1
+Data: 
+---
+
+[2025-10-29 06:47:55] [TransactionID: 4d64c4fc-19a8-4ce2-9fda-976ec0b3bffb] [EquipmentId: EBR] [LogType: Event] [LogCode: 200] [FolderName: EBRASPXService]
+Message: Recipe Load Using Button click Move :CPJ 120
+Data: 
+---
+
+[2025-10-29 10:06:40] [TransactionID: 688eb98d-09a3-4745-83ed-739dc4e0589f] [EquipmentId: EBR] [LogType: Event] [LogCode: 200] [FolderName: EBRASPXService]
+Message: OPC Reconnect..1
+Data: 
+---
+
+[2025-10-29 12:27:28] [TransactionID: 52c93742-cb2f-44fb-b426-f60a455e87bc] [EquipmentId: EBR] [LogType: Event] [LogCode: 200] [FolderName: EBRASPXService]
+Message: 29-10-2025 17:57:27 Scan Data=>   QrCode : {   "lot_no": "4R07092025102116",   "recipe_code": "CPJ 120",   "batch_number": 1,   "qty": 200,   "itemcode": "CPJ 120",   "domfg": "2025-07-04T10:50:04",   "shift": "A",   "revNO": "1" } Feeder: 1 numberofscan:  itemnumber:  isManual: 0 
+Data: 
+---
+
+[2025-10-29 12:27:34] [TransactionID: 52c93742-cb2f-44fb-b426-f60a455e87bc] [EquipmentId: EBR] [LogType: Event] [LogCode: 200] [FolderName: EBRASPXService]
+Message: OPC Reconnect..1
+Data: 
+---
+
+[2025-10-29 12:27:34] [TransactionID: 52c93742-cb2f-44fb-b426-f60a455e87bc] [EquipmentId: EBR] [LogType: Event] [LogCode: 200] [FolderName: EBRASPXService]
+Message: compound type
+Data: 
+---
+

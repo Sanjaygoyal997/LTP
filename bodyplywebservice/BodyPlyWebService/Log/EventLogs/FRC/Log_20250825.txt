@@ -1,0 +1,120 @@
+[2025-08-25 05:35:41] [TransactionID: 3ca8ffa0-0f57-4486-96ab-a7c2944a4cae] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: OPC Reconnect..1
+Data: 
+---
+
+[2025-08-25 05:35:45] [TransactionID: 3ca8ffa0-0f57-4486-96ab-a7c2944a4cae] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: CPJ 120
+Data: 
+---
+
+[2025-08-25 05:41:40] [TransactionID: 34a4fddf-4e67-43e4-a9b9-831f3fb5a334] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: OPC Reconnect..1
+Data: 
+---
+
+[2025-08-25 05:43:54] [TransactionID: 472da45a-1f6e-4a2a-b301-16b670d277c8] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: OPC Reconnect..1
+Data: 
+---
+
+[2025-08-25 05:43:54] [TransactionID: 472da45a-1f6e-4a2a-b301-16b670d277c8] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: CPJ 120
+Data: 
+---
+
+[2025-08-25 05:48:50] [TransactionID: 46f9ac89-91d0-48c6-b6f2-9ca9cbe7fc83] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: OPC Reconnect..1
+Data: 
+---
+
+[2025-08-25 05:52:29] [TransactionID: e2551989-8d01-485b-b559-c606a3f5b258] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: OPC Reconnect..1
+Data: 
+---
+
+[2025-08-25 05:52:29] [TransactionID: e2551989-8d01-485b-b559-c606a3f5b258] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: CPJ 120
+Data: 
+---
+
+[2025-08-25 07:06:22] [TransactionID: 1b8d0501-5756-4aae-9abe-62b17ef02a83] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: OPC Reconnect..1
+Data: 
+---
+
+[2025-08-25 07:06:22] [TransactionID: 1b8d0501-5756-4aae-9abe-62b17ef02a83] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: CPJ 120
+Data: 
+---
+
+[2025-08-25 09:49:28] [TransactionID: c312a23b-f245-4898-a96e-05edfcd16b99] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: OPC Reconnect..1
+Data: 
+---
+
+[2025-08-25 09:49:41] [TransactionID: c312a23b-f245-4898-a96e-05edfcd16b99] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: OPC Reconnect..1
+Data: 
+---
+
+[2025-08-25 09:49:47] [TransactionID: c312a23b-f245-4898-a96e-05edfcd16b99] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: RecipeChange status true
+Data: 
+---
+
+[2025-08-25 09:49:52] [TransactionID: c312a23b-f245-4898-a96e-05edfcd16b99] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: RecipeChange status Complete
+Data: 
+---
+
+[2025-08-25 09:50:10] [TransactionID: c312a23b-f245-4898-a96e-05edfcd16b99] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: OPC Reconnect..1
+Data: 
+---
+
+[2025-08-25 09:50:10] [TransactionID: c312a23b-f245-4898-a96e-05edfcd16b99] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: RecipeChange status true
+Data: 
+---
+
+[2025-08-25 09:50:10] [TransactionID: c312a23b-f245-4898-a96e-05edfcd16b99] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: RecipeChange status Complete
+Data: 
+---
+
+[2025-08-25 09:59:14] [TransactionID: 814d3c0e-bda6-4b5d-8d81-bc12175641b2] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: OPC Reconnect..1
+Data: 
+---
+
+[2025-08-25 10:03:00] [TransactionID: f23c84ae-d37e-418f-b18b-93d2d389c49a] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: OPC Reconnect..1
+Data: 
+---
+
+[2025-08-25 10:03:04] [TransactionID: f23c84ae-d37e-418f-b18b-93d2d389c49a] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: Recipe Load Using Button click Move :CPJ 120
+Data: 
+---
+
+[2025-08-25 12:48:47] [TransactionID: 205f1d59-f843-4d4a-84f3-89f2344046aa] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: Print Dublicate Tag of production Id: 20250812182728
+
+Data: 
+---
+
+[2025-08-25 12:49:23] [TransactionID: 205f1d59-f843-4d4a-84f3-89f2344046aa] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: {lot_No:'20250812182728',itemCode:'',qty:'300',ExpireDate:'',DOM:'25-Aug-2025 18:27:28',shift:'B',MHE:'String 13' ,Width:'0.0'}
+Data: 
+---
+
+[2025-08-25 12:49:32] [TransactionID: 205f1d59-f843-4d4a-84f3-89f2344046aa] [EquipmentId: FRC] [LogType: Event] [LogCode: 200] [FolderName: FourRollCalenderASPXService]
+Message: PRNString: ^XA
+^MCY^PMN
+^PW590
+~JSN^MMT
+^JZY
+^LH0,0^LRN
+^XZ
+~DGR:SSGFX000.GRF,48756,68,:Z64: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

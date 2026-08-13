@@ -1,0 +1,2 @@
+OPCServer_Connected	03-09-2025 17:51:15	OPC Start DATA	OPCServerGroup	-
+OPCServer_Connected	03-09-2025 17:51:54	OPC Start DATA	OPCServerGroup	-

@@ -1,0 +1,12 @@
+27-07-2026 18:42:50	QrCode:{lot_No:'MSL012607271802230272601',itemCode:'U7Z30',qty:'300',ExpireDate:'7/29/2026 6:02:23 PM',DOM:'27/Jul/2026 18:02:23',shift:'B',MHE:'' ,Width:''} Feeder:1 numberofscan:1 itemnumber:1 isManual:0 UserName:admin MachineName:Bodyply02
+27-07-2026 18:43:07	ScanningQrcodeServicecompound type
+27-07-2026 18:43:19	bodyply.validaterecipebodyply:{"itemName":"U7Z30","recipe":"B10C","productionId":"MSL012607271802230272601"}
+27-07-2026 18:43:27	ScanningQrcodeServiceValidateRecipe complete verify
+27-07-2026 18:43:29	dtbom available  10 
+27-07-2026 18:43:35	ScanningQrcodeServiceFeeder 1 Scan 
+27-07-2026 18:49:02	QrCode:{lot_No:'MSL012607271802230272601',itemCode:'U7Z30',qty:'300',ExpireDate:'7/29/2026 6:02:23 PM',DOM:'27/Jul/2026 18:02:23',shift:'B',MHE:'' ,Width:''} Feeder:1 numberofscan:1 itemnumber:1 isManual:0 UserName:admin MachineName:Bodyply01
+27-07-2026 18:49:19	ScanningQrcodeServicecompound type
+27-07-2026 18:49:24	bodyply.validaterecipebodyply:{"itemName":"U7Z30","recipe":"B10C","productionId":"MSL012607271802230272601"}
+27-07-2026 18:49:33	ScanningQrcodeServiceValidateRecipe complete verify
+27-07-2026 18:49:34	dtbom available  10 
+27-07-2026 18:49:37	ScanningQrcodeServiceFeeder 1 Scan 

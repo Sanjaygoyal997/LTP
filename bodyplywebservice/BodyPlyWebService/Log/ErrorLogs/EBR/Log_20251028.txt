@@ -1,0 +1,25 @@
+[2025-10-28 11:41:34] [TransactionID: 1a6a8a7a-50d8-4242-ba52-b7a93f883953] [EquipmentId: EBR] [LogType: Error] [LogCode: 500] [FolderName: EBRASPXService]
+Message: Exception: Column 'ConsumeMaterialName' does not belong to table ., Inner Exception: 
+Data: 
+---
+
+[2025-10-28 12:38:28] [TransactionID: 719ee7c6-70c0-44b4-a64e-2ad6e730b7b5] [EquipmentId: EBR] [LogType: Error] [LogCode: 500] [FolderName: EBRASPXService]
+Message: Exception: String was not recognized as a valid Boolean., Inner Exception: 
+Data: 
+---
+
+[2025-10-28 12:39:12] [TransactionID: a8f06048-3d3e-423e-96d6-01f4d57550b5] [EquipmentId: EBR] [LogType: Error] [LogCode: 500] [FolderName: EBRASPXService]
+Message: Exception: String was not recognized as a valid Boolean., Inner Exception: 
+Data: 
+---
+
+[2025-10-28 12:39:24] [TransactionID: 27c00f9c-ef0c-46d7-bb38-5fbbe246025d] [EquipmentId: EBR] [LogType: Error] [LogCode: 500] [FolderName: EBRASPXService]
+Message: Exception: String was not recognized as a valid Boolean., Inner Exception: 
+Data: 
+---
+
+[2025-10-28 12:40:03] [TransactionID: 9c159594-232f-4359-a9aa-40cae0432bd5] [EquipmentId: EBR] [LogType: Error] [LogCode: 500] [FolderName: EBRASPXService]
+Message: Exception: String was not recognized as a valid Boolean., Inner Exception: 
+Data: 
+---
+

@@ -1,0 +1,5 @@
+[2025-08-20 07:21:43] [TransactionID: 0a7b28cf-4bce-47b0-b2d5-c4be2d90488d] [EquipmentId: DBOperation] [LogType: Error] [LogCode: 500] [FolderName: LoggerRepository_AddlogInfo]
+Message: Error in logging into Database or text fileObject reference not set to an instance of an object.
+Data: {"Schema":null,"TransactionID":"0a7b28cf-4bce-47b0-b2d5-c4be2d90488d","EquipmentId":"DBOperation","LogType":"Error","LogCode":"500","Message":"Error in logging into Database or text fileObject reference not set to an instance of an object.","Data":"System.NullReferenceException: Object reference not set to an instance of an object.\r\n   at FourRollCalenderWebService.Repositories.LoggerRepository.AddLogsData(LogInfo logInfo) in D:\\ASP Code\\JK\\LTP\\GitLab\\FourRollCalenderWebService\\FourRollCalenderWebService\\Repositories\\LoggerRepository.cs:line 34","MethodInfo":"OprationWithDB","FolderName":"LoggerRepository_AddlogInfo","DateTime":"20-08-2025 12:51:01"}
+---
+

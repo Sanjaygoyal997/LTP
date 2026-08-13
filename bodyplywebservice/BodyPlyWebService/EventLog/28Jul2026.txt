@@ -1,0 +1,33 @@
+28-07-2026 13:20:57	QrCode:{lot_No:'MSL022607271013561394601',itemCode:'U4Z60',qty:'300',ExpireDate:'7/29/2026 10:13:56 AM',DOM:'27/Jul/2026 10:13:56',shift:'A',MHE:'' ,Width:'60.0'} Feeder:2 numberofscan:1 itemnumber:1 isManual:0 UserName:admin MachineName:Bodyply02
+28-07-2026 13:21:33	ScanningQrcodeServicecompound type
+28-07-2026 13:21:38	bodyply.validaterecipebodyply:{"itemName":"U4Z60","recipe":"B10C","productionId":"MSL022607271013561394601"}
+28-07-2026 13:28:43	ScanningQrcodeService result: [{"status":"fail","message":"Scanned material does not belong to the selected recipe."}]
+28-07-2026 13:29:28	Error OprationWithDB :Npgsql.NpgsqlException (0x80004005): Exception while writing to stream ---> System.IO.IOException: Unable to write data to the transport connection: An existing connection was forcibly closed by the remote host. ---> System.Net.Sockets.SocketException: An existing connection was forcibly closed by the remote host
+   at System.Net.Sockets.Socket.Send(Byte[] buffer, Int32 offset, Int32 size, SocketFlags socketFlags)
+   at System.Net.Sockets.NetworkStream.Write(Byte[] buffer, Int32 offset, Int32 size)
+   --- End of inner exception stack trace ---
+   at System.Net.Sockets.NetworkStream.Write(Byte[] buffer, Int32 offset, Int32 size)
+   at Npgsql.Internal.NpgsqlWriteBuffer.<Flush>d__38.MoveNext()
+   at Npgsql.Internal.NpgsqlWriteBuffer.<Flush>d__38.MoveNext()
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.ValidateEnd(Task task)
+   at Npgsql.NpgsqlCommand.<<Write>g__WriteExecute|101_0>d.MoveNext()
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.ValidateEnd(Task task)
+   at Npgsql.NpgsqlCommand.<ExecuteReader>d__120.MoveNext()
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at Npgsql.NpgsqlCommand.<ExecuteReader>d__120.MoveNext()
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at Npgsql.NpgsqlCommand.<ExecuteNonQuery>d__108.MoveNext()
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at Npgsql.NpgsqlCommand.ExecuteNonQuery()
+   at BodyPlyWebService.App_Data.DBOperations.OprationWithDB(String commandType, String QueryOrProcedureName, String parametervalue) in C:\Smart\LTP\BodyPly1\bodyplywebservice\BodyPlyWebService\App_Data\DBOperations.cs:line 121

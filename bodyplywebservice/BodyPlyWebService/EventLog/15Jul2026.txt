@@ -1,0 +1,170 @@
+15-07-2026 18:26:50	Error OprationWithDB :Npgsql.PostgresException (0x80004005): 42883: operator does not exist: integer = text
+   at Npgsql.Internal.NpgsqlConnector.<ReadMessageLong>d__231.MoveNext()
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Threading.Tasks.ValueTask`1.get_Result()
+   at Npgsql.NpgsqlDataReader.<NextResult>d__52.MoveNext()
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at Npgsql.NpgsqlDataReader.<NextResult>d__52.MoveNext()
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at Npgsql.NpgsqlDataReader.NextResult()
+   at Npgsql.NpgsqlCommand.<ExecuteReader>d__120.MoveNext()
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at Npgsql.NpgsqlCommand.<ExecuteReader>d__120.MoveNext()
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at Npgsql.NpgsqlCommand.<ExecuteNonQuery>d__108.MoveNext()
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at Npgsql.NpgsqlCommand.ExecuteNonQuery()
+   at BodyPlyWebService.App_Data.DBOperations.OprationWithDB(String commandType, String QueryOrProcedureName, String parametervalue) in C:\Smart\LTP\BodyPly1\bodyplywebservice\BodyPlyWebService\App_Data\DBOperations.cs:line 121
+  Exception data:
+    Severity: ERROR
+    SqlState: 42883
+    MessageText: operator does not exist: integer = text
+    Hint: No operator matches the given name and argument types. You might need to add explicit type casts.
+    InternalPosition: 112
+    InternalQuery: SELECT m.user_id , m.material_id                               FROM bodyply.i_material m
+	WHERE m.equipment_id = _equipment_id
+    AND m.live_quantity > 0
+    AND m.sequence_no > 0
+	LIMIT 1
+    Where: PL/pgSQL function bodyply.get_total_bodyply_byfeederscan(text) line 16 at SQL statement
+    File: parse_oper.c
+    Line: 644
+    Routine: op_error
+15-07-2026 18:26:51	Error OprationWithDB :Npgsql.PostgresException (0x80004005): 23502: null value in column "data" of relation "logs" violates not-null constraint
+
+DETAIL: Detail redacted as it may contain sensitive data. Specify 'Include Error Detail' in the connection string to include this information.
+   at Npgsql.Internal.NpgsqlConnector.<ReadMessageLong>d__231.MoveNext()
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Threading.Tasks.ValueTask`1.get_Result()
+   at Npgsql.NpgsqlDataReader.<NextResult>d__52.MoveNext()
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at Npgsql.NpgsqlDataReader.<NextResult>d__52.MoveNext()
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at Npgsql.NpgsqlDataReader.NextResult()
+   at Npgsql.NpgsqlCommand.<ExecuteReader>d__120.MoveNext()
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at Npgsql.NpgsqlCommand.<ExecuteReader>d__120.MoveNext()
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at Npgsql.NpgsqlCommand.<ExecuteNonQuery>d__108.MoveNext()
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at Npgsql.NpgsqlCommand.ExecuteNonQuery()
+   at BodyPlyWebService.App_Data.DBOperations.OprationWithDB(String commandType, String QueryOrProcedureName, String parametervalue) in C:\Smart\LTP\BodyPly1\bodyplywebservice\BodyPlyWebService\App_Data\DBOperations.cs:line 121
+  Exception data:
+    Severity: ERROR
+    SqlState: 23502
+    MessageText: null value in column "data" of relation "logs" violates not-null constraint
+    Detail: Detail redacted as it may contain sensitive data. Specify 'Include Error Detail' in the connection string to include this information.
+    Where: SQL statement "INSERT INTO bodyply.logs(equipment_id, log_type, code, message, data, source_app, dtandtime, transaction_id)
+    VALUES (equipment_id_val, log_type_val, code_val, message_val, data_val, source_app_val, dtandtime_val, transaction_id_val)"
+PL/pgSQL function bodyply.save_log(text) line 14 at SQL statement
+    SchemaName: bodyply
+    TableName: logs
+    ColumnName: data
+    File: execMain.c
+    Line: 2028
+    Routine: ExecConstraints
+15-07-2026 18:30:19	Error OprationWithDB :Npgsql.PostgresException (0x80004005): 42883: operator does not exist: integer = text
+   at Npgsql.Internal.NpgsqlConnector.<ReadMessageLong>d__231.MoveNext()
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Threading.Tasks.ValueTask`1.get_Result()
+   at Npgsql.NpgsqlDataReader.<NextResult>d__52.MoveNext()
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at Npgsql.NpgsqlDataReader.<NextResult>d__52.MoveNext()
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at Npgsql.NpgsqlDataReader.NextResult()
+   at Npgsql.NpgsqlCommand.<ExecuteReader>d__120.MoveNext()
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at Npgsql.NpgsqlCommand.<ExecuteReader>d__120.MoveNext()
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at Npgsql.NpgsqlCommand.<ExecuteNonQuery>d__108.MoveNext()
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at Npgsql.NpgsqlCommand.ExecuteNonQuery()
+   at BodyPlyWebService.App_Data.DBOperations.OprationWithDB(String commandType, String QueryOrProcedureName, String parametervalue) in C:\Smart\LTP\BodyPly1\bodyplywebservice\BodyPlyWebService\App_Data\DBOperations.cs:line 121
+  Exception data:
+    Severity: ERROR
+    SqlState: 42883
+    MessageText: operator does not exist: integer = text
+    Hint: No operator matches the given name and argument types. You might need to add explicit type casts.
+    InternalPosition: 112
+    InternalQuery: SELECT m.user_id , m.material_id                               FROM bodyply.i_material m
+	WHERE m.equipment_id = _equipment_id
+    AND m.live_quantity > 0
+    AND m.sequence_no > 0
+	LIMIT 1
+    Where: PL/pgSQL function bodyply.get_total_bodyply_byfeederscan(text) line 16 at SQL statement
+    File: parse_oper.c
+    Line: 644
+    Routine: op_error
+15-07-2026 18:30:19	Error OprationWithDB :Npgsql.PostgresException (0x80004005): 23502: null value in column "data" of relation "logs" violates not-null constraint
+
+DETAIL: Detail redacted as it may contain sensitive data. Specify 'Include Error Detail' in the connection string to include this information.
+   at Npgsql.Internal.NpgsqlConnector.<ReadMessageLong>d__231.MoveNext()
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Threading.Tasks.ValueTask`1.get_Result()
+   at Npgsql.NpgsqlDataReader.<NextResult>d__52.MoveNext()
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at Npgsql.NpgsqlDataReader.<NextResult>d__52.MoveNext()
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at Npgsql.NpgsqlDataReader.NextResult()
+   at Npgsql.NpgsqlCommand.<ExecuteReader>d__120.MoveNext()
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at Npgsql.NpgsqlCommand.<ExecuteReader>d__120.MoveNext()
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at Npgsql.NpgsqlCommand.<ExecuteNonQuery>d__108.MoveNext()
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at Npgsql.NpgsqlCommand.ExecuteNonQuery()
+   at BodyPlyWebService.App_Data.DBOperations.OprationWithDB(String commandType, String QueryOrProcedureName, String parametervalue) in C:\Smart\LTP\BodyPly1\bodyplywebservice\BodyPlyWebService\App_Data\DBOperations.cs:line 121
+  Exception data:
+    Severity: ERROR
+    SqlState: 23502
+    MessageText: null value in column "data" of relation "logs" violates not-null constraint
+    Detail: Detail redacted as it may contain sensitive data. Specify 'Include Error Detail' in the connection string to include this information.
+    Where: SQL statement "INSERT INTO bodyply.logs(equipment_id, log_type, code, message, data, source_app, dtandtime, transaction_id)
+    VALUES (equipment_id_val, log_type_val, code_val, message_val, data_val, source_app_val, dtandtime_val, transaction_id_val)"
+PL/pgSQL function bodyply.save_log(text) line 14 at SQL statement
+    SchemaName: bodyply
+    TableName: logs
+    ColumnName: data
+    File: execMain.c
+    Line: 2028
+    Routine: ExecConstraints

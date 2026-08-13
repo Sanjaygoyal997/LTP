@@ -1,0 +1,49 @@
+[2026-07-02 09:19:17] [TransactionID: 13f25a1d-a6aa-460d-ac7a-5b4de30fa19f] [EquipmentId: DBOperation] [LogType: Error] [LogCode: 500] [FolderName: DBOperations]
+Message: Exception: 23502: null value in column "data" of relation "logs" violates not-null constraint
+
+DETAIL: Detail redacted as it may contain sensitive data. Specify 'Include Error Detail' in the connection string to include this information., Inner Exception: 
+Data: NA
+---
+
+[2026-07-02 09:19:38] [TransactionID: 7c966c03-374b-45a4-b825-c2f650250c52] [EquipmentId: DBOperation] [LogType: Error] [LogCode: 500] [FolderName: DBOperations]
+Message: Exception: 23502: null value in column "data" of relation "logs" violates not-null constraint
+
+DETAIL: Detail redacted as it may contain sensitive data. Specify 'Include Error Detail' in the connection string to include this information., Inner Exception: 
+Data: NA
+---
+
+[2026-07-02 09:19:59] [TransactionID: 7b9d47c5-024e-4dd3-ab4e-8e354cda83d7] [EquipmentId: DBOperation] [LogType: Error] [LogCode: 500] [FolderName: DBOperations]
+Message: Exception: 23502: null value in column "data" of relation "logs" violates not-null constraint
+
+DETAIL: Detail redacted as it may contain sensitive data. Specify 'Include Error Detail' in the connection string to include this information., Inner Exception: 
+Data: NA
+---
+
+[2026-07-02 09:20:27] [TransactionID: 56507ff1-19fe-485a-bc6b-4f9bb44ce492] [EquipmentId: DBOperation] [LogType: Error] [LogCode: 500] [FolderName: DBOperations]
+Message: Exception: 42883: procedure bodyply.getbodyplyprndublicatetag(_json => text, result => unknown) does not exist
+
+POSITION: 6, Inner Exception: 
+Data: NA
+---
+
+[2026-07-02 09:21:20] [TransactionID: 56507ff1-19fe-485a-bc6b-4f9bb44ce492] [EquipmentId: DBOperation] [LogType: Error] [LogCode: 500] [FolderName: DBOperations]
+Message: Exception: 23502: null value in column "data" of relation "logs" violates not-null constraint
+
+DETAIL: Detail redacted as it may contain sensitive data. Specify 'Include Error Detail' in the connection string to include this information., Inner Exception: 
+Data: NA
+---
+
+[2026-07-02 09:21:27] [TransactionID: 56507ff1-19fe-485a-bc6b-4f9bb44ce492] [EquipmentId: DBOperation] [LogType: Error] [LogCode: 500] [FolderName: DBOperations]
+Message: Exception: 42883: procedure bodyply.getbodyplyprndublicatetag(_json => text, result => unknown) does not exist
+
+POSITION: 6, Inner Exception: 
+Data: NA
+---
+
+[2026-07-02 09:23:25] [TransactionID: 56507ff1-19fe-485a-bc6b-4f9bb44ce492] [EquipmentId: DBOperation] [LogType: Error] [LogCode: 500] [FolderName: DBOperations]
+Message: Exception: 23502: null value in column "data" of relation "logs" violates not-null constraint
+
+DETAIL: Detail redacted as it may contain sensitive data. Specify 'Include Error Detail' in the connection string to include this information., Inner Exception: 
+Data: NA
+---
+

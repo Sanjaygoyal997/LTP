@@ -1,0 +1,5 @@
+OPCServer_Connected	05-09-2025 16:22:44	OPC Start DATA	OPCServerGroup	-
+OPCServer_Connected	05-09-2025 17:06:27	OPC Start DATA	OPCServerGroup	-
+OPCServer_Connected	05-09-2025 17:17:04	OPC Start DATA	OPCServerGroup	-
+OPCServer_Connected	05-09-2025 18:11:35	OPC Start DATA	OPCServerGroup	-
+OPCServer_Connected	05-09-2025 18:14:22	OPC Start DATA	OPCServerGroup	-

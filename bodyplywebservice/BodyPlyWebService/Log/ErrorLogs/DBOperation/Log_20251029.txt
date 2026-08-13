@@ -1,0 +1,7 @@
+[2025-10-29 10:06:49] [TransactionID: 46a6292f-447b-4904-844b-a90ef0dacd61] [EquipmentId: DBOperation] [LogType: Error] [LogCode: 500] [FolderName: DBOperations]
+Message: Exception: 23502: null value in column "data" of relation "logs" violates not-null constraint
+
+DETAIL: Detail redacted as it may contain sensitive data. Specify 'Include Error Detail' in the connection string to include this information., Inner Exception: 
+Data: NA
+---
+

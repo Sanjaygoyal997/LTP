@@ -1,0 +1,119 @@
+13-07-2026 16:37:14	QrCode:{lot_No:'4R-S-07708_2026',itemCode:'CWBP60',qty:'300',ExpireDate:'7/15/2026 5:50:42 AM',DOM:'11/Jul/2026 05:50:42',shift:'C',MHE:'CSS0123' ,Width:'1060'} Feeder:1 numberofscan: itemnumber:1 isManual:0 UserName:1
+13-07-2026 16:37:35	ScanningQrcodeServicecompound type
+13-07-2026 16:37:49	ScanningQrcodeServiceValidateRecipe complete verify
+13-07-2026 16:37:51	dtbom available  10 
+13-07-2026 16:37:54	ScanningQrcodeServiceFeeder 1 Scan 
+13-07-2026 16:39:14	QrCode:{lot_No:'4R-S-07708_2026',itemCode:'CWBP60',qty:'300',ExpireDate:'7/15/2026 5:50:42 AM',DOM:'11/Jul/2026 05:50:42',shift:'C',MHE:'CSS0123' ,Width:'1060'} Feeder:1 numberofscan: itemnumber:1 isManual:0 UserName:1
+13-07-2026 16:39:25	ScanningQrcodeServicecompound type
+13-07-2026 16:46:36	ScanningQrcodeServiceValidateRecipe complete verify
+13-07-2026 16:49:24	dtbom available  1 
+13-07-2026 16:49:26	ScanningQrcodeServiceFeeder 1 Scan 
+13-07-2026 16:49:35	QrCode:{lot_No:'4R-S-07708_2026',itemCode:'CWBP60',qty:'300',ExpireDate:'7/15/2026 5:50:42 AM',DOM:'11/Jul/2026 05:50:42',shift:'C',MHE:'CSS0123' ,Width:'1060'} Feeder:1 numberofscan: itemnumber:1 isManual:0 UserName:1
+13-07-2026 16:49:35	ScanningQrcodeServicecompound type
+13-07-2026 16:49:39	ScanningQrcodeServiceValidateRecipe complete verify
+13-07-2026 16:53:13	dtbom available  10 
+13-07-2026 16:53:32	ScanningQrcodeServiceFeeder 1 Scan 
+13-07-2026 16:53:57	QrCode:{lot_No:'4R-S-07708_2026',itemCode:'CWBP60',qty:'300',ExpireDate:'7/15/2026 5:50:42 AM',DOM:'11/Jul/2026 05:50:42',shift:'C',MHE:'CSS0123' ,Width:'1060'} Feeder:1 numberofscan: itemnumber:1 isManual:0 UserName:1
+13-07-2026 16:53:57	ScanningQrcodeServicecompound type
+13-07-2026 16:53:59	ScanningQrcodeServiceValidateRecipe complete verify
+13-07-2026 16:54:00	dtbom available  10 
+13-07-2026 16:54:02	ScanningQrcodeServiceFeeder 1 Scan 
+13-07-2026 17:02:30	QrCode:{lot_No:'4R-S-07708_2026',itemCode:'CWBP60',qty:'300',ExpireDate:'7/15/2026 5:50:42 AM',DOM:'11/Jul/2026 05:50:42',shift:'C',MHE:'CSS0123' ,Width:'1060'} Feeder:1 numberofscan:1 itemnumber:1 isManual:0 UserName:1
+13-07-2026 17:02:58	ScanningQrcodeServicecompound type
+13-07-2026 17:03:08	ScanningQrcodeServiceValidateRecipe complete verify
+13-07-2026 17:04:20	dtbom available  10 
+13-07-2026 17:04:26	ScanningQrcodeServiceFeeder 1 Scan 
+13-07-2026 17:04:30	compoundname=  CWBP60   Item code:   CWBP60
+13-07-2026 17:09:32	QrCode:{lot_No:'4R-S-07708_2026',itemCode:'CWBP60',qty:'300',ExpireDate:'7/15/2026 5:50:42 AM',DOM:'11/Jul/2026 05:50:42',shift:'C',MHE:'CSS0123' ,Width:'1060'} Feeder:1 numberofscan:1 itemnumber:1 isManual:0 UserName:1
+13-07-2026 17:09:42	ScanningQrcodeServicecompound type
+13-07-2026 17:09:44	ScanningQrcodeServiceValidateRecipe complete verify
+13-07-2026 17:09:48	dtbom available  10 
+13-07-2026 17:09:50	ScanningQrcodeServiceFeeder 1 Scan 
+13-07-2026 17:09:54	compoundname=  CWBP60   Item code:   CWBP60
+13-07-2026 17:17:40	QrCode:{lot_No:'4R-S-07708_2026',itemCode:'CWBP60',qty:'300',ExpireDate:'7/15/2026 5:50:42 AM',DOM:'11/Jul/2026 05:50:42',shift:'C',MHE:'CSS0123' ,Width:'1060'}  Feeder:1 numberofscan:1 itemnumber:1 isManual:0 UserName:1
+13-07-2026 17:17:52	ScanningQrcodeServicecompound type
+13-07-2026 17:17:56	ScanningQrcodeServiceValidateRecipe complete verify
+13-07-2026 17:18:01	dtbom available  10 
+13-07-2026 17:18:05	ScanningQrcodeServiceFeeder 1 Scan 
+13-07-2026 17:18:08	compoundname=  CWBP60   Item code:   CWBP60
+13-07-2026 17:43:42	QrCode:4r-s-07708_2026 Feeder:1 numberofscan:1 itemnumber:1 isManual:1 UserName:1
+13-07-2026 17:49:34	QrCode:4r-s-07708_2026 Feeder:1 numberofscan:1 itemnumber:1 isManual:1 UserName:1
+13-07-2026 17:55:29	Error OprationWithDB :Npgsql.NpgsqlException (0x80004005): Exception while writing to stream ---> System.IO.IOException: Unable to write data to the transport connection: An existing connection was forcibly closed by the remote host. ---> System.Net.Sockets.SocketException: An existing connection was forcibly closed by the remote host
+   at System.Net.Sockets.Socket.Send(Byte[] buffer, Int32 offset, Int32 size, SocketFlags socketFlags)
+   at System.Net.Sockets.NetworkStream.Write(Byte[] buffer, Int32 offset, Int32 size)
+   --- End of inner exception stack trace ---
+   at System.Net.Sockets.NetworkStream.Write(Byte[] buffer, Int32 offset, Int32 size)
+   at Npgsql.Internal.NpgsqlWriteBuffer.<Flush>d__38.MoveNext()
+   at Npgsql.Internal.NpgsqlWriteBuffer.<Flush>d__38.MoveNext()
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.ValidateEnd(Task task)
+   at Npgsql.NpgsqlCommand.<<Write>g__WriteExecute|101_0>d.MoveNext()
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.ValidateEnd(Task task)
+   at Npgsql.NpgsqlCommand.<ExecuteReader>d__120.MoveNext()
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at Npgsql.NpgsqlCommand.<ExecuteReader>d__120.MoveNext()
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at Npgsql.NpgsqlCommand.<ExecuteNonQuery>d__108.MoveNext()
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at Npgsql.NpgsqlCommand.ExecuteNonQuery()
+   at BodyPlyWebService.App_Data.DBOperations.OprationWithDB(String commandType, String QueryOrProcedureName, String parametervalue) in C:\Smart\LTP\BodyPly1\bodyplywebservice\BodyPlyWebService\App_Data\DBOperations.cs:line 121
+13-07-2026 17:55:37	QrCode:4r-s-07708_2026 Feeder:1 numberofscan:1 itemnumber:1 isManual:1 UserName:1
+13-07-2026 17:57:25	QrCode:4r-s-07708_2026 Feeder:1 numberofscan:1 itemnumber:1 isManual:1 UserName:1
+13-07-2026 18:02:10	QrCode:4r-s-07708_2026 Feeder:1 numberofscan:1 itemnumber:1 isManual:1 UserName:1
+13-07-2026 18:05:17	Error OprationWithDB :Npgsql.PostgresException (0x80004005): 23502: null value in column "user_id" of relation "i_material" violates not-null constraint
+
+DETAIL: Detail redacted as it may contain sensitive data. Specify 'Include Error Detail' in the connection string to include this information.
+   at Npgsql.Internal.NpgsqlConnector.<ReadMessageLong>d__231.MoveNext()
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at System.Threading.Tasks.ValueTask`1.get_Result()
+   at Npgsql.NpgsqlDataReader.<NextResult>d__52.MoveNext()
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at Npgsql.NpgsqlDataReader.<NextResult>d__52.MoveNext()
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at Npgsql.NpgsqlDataReader.NextResult()
+   at Npgsql.NpgsqlCommand.<ExecuteReader>d__120.MoveNext()
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at Npgsql.NpgsqlCommand.<ExecuteReader>d__120.MoveNext()
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at Npgsql.NpgsqlCommand.<ExecuteNonQuery>d__108.MoveNext()
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.CompilerServices.TaskAwaiter.ThrowForNonSuccess(Task task)
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at Npgsql.NpgsqlCommand.ExecuteNonQuery()
+   at BodyPlyWebService.App_Data.DBOperations.OprationWithDB(String commandType, String QueryOrProcedureName, String parametervalue)
+  Exception data:
+    Severity: ERROR
+    SqlState: 23502
+    MessageText: null value in column "user_id" of relation "i_material" violates not-null constraint
+    Detail: Detail redacted as it may contain sensitive data. Specify 'Include Error Detail' in the connection string to include this information.
+    Where: SQL statement "UPDATE bodyply.i_material
+            SET modified_dtandtime = now(),
+                sequence_no = _count,
+                user_id = _user_id,
+                feeder_code = _feedercode
+            WHERE lot_id ILIKE _productionid AND equipment_id = _equipment_id"
+PL/pgSQL function bodyply.add_update_i_material(text) line 104 at SQL statement
+    SchemaName: bodyply
+    TableName: i_material
+    ColumnName: user_id
+    File: execMain.c
+    Line: 2028
+    Routine: ExecConstraints

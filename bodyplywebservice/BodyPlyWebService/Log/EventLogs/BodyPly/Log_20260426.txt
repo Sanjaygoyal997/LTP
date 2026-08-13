@@ -1,0 +1,37 @@
+[2026-04-26 05:59:18] [TransactionID: ac65a0a3-7647-4140-8aa1-79f777e0fea5] [EquipmentId: BodyPly] [LogType: Event] [LogCode: 200] [FolderName: BodyPlyASPXService]
+Message: OPC Reconnect..1
+Data: 
+---
+
+[2026-04-26 05:59:43] [TransactionID: ] [EquipmentId: BodyPly] [LogType: Event] [LogCode: 200] [FolderName: BodyPlyASPXService]
+Message: Printer Not Configure!
+Data: 
+---
+
+[2026-04-26 05:59:50] [TransactionID: ] [EquipmentId: BodyPly] [LogType: Event] [LogCode: 200] [FolderName: BodyPlyASPXService]
+Message: Error in RunningSetLength conversion System.FormatException: Input string was not in a correct format.
+   at System.Number.StringToNumber(String str, NumberStyles options, NumberBuffer& number, NumberFormatInfo info, Boolean parseDecimal)
+   at System.Number.ParseDecimal(String value, NumberStyles options, NumberFormatInfo numfmt)
+   at System.Convert.ToDecimal(String value)
+   at BodyPlyWebService.Services.BodyPlyASPXService.UpdateHMIService(String machineName, Int32 equipment_id, String transaction_Id) in C:\Smart\LTP\BodyPly1\bodyplywebservice\BodyPlyWebService\Services\BodyPlyASPXService.cs:line 400
+Data: 
+---
+
+[2026-04-26 05:59:54] [TransactionID: ] [EquipmentId: BodyPly] [LogType: Event] [LogCode: 200] [FolderName: BodyPlyASPXService]
+Message: Error in Runningrecipesetlength conversion  System.FormatException: Input string was not in a correct format.
+   at System.Number.StringToNumber(String str, NumberStyles options, NumberBuffer& number, NumberFormatInfo info, Boolean parseDecimal)
+   at System.Number.ParseDecimal(String value, NumberStyles options, NumberFormatInfo numfmt)
+   at System.Convert.ToDecimal(String value)
+   at BodyPlyWebService.Services.BodyPlyASPXService.UpdateHMIService(String machineName, Int32 equipment_id, String transaction_Id) in C:\Smart\LTP\BodyPly1\bodyplywebservice\BodyPlyWebService\Services\BodyPlyASPXService.cs:line 429
+Data: 
+---
+
+[2026-04-26 06:00:13] [TransactionID: ] [EquipmentId: BodyPly] [LogType: Event] [LogCode: 200] [FolderName: BodyPlyASPXService]
+Message: Error in WidthActual conversion System.FormatException: Input string was not in a correct format.
+   at System.Number.StringToNumber(String str, NumberStyles options, NumberBuffer& number, NumberFormatInfo info, Boolean parseDecimal)
+   at System.Number.ParseDecimal(String value, NumberStyles options, NumberFormatInfo numfmt)
+   at System.Convert.ToDecimal(String value)
+   at BodyPlyWebService.Services.BodyPlyASPXService.UpdateHMIService(String machineName, Int32 equipment_id, String transaction_Id) in C:\Smart\LTP\BodyPly1\bodyplywebservice\BodyPlyWebService\Services\BodyPlyASPXService.cs:line 453
+Data: 
+---
+
