@@ -281,8 +281,13 @@ namespace BodyPlyWebService.Repositories
         //dbo.bomextrudermapping records the bom and the consumed item for each extruder, so a
         //row returned here is the scanned material being valid on that feeder, and the service
         //no longer has to infer it from the bill of materials.
+        //
+        //The recipe read from the PLC is dbo.bom.plcbomname, while bomextrudermapping.bomcode
+        //holds dbo.bom.formulacode, so the name is translated in the statement. This is the
+        //same translation validaterecipebodyply performs before it checks the bill of
+        //materials.
         public DataTable GetExtruderForConsumeItem(string equipmentId, string sequenceNo,
-                                                   string bomCode, string consumeItemCode)
+                                                   string plcBomName, string consumeItemCode)
         {
             DataTable dt = new DataTable();
             try
@@ -298,18 +303,19 @@ namespace BodyPlyWebService.Repositories
                     return dt;
                 }
 
-                //bomcode comes from the recipe tag and consumeitemcode from the scanned code,
-                //so both are quoted and cut to the column width before being written in.
-                string bom = QuotedText(bomCode, 20);
+                //plcbomname comes from the recipe tag and consumeitemcode from the scanned
+                //code, so both are quoted and cut to the column width before being written in.
+                string plcBom = QuotedText(plcBomName, 50);
                 string consumeItem = QuotedText(consumeItemCode, 20);
 
                 string query =
                     "SELECT m.name AS extrudername " +
                     "FROM dbo.bomextrudermapping b " +
                     "JOIN dbo.master_extruder m ON m.id = b.extruderid " +
+                    "JOIN dbo.bom o ON o.formulacode = b.bomcode " +
                     "WHERE b.equipmentid = '" + equipment + "' " +
                     "AND b.sequenceno = " + sequence + " " +
-                    "AND b.bomcode = '" + bom + "' " +
+                    "AND o.plcbomname = '" + plcBom + "' " +
                     "AND b.consumeitemcode = '" + consumeItem + "' " +
                     "AND b.isactive = true AND m.isdeleted = false " +
                     "GROUP BY m.name";
