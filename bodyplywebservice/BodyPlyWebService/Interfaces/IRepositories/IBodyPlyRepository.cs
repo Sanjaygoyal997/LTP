@@ -54,6 +54,7 @@ namespace BodyPlyWebService.Interfaces.IRepositories
         DataTable GetTotalBodyPlyScan(string feederName,string equipment_id);
        // DataTable GetTotalBodyPlyScan(string feederName,int equipment_id);
         DataTable GetEquipmentExtruder(string equipmentId);
+        DataTable GetExtruderForConsumeItem(string equipmentId, string sequenceNo, string bomCode, string consumeItemCode);
 
     }
 }

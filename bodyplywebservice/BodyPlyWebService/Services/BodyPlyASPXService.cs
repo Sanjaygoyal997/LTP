@@ -830,94 +830,70 @@ namespace BodyPlyWebService.Services
             return json;
         }
 
-        //Records a scanned material against the extruder that the HMI feeder position refers
-        //to. The position is matched against sequenceno in the configuration, so the extruder
-        //name and the material group both come from the same rows UpdateHMIService and
-        //ResetExtruderMaterial read. Shared by the scanned and the manual paths, which differ
-        //only in how the QR data reaches bsObj.
-        private void RecordScannedMaterial(DataTable dtbom, QrcodeData bsObj, string Feeder,
+        //Records a scanned material against the extruder it belongs to. dbo.bomextrudermapping
+        //holds the bom and the consumed item for every extruder, so the scan is validated by
+        //asking whether the scanned item is mapped to the extruder standing at this feeder
+        //position. A row returned is the material being correct there, which the bill of
+        //materials could only approximate: its material group separates calendered roll from
+        //slitted material but cannot tell one side of a pair from the other.
+        //Shared by the scanned and the manual paths, which differ only in how the QR data
+        //reaches bsObj.
+        private void RecordScannedMaterial(string recipe, QrcodeData bsObj, string Feeder,
                                            int equipment_id, string MachineName, string UserName,
-                                           string result, ResultantDTO Result)
+                                           ResultantDTO Result)
         {
-            List<ExtruderConfig> configuredExtruders =
-                ExtruderConfigProvider.Get(equipment_id.ToString(), _bodyPlyRepository);
+            string extruderName = "";
 
-            ExtruderConfig configuredExtruder = null;
-            if (configuredExtruders != null)
+            try
             {
-                configuredExtruder = configuredExtruders.FirstOrDefault(
-                    e => e.SequenceNo.ToString() == Feeder);
+                DataTable dtextruder = _bodyPlyRepository.GetExtruderForConsumeItem(
+                    equipment_id.ToString(), Feeder, recipe, bsObj.itemCode);
+
+                if (dtextruder != null && dtextruder.Rows.Count > 0
+                    && dtextruder.Columns.Contains("extrudername"))
+                {
+                    extruderName = dtextruder.Rows[0]["extrudername"].ToString();
+                }
+            }
+            catch (Exception exc)
+            {
+                LogError("BodyPlyASPXService", "RecordScannedMaterial", exc, _transaction_Id);
             }
 
-            //A position the configuration does not describe is reported rather than ignored.
-            //The feeder chain this replaced fell through such a scan without a message.
-            if (configuredExtruder == null)
+            if (extruderName == "")
             {
-                Uitility.LogEvent("RecordScannedMaterial : feeder " + Feeder +
-                                  " is not configured for equipment " + equipment_id);
+                Uitility.LogEvent("RecordScannedMaterial : " + bsObj.itemCode +
+                                  " is not mapped to feeder " + Feeder + " for bom " + recipe +
+                                  " on equipment " + equipment_id);
                 Result.Status = 0;
-                Result.Message = "Feeder " + Feeder + " is not configured on this machine";
+                Result.Message = bsObj.itemCode + " Not Validate on this input feeder";
                 Result.Data = "False";
+                ResetExtruderMaterial(equipment_id);
                 return;
             }
 
-            //The let off carries calendered roll and every strip feeder carries slitted
-            //material. IndexOf rather than equality so the match survives an extruder whose
-            //name has been suffixed in master_extruder.
-            string materialGroup =
-                configuredExtruder.ExtruderName.IndexOf("LetOff", StringComparison.OrdinalIgnoreCase) >= 0
-                    ? "CALANDARED ROLL"
-                    : "SLITTED MATERIAL";
+            Uitility.LogEvent("RecordScannedMaterial : feeder " + Feeder + " => " + extruderName +
+                              " for bom " + recipe + " item " + bsObj.itemCode);
+            Result.Status = 1;
+            Result.Message = "Sucess";
+            Result.Data = "True";
 
-            Uitility.LogEvent("RecordScannedMaterial : feeder " + Feeder + " => " +
-                              configuredExtruder.ExtruderName + " (" + materialGroup + ")");
-
-            var DetailProduction = dtbom.AsEnumerable().Where(
-                r => r.Field<String>("MaterialGroup_IN").Contains(materialGroup) &&
-                     r.Field<String>("MaterialCodeGroup_IN").Contains(bsObj.itemCode)).Select(s => new
-                     {
-                         CompoundDetail = s.Field<string>("MaterialCodeGroup_IN"),
-
-                     }).ToList();
-
-            var items = DetailProduction.ToArray();
-            string compoundname = "";
-            for (int i = 0; i <= (items.Length - 1); i++) // Run loop until get all the quantities in the array
+            try
             {
-                compoundname = items[i].CompoundDetail.ToString();
+                Uitility.LogEvent("bsObj.lot_No:" + bsObj.lot_No + " bsObj.qty:" + bsObj.qty +
+                                  " bsObj.itemCode:" + bsObj.itemCode + " " + extruderName +
+                                  " MachineName:" + MachineName + " UserName" + UserName);
+                _bodyPlyRepository.AddUpdateI_Material(bsObj.lot_No, bsObj.qty, bsObj.itemCode,
+                    extruderName, MachineName, MachineName, UserName, "R");
             }
-
-            if (compoundname != "" && compoundname == bsObj.itemCode)
+            catch (Exception ex)
             {
-                Uitility.LogEvent($"compoundname=  {compoundname}   Item code:   {bsObj.itemCode}");
-                Result.Status = 1;
-                Result.Message = "Sucess";
-                Result.Data = "True";
-
-                try
-                {
-                    Uitility.LogEvent("bsObj.lot_No:" + bsObj.lot_No + " bsObj.qty:" + bsObj.qty +
-                                      " bsObj.itemCode:" + bsObj.itemCode + " " + configuredExtruder.ExtruderName +
-                                      " MachineName:" + MachineName + " UserName" + UserName);
-                    _bodyPlyRepository.AddUpdateI_Material(bsObj.lot_No, bsObj.qty, bsObj.itemCode,
-                        configuredExtruder.ExtruderName, MachineName, MachineName, UserName, "R");
-                }
-                catch (Exception ex)
-                {
-                    Uitility.LogEvent("AddUpdateI_Material:" + ex.ToString());
-                    LogError("BodyPlyASPXService", "RecordScannedMaterial", ex, _transaction_Id);
-                }
-            }
-            else
-            {
-                Result.Status = 0;
-                Result.Message = result;
-                Result.Data = "False";
+                Uitility.LogEvent("AddUpdateI_Material:" + ex.ToString());
+                LogError("BodyPlyASPXService", "RecordScannedMaterial", ex, _transaction_Id);
             }
 
             ResetExtruderMaterial(equipment_id);
         }
-
 
         public string ScanningQrcodeService(string QrCode, string Feeder, string numberofscan, string itemnumber, string isManual, string UserName,  string _transaction_Id,string MachineName,int equipment_id)
         {
@@ -1043,11 +1019,8 @@ namespace BodyPlyWebService.Services
                         {
                             Uitility.LogEvent("ScanningQrcodeService"+ "ValidateRecipe complete verify");
                             //LogEvent("BodyPlyASPXService", "ScanningQrcodeService", "ValidateRecipe complete verify", _transaction_Id, "");
-                            DataTable dtbom = _bodyPlyRepository.GetProduceItembom(recipe);
-                            Uitility.LogEvent($"dtbom available  { dtbom.Rows.Count} ");
-                            // LogEvent("BodyPlyASPXService", "ScanningQrcodeService", $"dtbom available  { dtbom.Rows.Count} ", _transaction_Id, "");
-                            RecordScannedMaterial(dtbom, bsObj, Feeder, equipment_id,
-                                                  MachineName, UserName, result, Result);
+                            RecordScannedMaterial(recipe, bsObj, Feeder, equipment_id,
+                                                  MachineName, UserName, Result);
                         }
                         else
                         {
@@ -1158,12 +1131,8 @@ namespace BodyPlyWebService.Services
                         {
                             Uitility.LogEvent("ScanningQrcodeService"+ "ValidateRecipe complete verify");
                             // LogEvent("BodyPlyASPXService", "ScanningQrcodeService", "ValidateRecipe complete verify", _transaction_Id, "");
-                            DataTable dtbom = _bodyPlyRepository.GetProduceItembom(recipe);
-                            Uitility.LogEvent("ScanningQrcodeService"+ $"dtbom available  { dtbom.Rows.Count} ");
-                            //LogEvent("BodyPlyASPXService", "ScanningQrcodeService", $"dtbom available  { dtbom.Rows.Count} ", _transaction_Id, "");
-
-                            RecordScannedMaterial(dtbom, bsObj, Feeder, equipment_id,
-                                                  MachineName, UserName, result, Result);
+                            RecordScannedMaterial(recipe, bsObj, Feeder, equipment_id,
+                                                  MachineName, UserName, Result);
                         }
                         else
                         {

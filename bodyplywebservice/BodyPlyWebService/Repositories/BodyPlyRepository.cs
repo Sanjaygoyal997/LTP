@@ -277,6 +277,71 @@ namespace BodyPlyWebService.Repositories
         //stored procedure. The grouping collapses the many bom/consume item rows that
         //exist per extruder down to one row per extruder, and the ordering is applied
         //here because the caller iterates the rows in the order they are returned.
+        //Resolves the extruder that a scanned item belongs to at a given feeder position.
+        //dbo.bomextrudermapping records the bom and the consumed item for each extruder, so a
+        //row returned here is the scanned material being valid on that feeder, and the service
+        //no longer has to infer it from the bill of materials.
+        public DataTable GetExtruderForConsumeItem(string equipmentId, string sequenceNo,
+                                                   string bomCode, string consumeItemCode)
+        {
+            DataTable dt = new DataTable();
+            try
+            {
+                //equipmentId and sequenceNo are validated as integers before they are placed
+                //into the statement.
+                int equipment = 0;
+                int sequence = 0;
+                if (!int.TryParse(equipmentId, out equipment) || !int.TryParse(sequenceNo, out sequence))
+                {
+                    LogEvent("BodyPlyRepository", "GetExtruderForConsumeItem",
+                        $"Invalid equipmentId or sequenceNo: {equipmentId} / {sequenceNo}", _transaction_Id, "NA");
+                    return dt;
+                }
+
+                //bomcode comes from the recipe tag and consumeitemcode from the scanned code,
+                //so both are quoted and cut to the column width before being written in.
+                string bom = QuotedText(bomCode, 20);
+                string consumeItem = QuotedText(consumeItemCode, 20);
+
+                string query =
+                    "SELECT m.name AS extrudername " +
+                    "FROM dbo.bomextrudermapping b " +
+                    "JOIN dbo.master_extruder m ON m.id = b.extruderid " +
+                    "WHERE b.equipmentid = '" + equipment + "' " +
+                    "AND b.sequenceno = " + sequence + " " +
+                    "AND b.bomcode = '" + bom + "' " +
+                    "AND b.consumeitemcode = '" + consumeItem + "' " +
+                    "AND b.isactive = true AND m.isdeleted = false " +
+                    "GROUP BY m.name";
+
+                dt = _dBOperations.OprationWithDB("Text", query, "");
+            }
+            catch (Exception exc)
+            {
+                // Log unexpected error in catch block and log into DB
+                LogError("BodyPlyRepository", "GetExtruderForConsumeItem", exc, _transaction_Id);
+            }
+            return dt;
+        }
+
+        //Doubles any quote and limits the length of a value that has to be written into a text
+        //statement, since the text path of OprationWithDB carries no parameter binding.
+        private static string QuotedText(string value, int maxLength)
+        {
+            if (string.IsNullOrEmpty(value))
+            {
+                return "";
+            }
+
+            string trimmed = value.Trim();
+            if (trimmed.Length > maxLength)
+            {
+                trimmed = trimmed.Substring(0, maxLength);
+            }
+
+            return trimmed.Replace("'", "''");
+        }
+
         public DataTable GetEquipmentExtruder(string equipmentId)
         {
             DataTable dt = new DataTable();
