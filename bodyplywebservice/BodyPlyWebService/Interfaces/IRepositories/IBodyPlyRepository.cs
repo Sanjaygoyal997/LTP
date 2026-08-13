@@ -53,7 +53,6 @@ namespace BodyPlyWebService.Interfaces.IRepositories
         string UpdateBodyPlyI_Material();
         DataTable GetTotalBodyPlyScan(string feederName,string equipment_id);
        // DataTable GetTotalBodyPlyScan(string feederName,int equipment_id);
-        void ResetExtruderMaterial(int equipmentId);
         DataTable GetEquipmentExtruder(string equipmentId);
 
     }

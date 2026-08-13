@@ -415,9 +415,5 @@ namespace BodyPlyWebService.Repositories
             });
         }
 
-        public void ResetExtruderMaterial(int equipmentId)
-        {
-            throw new NotImplementedException();
-        }
     }
 }
