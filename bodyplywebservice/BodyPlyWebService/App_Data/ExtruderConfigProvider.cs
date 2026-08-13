@@ -58,8 +58,8 @@ namespace BodyPlyWebService.App_Data
                 configuredExtruders.Clear();
             }
 
-            //A failed or empty load is not cached, so the next poll retries and the
-            //caller keeps using the existing hardcoded feeder list in the meantime.
+            //A failed or empty load is not cached, so the next poll retries rather than
+            //serving an empty list for the lifetime of the application pool.
             if (configuredExtruders.Count > 0)
             {
                 _cache[equipmentId] = configuredExtruders;
