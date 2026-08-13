@@ -13,7 +13,9 @@
 -- equipmentId and sequenceNo are optional so that callers which do not send
 -- them keep working unchanged. When both are present the scanned material is
 -- also checked against dbo.bomextrudermapping, which is what decides whether
--- the material belongs on that particular feeder.
+-- the material belongs on that particular feeder, and the same rows name the
+-- schema the production record is read from. Without them, or without a source
+-- on the mapping, every known schema is searched instead.
 --
 -- Output (result):
 --   status   success | fail | confirm
@@ -39,6 +41,8 @@ DECLARE
     -- Working vars
     _mesrecipename     text;
     _materialgroup_in  text;
+    _sourceschema      text;
+    _qualitystatus     text;
     _count             int  := 0;
 
     _maxaging      int;
@@ -124,6 +128,21 @@ BEGIN
             );
             RETURN;
         END IF;
+
+        --The same rows name the schema holding the production record for this
+        --feeder, so the aging and lab checks read the right one without naming
+        --it here.
+        SELECT b.sourceschema
+          INTO _sourceschema
+          FROM dbo.bomextrudermapping b
+         WHERE b.equipmentid     = _equipmentid
+           AND b.sequenceno      = _sequenceno::int
+           AND b.consumeitemcode = _itemname
+           AND (b.bomcode = _mesrecipename OR b.bomcode = _recipename)
+           AND b.isactive = true
+           AND b.sourceschema IS NOT NULL
+           AND b.sourceschema <> ''
+         LIMIT 1;
     END IF;
 
     -------------------------------------------------------------------------
@@ -149,11 +168,26 @@ BEGIN
     -- from. Without it the interval comparisons evaluate to NULL and both
     -- aging checks pass without saying anything, so it is required here.
     -------------------------------------------------------------------------
-    SELECT dtandtime
-      INTO _productiondate
-      FROM frc.o_production
-     WHERE production_id = _productionid
-     LIMIT 1;
+    --Material reaching the let off is produced on the four roll calender and
+    --material reaching the strip feeders on the multi slitter, so the record
+    --lives in whichever schema the mapping names. When the caller did not say
+    --where the scan was made, or the mapping carries no source, every known
+    --schema is searched instead, because the lot exists in exactly one of them.
+    IF _sourceschema IS NOT NULL THEN
+        EXECUTE format(
+            'SELECT dtandtime, quality_status FROM %I.o_production '
+            'WHERE production_id = $1 LIMIT 1', _sourceschema)
+           INTO _productiondate, _qualitystatus
+          USING _productionid;
+    ELSE
+        SELECT p.dtandtime, p.quality_status
+          INTO _productiondate, _qualitystatus
+          FROM ( SELECT production_id, dtandtime, quality_status FROM frc.o_production
+                 UNION ALL
+                 SELECT production_id, dtandtime, quality_status FROM multislitter.o_production ) p
+         WHERE p.production_id = _productionid
+         LIMIT 1;
+    END IF;
 
     IF _productiondate IS NULL THEN
         result := json_build_object(
@@ -274,13 +308,7 @@ BEGIN
     -- never match.
     -------------------------------------------------------------------------
     IF upper(coalesce(_materialgroup_in, '')) LIKE '%CAL%ND%R%' THEN
-        SELECT count(*)
-          INTO _count
-          FROM frc.o_production
-         WHERE production_id = _productionid
-           AND quality_status IN ('1','3','5');
-
-        IF _count = 0 THEN
+        IF coalesce(_qualitystatus, '') NOT IN ('1','3','5') THEN
             result := json_build_object(
                 'status',  'fail',
                 'code',    'lab_pending',
