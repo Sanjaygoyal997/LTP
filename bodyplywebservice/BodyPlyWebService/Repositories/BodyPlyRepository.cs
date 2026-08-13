@@ -317,7 +317,7 @@ namespace BodyPlyWebService.Repositories
                     "FROM dbo.bomextrudermapping b " +
                     "JOIN dbo.master_extruder m ON m.id = b.extruderid " +
                     "LEFT JOIN dbo.bom o ON o.formulacode = b.bomcode " +
-                    "WHERE b.equipmentid = '" + equipment + "' " +
+                    "WHERE b.equipmentid = " + equipment + " " +
                     "AND b.sequenceno = " + sequence + " " +
                     "AND (o.plcbomname = '" + plcBom + "' OR b.bomcode = '" + plcBom + "') " +
                     "AND b.consumeitemcode = '" + consumeItem + "' " +
@@ -372,7 +372,7 @@ namespace BodyPlyWebService.Repositories
                     "b.extruderhooter AS extruderhooter " +
                     "FROM dbo.bomextrudermapping b " +
                     "JOIN dbo.master_extruder m ON m.id = b.extruderid " +
-                    "WHERE b.equipmentid = '" + equipment + "' " +
+                    "WHERE b.equipmentid = " + equipment + " " +
                     "AND b.isactive = true AND m.isdeleted = false " +
                     "GROUP BY m.name, b.sequenceno, b.mesitemcount, " +
                     "b.extruderscanok, b.extruderhooter " +

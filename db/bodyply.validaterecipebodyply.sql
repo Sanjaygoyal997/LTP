@@ -41,7 +41,7 @@ DECLARE
     -- Working vars
     _mesrecipename     text;
     _materialgroup_in  text;
-    _sourceschema      text;
+    _schemaname        text;
     _qualitystatus     text;
     _count             int  := 0;
 
@@ -109,12 +109,12 @@ BEGIN
     -- rather than the formula code is still found.
     -------------------------------------------------------------------------
     IF _equipmentid IS NOT NULL AND _sequenceno IS NOT NULL
-       AND _sequenceno ~ '^[0-9]+$' THEN
+       AND _equipmentid ~ '^[0-9]+$' AND _sequenceno ~ '^[0-9]+$' THEN
 
         SELECT count(*)
           INTO _count
           FROM dbo.bomextrudermapping b
-         WHERE b.equipmentid      = _equipmentid
+         WHERE b.equipmentid      = _equipmentid::int
            AND b.sequenceno       = _sequenceno::int
            AND b.consumeitemcode  = _itemname
            AND (b.bomcode = _mesrecipename OR b.bomcode = _recipename)
@@ -132,16 +132,16 @@ BEGIN
         --The same rows name the schema holding the production record for this
         --feeder, so the aging and lab checks read the right one without naming
         --it here.
-        SELECT b.sourceschema
-          INTO _sourceschema
+        SELECT b.schemaname
+          INTO _schemaname
           FROM dbo.bomextrudermapping b
-         WHERE b.equipmentid     = _equipmentid
+         WHERE b.equipmentid     = _equipmentid::int
            AND b.sequenceno      = _sequenceno::int
            AND b.consumeitemcode = _itemname
            AND (b.bomcode = _mesrecipename OR b.bomcode = _recipename)
            AND b.isactive = true
-           AND b.sourceschema IS NOT NULL
-           AND b.sourceschema <> ''
+           AND b.schemaname IS NOT NULL
+           AND b.schemaname <> ''
          LIMIT 1;
     END IF;
 
@@ -173,10 +173,10 @@ BEGIN
     --lives in whichever schema the mapping names. When the caller did not say
     --where the scan was made, or the mapping carries no source, every known
     --schema is searched instead, because the lot exists in exactly one of them.
-    IF _sourceschema IS NOT NULL THEN
+    IF _schemaname IS NOT NULL THEN
         EXECUTE format(
             'SELECT dtandtime, quality_status FROM %I.o_production '
-            'WHERE production_id = $1 LIMIT 1', _sourceschema)
+            'WHERE production_id = $1 LIMIT 1', _schemaname)
            INTO _productiondate, _qualitystatus
           USING _productionid;
     ELSE
