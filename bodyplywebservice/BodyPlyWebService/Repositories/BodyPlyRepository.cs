@@ -273,12 +273,37 @@ namespace BodyPlyWebService.Repositories
             return dt;
         }
 
+        //Extruder configuration is read directly from the tables instead of through a
+        //stored procedure. The grouping collapses the many bom/consume item rows that
+        //exist per extruder down to one row per extruder, and the ordering is applied
+        //here because the caller iterates the rows in the order they are returned.
         public DataTable GetEquipmentExtruder(string equipmentId)
         {
             DataTable dt = new DataTable();
             try
             {
-                dt = _dBOperations.OprationWithDB("StoredProcedure", "dbo.get_equipment_extruder", equipmentId);
+                //equipmentId is validated as an integer before it is placed into the
+                //statement, so no free text can reach the database.
+                int equipment = 0;
+                if (!int.TryParse(equipmentId, out equipment))
+                {
+                    LogEvent("BodyPlyRepository", "GetEquipmentExtruder", $"Invalid equipmentId: {equipmentId}", _transaction_Id, "NA");
+                    return dt;
+                }
+
+                string query =
+                    "SELECT m.name AS extrudername, b.sequenceno AS sequenceno, " +
+                    "b.mesitemcount AS mesitemcount, b.extruderscanok AS extruderscanok, " +
+                    "b.extruderhooter AS extruderhooter, b.alarmtag AS alarmtag " +
+                    "FROM dbo.bomextrudermapping b " +
+                    "JOIN dbo.master_extruder m ON m.id = b.extruderid " +
+                    "WHERE b.equipmentid = '" + equipment + "' " +
+                    "AND b.isactive = true AND m.isdeleted = false " +
+                    "GROUP BY m.name, b.sequenceno, b.mesitemcount, " +
+                    "b.extruderscanok, b.extruderhooter, b.alarmtag " +
+                    "ORDER BY b.sequenceno";
+
+                dt = _dBOperations.OprationWithDB("Text", query, "");
             }
             catch (Exception exc)
             {
