@@ -197,8 +197,7 @@ namespace BodyPlyWebService
             string result = string.Empty;
             try
             {
-                result = _bodyplyRollCalenderASPXService.ScanningQrcodeService(QrCode, Feeder, numberofscan, itemnumber, isManual, UserName, _transaction_Id,machineName);
-               // _bodyplyRollCalenderASPXService.ResetExtruderMaterial(equipment_id);
+                result = _bodyplyRollCalenderASPXService.ScanningQrcodeService(QrCode, Feeder, numberofscan, itemnumber, isManual, UserName, _transaction_Id,machineName,equipment_id);
             }
             catch (Exception exc)
             {

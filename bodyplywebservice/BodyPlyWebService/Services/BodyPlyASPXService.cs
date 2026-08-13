@@ -570,7 +570,9 @@ namespace BodyPlyWebService.Services
                 // Log unexpected error in catch block and log into DB
                 //   LogError("BodyPlyASPXService", "UpdateHMIService", exc, _transaction_Id);
             }
-            ResetExtruderMaterial(equipment_id);
+            //ResetExtruderMaterial already runs above, inside the try, once the OPC state
+            //has been confirmed. Calling it a second time here repeated every database read
+            //and every PLC write for the same poll.
             var json = jsonSerialiser.Serialize(result);
             return json;
         }
@@ -619,87 +621,37 @@ namespace BodyPlyWebService.Services
 
             if (AllTagStatus.opcRunningState() && AllTagStatus != null)
             {
-                DataTable dtscan = new DataTable();
-                DataTable dtscan2 = new DataTable();
-                try
+                //Every configured extruder is refreshed from the same rows UpdateHMIService
+                //reads, so the values written here and the values reported to the HMI cannot
+                //diverge. The scan count goes to the item count tag, and the scan ok and
+                //hooter tags are driven as a pair.
+                List<ExtruderConfig> configuredExtruders =
+                    ExtruderConfigProvider.Get(equipment_id.ToString(), _bodyPlyRepository);
+
+                if (configuredExtruders != null)
                 {
-                    dtscan = _bodyPlyRepository.GetTotalBodyPlyScan("LetOff01", equipment_id.ToString());
-                    if (dtscan.Rows.Count > 0)
+                    foreach (ExtruderConfig configuredExtruder in configuredExtruders)
                     {
-                        AllTagStatus.WriteData(dtscan.Rows.Count, inf.opcItemID[inf.opcItemID.IndexOf(("mescompounditem").ToLower())]);
-                        AllTagStatus.WriteData(0, inf.opcItemID[inf.opcItemID.IndexOf(("INPUTMaterial_SCANOK1Hooter").ToLower())]);
-                        AllTagStatus.WriteData(1, inf.opcItemID[inf.opcItemID.IndexOf(("inputmaterial_scanok1").ToLower())]);
+                        //Scoped per extruder so a missing tag or a failed write does not
+                        //abandon the extruders that follow.
+                        try
+                        {
+                            DataTable dtscan = _bodyPlyRepository.GetTotalBodyPlyScan(
+                                configuredExtruder.ExtruderName, equipment_id.ToString());
 
-                    }
-                    else
-                    {
-                        AllTagStatus.WriteData(dtscan.Rows.Count, inf.opcItemID[inf.opcItemID.IndexOf(("mescompounditem").ToLower())]);
-                        AllTagStatus.WriteData(1, inf.opcItemID[inf.opcItemID.IndexOf(("INPUTMaterial_SCANOK1Hooter").ToLower())]);
-                        AllTagStatus.WriteData(0, inf.opcItemID[inf.opcItemID.IndexOf(("inputmaterial_scanok1").ToLower())]);
-                    }
-                    dtscan = _bodyPlyRepository.GetTotalBodyPlyScan("GumStrip(L)", equipment_id.ToString());
-                    if (dtscan.Rows.Count > 0)
-                    {
-                        AllTagStatus.WriteData(dtscan.Rows.Count, inf.opcItemID[inf.opcItemID.IndexOf(("mescompounditem1").ToLower())]);
-                        AllTagStatus.WriteData(0, inf.opcItemID[inf.opcItemID.IndexOf(("INPUTMaterial_SCANOK2Hooter").ToLower())]);
-                        AllTagStatus.WriteData(1, inf.opcItemID[inf.opcItemID.IndexOf(("inputmaterial_scanok2").ToLower())]);
+                            int scanCount = (dtscan == null) ? 0 : dtscan.Rows.Count;
+                            bool materialScanned = scanCount > 0;
 
+                            TryWriteTag(AllTagStatus, inf, configuredExtruder.MesItemCountTag, scanCount);
+                            TryWriteTag(AllTagStatus, inf, configuredExtruder.ExtruderHooterTag, materialScanned ? 0 : 1);
+                            TryWriteTag(AllTagStatus, inf, configuredExtruder.ExtruderScanOkTag, materialScanned ? 1 : 0);
+                        }
+                        catch (Exception exc)
+                        {
+                            // Log unexpected error in catch block and log into DB
+                            LogError("BodyPlyASPXService", "ResetExtruderMaterial", exc, _transaction_Id);
+                        }
                     }
-                    else
-                    {
-                        AllTagStatus.WriteData(dtscan.Rows.Count, inf.opcItemID[inf.opcItemID.IndexOf(("mescompounditem1").ToLower())]);
-                        AllTagStatus.WriteData(1, inf.opcItemID[inf.opcItemID.IndexOf(("INPUTMaterial_SCANOK2Hooter").ToLower())]);
-                        AllTagStatus.WriteData(0, inf.opcItemID[inf.opcItemID.IndexOf(("inputmaterial_scanok2").ToLower())]);
-                    }
-                    dtscan = _bodyPlyRepository.GetTotalBodyPlyScan("GumStrip(R)", equipment_id.ToString());
-                    if (dtscan.Rows.Count > 0)
-                    {
-                        AllTagStatus.WriteData(dtscan.Rows.Count, inf.opcItemID[inf.opcItemID.IndexOf(("mescompounditem2").ToLower())]);
-                        AllTagStatus.WriteData(0, inf.opcItemID[inf.opcItemID.IndexOf(("INPUTMaterial_SCANOK2Hooter").ToLower())]);
-                        AllTagStatus.WriteData(1, inf.opcItemID[inf.opcItemID.IndexOf(("inputmaterial_scanok2").ToLower())]);
-
-                    }
-                    else
-                    {
-                        AllTagStatus.WriteData(dtscan.Rows.Count, inf.opcItemID[inf.opcItemID.IndexOf(("mescompounditem2").ToLower())]);
-                        AllTagStatus.WriteData(1, inf.opcItemID[inf.opcItemID.IndexOf(("INPUTMaterial_SCANOK3Hooter").ToLower())]);
-                        AllTagStatus.WriteData(0, inf.opcItemID[inf.opcItemID.IndexOf(("inputmaterial_scanok3").ToLower())]);
-                    }
-                    dtscan = _bodyPlyRepository.GetTotalBodyPlyScan("WideStrip(L)", equipment_id.ToString());
-                    if (dtscan.Rows.Count > 0)
-                    {
-                        AllTagStatus.WriteData(dtscan.Rows.Count, inf.opcItemID[inf.opcItemID.IndexOf(("mescompounditem3").ToLower())]);
-                        AllTagStatus.WriteData(0, inf.opcItemID[inf.opcItemID.IndexOf(("INPUTMaterial_SCANOK4Hooter").ToLower())]);
-                        AllTagStatus.WriteData(1, inf.opcItemID[inf.opcItemID.IndexOf(("inputmaterial_scanok4").ToLower())]);
-
-                    }
-                    else
-                    {
-                        AllTagStatus.WriteData(dtscan.Rows.Count, inf.opcItemID[inf.opcItemID.IndexOf(("mescompounditem3").ToLower())]);
-                        AllTagStatus.WriteData(1, inf.opcItemID[inf.opcItemID.IndexOf(("INPUTMaterial_SCANOK4Hooter").ToLower())]);
-                        AllTagStatus.WriteData(0, inf.opcItemID[inf.opcItemID.IndexOf(("inputmaterial_scanok4").ToLower())]);
-                    }
-                    dtscan = _bodyPlyRepository.GetTotalBodyPlyScan("WideStrip(R)", equipment_id.ToString());
-                    if (dtscan.Rows.Count > 0)
-                    {
-                        AllTagStatus.WriteData(dtscan.Rows.Count, inf.opcItemID[inf.opcItemID.IndexOf(("mescompounditem4").ToLower())]);
-                        AllTagStatus.WriteData(0, inf.opcItemID[inf.opcItemID.IndexOf(("INPUTMaterial_SCANOK5Hooter").ToLower())]);
-                        AllTagStatus.WriteData(1, inf.opcItemID[inf.opcItemID.IndexOf(("inputmaterial_scanok5").ToLower())]);
-
-                    }
-                    else
-                    {
-                        AllTagStatus.WriteData(dtscan.Rows.Count, inf.opcItemID[inf.opcItemID.IndexOf(("mescompounditem4").ToLower())]);
-                        AllTagStatus.WriteData(1, inf.opcItemID[inf.opcItemID.IndexOf(("INPUTMaterial_SCANOK5Hooter").ToLower())]);
-                        AllTagStatus.WriteData(0, inf.opcItemID[inf.opcItemID.IndexOf(("inputmaterial_scanok5").ToLower())]);
-                    }
-
-
-                }
-                catch (Exception exc)
-                {
-                    // Log unexpected error in catch block and log into DB
-                    //LogError("BodyPlyASPXService", "ResetExtruderMaterial", exc, _transaction_Id);
                 }
             }
             else
@@ -878,7 +830,7 @@ namespace BodyPlyWebService.Services
             return json;
         }
 
-        public string ScanningQrcodeService(string QrCode, string Feeder, string numberofscan, string itemnumber, string isManual, string UserName,  string _transaction_Id,string MachineName)
+        public string ScanningQrcodeService(string QrCode, string Feeder, string numberofscan, string itemnumber, string isManual, string UserName,  string _transaction_Id,string MachineName,int equipment_id)
         {
             //LogEvent("BodyPlyASPXService", "ScanningQrcodeService", $"{DateTime.Now.ToString()} Scan Data=>   QrCode : {QrCode} Feeder: {Feeder} numberofscan: {numberofscan} itemnumber: {itemnumber} isManual: {isManual} " ,_transaction_Id, "");
             Uitility.LogEvent("QrCode:"+ QrCode+ " Feeder:"+ Feeder+ " numberofscan:"+ numberofscan+ " itemnumber:"+ itemnumber+ " isManual:"+ isManual+ " UserName:"+ UserName+ " MachineName:"+ MachineName);
@@ -1262,7 +1214,7 @@ namespace BodyPlyWebService.Services
                                         Result.Data = status;
                                     }
                                 }
-                                ResetExtruderMaterial(230);                              
+                                ResetExtruderMaterial(equipment_id);
                             }
                           else  if (MachineName == "Bodyply02")
                             {
@@ -1417,7 +1369,7 @@ namespace BodyPlyWebService.Services
                                     }
                                 }
 
-                                ResetExtruderMaterial(231);
+                                ResetExtruderMaterial(equipment_id);
                             }
 
                             //DataTable dtscan = _bodyPlyRepository.GetTotalBodyPlyScan(MachineName);
@@ -2893,6 +2845,36 @@ PRINT KEY OFF
             catch (Exception exc)
             {
                 Uitility.LogEvent("TryReadTag :" + tagName + " :" + exc.ToString());
+                return false;
+            }
+        }
+
+        //Writes a value to an OPC tag resolved by its friendly name. Mirrors TryReadTag:
+        //a name that is absent from BodyPlyConfig.csv resolves to -1, which would throw on
+        //the indexer, so it is reported rather than allowed to abort the caller.
+        private bool TryWriteTag(SmartLogic.SmartOPC opc, SmartLogic.loginformation inf,
+                                 string tagName, object value)
+        {
+            if (opc == null || inf == null || string.IsNullOrEmpty(tagName))
+            {
+                return false;
+            }
+
+            try
+            {
+                int tagIndex = inf.opcItemID.IndexOf(tagName.ToLower());
+                if (tagIndex < 0)
+                {
+                    Uitility.LogEvent("TryWriteTag : tag not configured : " + tagName);
+                    return false;
+                }
+
+                opc.WriteData(value, inf.opcItemID[tagIndex]);
+                return true;
+            }
+            catch (Exception exc)
+            {
+                Uitility.LogEvent("TryWriteTag :" + tagName + " :" + exc.ToString());
                 return false;
             }
         }

@@ -11,7 +11,7 @@ namespace BodyPlyWebService.Interfaces.IServices
         string UpdateHMIService(string machineName,int equipment_id, string transaction_Id);
         string GetRecipeListService(string transaction_Id);
         string GetTodayProductionDetailsService(string machineName,string transaction_Id);
-        string ScanningQrcodeService(string qrCode, string feeder, string numberofscan, string itemnumber, string isManual,  string UserName, string _transaction_Id,string MachineName);
+        string ScanningQrcodeService(string qrCode, string feeder, string numberofscan, string itemnumber, string isManual,  string UserName, string _transaction_Id,string MachineName,int equipment_id);
         string removeMaterialService(string qrcode, string userID, string isManual, string Feeder);
         string MHEScanningService(string qrCode);
         string GetBOMService(string transaction_Id);
