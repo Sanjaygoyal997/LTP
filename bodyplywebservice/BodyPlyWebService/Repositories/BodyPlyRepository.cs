@@ -294,13 +294,13 @@ namespace BodyPlyWebService.Repositories
                 string query =
                     "SELECT m.name AS extrudername, b.sequenceno AS sequenceno, " +
                     "b.mesitemcount AS mesitemcount, b.extruderscanok AS extruderscanok, " +
-                    "b.extruderhooter AS extruderhooter, b.alarmtag AS alarmtag " +
+                    "b.extruderhooter AS extruderhooter " +
                     "FROM dbo.bomextrudermapping b " +
                     "JOIN dbo.master_extruder m ON m.id = b.extruderid " +
                     "WHERE b.equipmentid = '" + equipment + "' " +
                     "AND b.isactive = true AND m.isdeleted = false " +
                     "GROUP BY m.name, b.sequenceno, b.mesitemcount, " +
-                    "b.extruderscanok, b.extruderhooter, b.alarmtag " +
+                    "b.extruderscanok, b.extruderhooter " +
                     "ORDER BY b.sequenceno";
 
                 dt = _dBOperations.OprationWithDB("Text", query, "");

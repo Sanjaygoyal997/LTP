@@ -47,8 +47,7 @@ namespace BodyPlyWebService.App_Data
                             SequenceNo = SequenceValue(row),
                             MesItemCountTag = ColumnValue(row, "mesitemcount"),
                             ExtruderScanOkTag = ColumnValue(row, "extruderscanok"),
-                            ExtruderHooterTag = ColumnValue(row, "extruderhooter"),
-                            AlarmTag = ColumnValue(row, "alarmtag")
+                            ExtruderHooterTag = ColumnValue(row, "extruderhooter")
                         });
                     }
                 }

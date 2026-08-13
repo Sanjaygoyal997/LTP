@@ -253,17 +253,16 @@ namespace BodyPlyWebService.Services
                                         extruderItemValue = "";
                                     }
 
-                                    bool extruderAlarmStatus = false;
-                                    if (!string.IsNullOrEmpty(configuredExtruder.AlarmTag))
+                                    //Hooter state is the extruder's own hooter tag, which
+                                    //ResetExtruderMaterial drives to 1 when the extruder has no
+                                    //material scanned. It is reported for a scanned and an
+                                    //unscanned extruder alike, because the unscanned one is
+                                    //where the hooter actually sounds.
+                                    string extruderHooterValue;
+                                    bool extruderHooterStatus = false;
+                                    if (TryReadTag(AllTagStatus, inf, configuredExtruder.ExtruderHooterTag, out extruderHooterValue))
                                     {
-                                        string extruderAlarmValue;
-                                        if (TryReadTag(AllTagStatus, inf, configuredExtruder.AlarmTag, out extruderAlarmValue))
-                                        {
-                                            try
-                                            { extruderAlarmStatus = Convert.ToBoolean(extruderAlarmValue); }
-                                            catch
-                                            { extruderAlarmStatus = false; }
-                                        }
+                                        extruderHooterStatus = TagValueToBoolean(extruderHooterValue);
                                     }
 
                                     List<Items> ItemsForExtruder = new List<Items>();
@@ -275,7 +274,7 @@ namespace BodyPlyWebService.Services
                                             item_name = extruderItemValue,
                                             scan_status = true,
                                             Hooter = "Hooter",
-                                            Hooter_status = extruderAlarmStatus,
+                                            Hooter_status = extruderHooterStatus,
                                             Setting_status = false,
                                             blending_status = false,
                                             Slitting_status = false,
@@ -290,7 +289,9 @@ namespace BodyPlyWebService.Services
                                         {
 
                                             item_name = extruderItemValue,
-                                            scan_status = false
+                                            scan_status = false,
+                                            Hooter = "Hooter",
+                                            Hooter_status = extruderHooterStatus
 
                                         });
                                     }
@@ -2880,6 +2881,37 @@ PRINT KEY OFF
                 Uitility.LogEvent("TryReadTag :" + tagName + " :" + exc.ToString());
                 return false;
             }
+        }
+
+        //Converts an OPC tag value to a boolean. The value depends on how the tag is
+        //configured in Kepware: a boolean tag reads back as True/False while a word or
+        //integer tag reads back as 1/0. Convert.ToBoolean only accepts True/False and
+        //throws on "1", so both forms are handled here.
+        private static bool TagValueToBoolean(string value)
+        {
+            if (string.IsNullOrEmpty(value))
+            {
+                return false;
+            }
+
+            string tagValue = value.Trim();
+
+            if (tagValue == "1") { return true; }
+            if (tagValue == "0") { return false; }
+
+            bool parsedBoolean;
+            if (bool.TryParse(tagValue, out parsedBoolean))
+            {
+                return parsedBoolean;
+            }
+
+            decimal parsedNumber;
+            if (decimal.TryParse(tagValue, out parsedNumber))
+            {
+                return parsedNumber != 0;
+            }
+
+            return false;
         }
 
         private void LogError(string folderName, string methodInfo, Exception exc, string transactionId)

@@ -101,7 +101,6 @@ namespace BodyPlyWebService.Models
         public string MesItemCountTag { get; set; }
         public string ExtruderScanOkTag { get; set; }
         public string ExtruderHooterTag { get; set; }
-        public string AlarmTag { get; set; }
     }
     public class Feeder
     {
