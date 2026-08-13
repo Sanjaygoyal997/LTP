@@ -265,6 +265,16 @@ namespace BodyPlyWebService.Services
                                         extruderHooterStatus = TagValueToBoolean(extruderHooterValue);
                                     }
 
+                                    //Extruder state is the extruder's scan ok tag, which
+                                    //ResetExtruderMaterial drives to 1 once the extruder has
+                                    //material scanned against it.
+                                    string extruderScanOkValue;
+                                    bool extruderScanOkStatus = false;
+                                    if (TryReadTag(AllTagStatus, inf, configuredExtruder.ExtruderScanOkTag, out extruderScanOkValue))
+                                    {
+                                        extruderScanOkStatus = TagValueToBoolean(extruderScanOkValue);
+                                    }
+
                                     List<Items> ItemsForExtruder = new List<Items>();
 
                                     if (extruderItemValue != "" && extruderItemValue != "0")
@@ -275,6 +285,8 @@ namespace BodyPlyWebService.Services
                                             scan_status = true,
                                             Hooter = "Hooter",
                                             Hooter_status = extruderHooterStatus,
+                                            Extruder_name = configuredExtruder.ExtruderName,
+                                            Extruder_status = extruderScanOkStatus,
                                             Setting_status = false,
                                             blending_status = false,
                                             Slitting_status = false,
@@ -291,7 +303,9 @@ namespace BodyPlyWebService.Services
                                             item_name = extruderItemValue,
                                             scan_status = false,
                                             Hooter = "Hooter",
-                                            Hooter_status = extruderHooterStatus
+                                            Hooter_status = extruderHooterStatus,
+                                            Extruder_name = configuredExtruder.ExtruderName,
+                                            Extruder_status = extruderScanOkStatus
 
                                         });
                                     }
