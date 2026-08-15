@@ -96,9 +96,10 @@ BEGIN
     -------------------------------------------------------------------------
     -- Which schema holds the production record for this feeder
     --
-    -- Read from the mapping rather than decided from the feeder name. A name
-    -- outside the list the previous version carried silently recorded nothing
-    -- and still reported success.
+    -- Read from the equipment layout rather than decided from the feeder name.
+    -- A name outside the list the previous version carried silently recorded
+    -- nothing and still reported success. Where a feeder's material is produced
+    -- belongs to the machine and the position, not to the recipe or the item.
     -------------------------------------------------------------------------
     IF _equipmentid IS NOT NULL AND _sequenceno IS NOT NULL
        AND _equipmentid ~ '^[0-9]+$' AND _sequenceno ~ '^[0-9]+$' THEN
