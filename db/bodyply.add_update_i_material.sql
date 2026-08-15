@@ -18,8 +18,8 @@
 -- The production record lives in a different schema depending on where the
 -- material was made: the let off takes calendered roll from the four roll
 -- calender, the strip feeders take slitted material from the multi slitter.
--- The schema is read from dbo.bomextrudermapping.schemaname using equipmentId
--- and sequenceNo, so no feeder name is named here.
+-- The schema is read from dbo.equipment_extruder_lookup.schemaname using
+-- equipmentId and sequenceNo, so no feeder name is named here.
 --
 -- equipmentId and sequenceNo are optional. Without them, or without a schema
 -- recorded on the mapping, every known schema is searched instead, because the

@@ -12,10 +12,11 @@
 --
 -- equipmentId and sequenceNo are optional so that callers which do not send
 -- them keep working unchanged. When both are present the scanned material is
--- also checked against dbo.bomextrudermapping, which is what decides whether
--- the material belongs on that particular feeder, and the same rows name the
--- schema the production record is read from. Without them, or without a source
--- on the mapping, every known schema is searched instead.
+-- also checked against dbo.bomextrudermapping, joined to
+-- dbo.equipment_extruder_lookup because the operator scans at a position while
+-- the mapping is keyed by extruder. The layout also names the schema the
+-- production record is read from. Without them, or without a schema on the
+-- layout, every known schema is searched instead.
 --
 -- Output (result):
 --   status   success | fail | confirm
