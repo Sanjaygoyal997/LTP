@@ -549,7 +549,7 @@ namespace BodyPlyWebService.Services
                         Uitility.LogEvent("UpdateHMIService" + $"OPC Reconnect..1");
                         //  LogEvent("BodyPlyASPXService", "UpdateHMIService", "OPC Reconnect..1", _transaction_Id, "");
                     }
-                    ResetExtruderMaterial(equipment_id);
+                    ResetExtruderMaterial(equipment_id, recipe);
                 }
                 catch (Exception exc)
                 {
@@ -577,7 +577,10 @@ namespace BodyPlyWebService.Services
             return json;
         }
 
-        public void ResetExtruderMaterial(int equipment_id)
+        //recipe is the value read from the PLC. It decides which of the machine's extruders
+        //the running product actually needs, so an extruder the recipe does not use is left
+        //satisfied and quiet rather than being made to demand a scan it will never receive.
+        public void ResetExtruderMaterial(int equipment_id, string recipe)
         {
             SmartLogic.SmartOPC AllTagStatus;
             SmartLogic.loginformation inf;
@@ -628,6 +631,8 @@ namespace BodyPlyWebService.Services
                 List<ExtruderConfig> configuredExtruders =
                     ExtruderConfigProvider.Get(equipment_id.ToString(), _bodyPlyRepository);
 
+                MarkRequiredExtruders(configuredExtruders, equipment_id, recipe);
+
                 if (configuredExtruders != null)
                 {
                     foreach (ExtruderConfig configuredExtruder in configuredExtruders)
@@ -636,6 +641,17 @@ namespace BodyPlyWebService.Services
                         //abandon the extruders that follow.
                         try
                         {
+                            //An extruder the running recipe does not use is reported as
+                            //satisfied: no count, no hooter, and scan ok set so it does not
+                            //hold the machine on an interlock.
+                            if (!configuredExtruder.IsRequired)
+                            {
+                                TryWriteTag(AllTagStatus, inf, configuredExtruder.MesItemCountTag, 0);
+                                TryWriteTag(AllTagStatus, inf, configuredExtruder.ExtruderHooterTag, 0);
+                                TryWriteTag(AllTagStatus, inf, configuredExtruder.ExtruderScanOkTag, 1);
+                                continue;
+                            }
+
                             DataTable dtscan = _bodyPlyRepository.GetTotalBodyPlyScan(
                                 configuredExtruder.ExtruderName, equipment_id.ToString());
 
@@ -868,7 +884,7 @@ namespace BodyPlyWebService.Services
                 Result.Status = 0;
                 Result.Message = bsObj.itemCode + " Not Validate on this input feeder";
                 Result.Data = "False";
-                ResetExtruderMaterial(equipment_id);
+                ResetExtruderMaterial(equipment_id, recipe);
                 return;
             }
 
@@ -893,7 +909,7 @@ namespace BodyPlyWebService.Services
                 LogError("BodyPlyASPXService", "RecordScannedMaterial", ex, _transaction_Id);
             }
 
-            ResetExtruderMaterial(equipment_id);
+            ResetExtruderMaterial(equipment_id, recipe);
         }
 
         public string ScanningQrcodeService(string QrCode, string Feeder, string numberofscan, string itemnumber, string isManual, string UserName,  string _transaction_Id,string MachineName,int equipment_id)
@@ -2246,6 +2262,51 @@ PRINT KEY OFF
             {
                 Uitility.LogEvent("TryReadTag :" + tagName + " :" + exc.ToString());
                 return false;
+            }
+        }
+
+        //Marks which of the machine's extruders the running recipe requires a scan on. The
+        //list itself is every extruder the machine carries, so this only decides which of
+        //them are demanded. A recipe that resolves to nothing leaves every extruder required,
+        //which is the safe reading: better to ask for a scan than to skip one.
+        private void MarkRequiredExtruders(List<ExtruderConfig> configuredExtruders,
+                                           int equipment_id, string recipe)
+        {
+            if (configuredExtruders == null || configuredExtruders.Count == 0)
+            {
+                return;
+            }
+
+            List<int> requiredPositions = new List<int>();
+
+            try
+            {
+                DataTable dtrequired = _bodyPlyRepository.GetRequiredExtruderPositions(
+                    equipment_id.ToString(), recipe);
+
+                if (dtrequired != null && dtrequired.Columns.Contains("sequenceno"))
+                {
+                    foreach (DataRow row in dtrequired.Rows)
+                    {
+                        int position = 0;
+                        if (int.TryParse(row["sequenceno"].ToString(), out position))
+                        {
+                            requiredPositions.Add(position);
+                        }
+                    }
+                }
+            }
+            catch (Exception exc)
+            {
+                LogError("BodyPlyASPXService", "MarkRequiredExtruders", exc, _transaction_Id);
+            }
+
+            bool recipeResolved = requiredPositions.Count > 0;
+
+            foreach (ExtruderConfig configuredExtruder in configuredExtruders)
+            {
+                configuredExtruder.IsRequired =
+                    !recipeResolved || requiredPositions.Contains(configuredExtruder.SequenceNo);
             }
         }
 

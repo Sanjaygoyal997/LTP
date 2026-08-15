@@ -103,14 +103,14 @@ BEGIN
     IF _equipmentid IS NOT NULL AND _sequenceno IS NOT NULL
        AND _equipmentid ~ '^[0-9]+$' AND _sequenceno ~ '^[0-9]+$' THEN
 
-        SELECT b.schemaname
+        SELECT l.schemaname
           INTO _schemaname
-          FROM dbo.bomextrudermapping b
-         WHERE b.equipmentid = _equipmentid::int
-           AND b.sequenceno  = _sequenceno::int
-           AND b.isactive = true
-           AND b.schemaname IS NOT NULL
-           AND b.schemaname <> ''
+          FROM dbo.equipment_extruder_lookup l
+         WHERE l.equipmentid = _equipmentid::int
+           AND l.sequenceno  = _sequenceno::int
+           AND l.isdeleted = false
+           AND l.schemaname IS NOT NULL
+           AND l.schemaname <> ''
          LIMIT 1;
     END IF;
 

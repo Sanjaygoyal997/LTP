@@ -98,6 +98,9 @@ namespace BodyPlyWebService.Models
     {
         public string ExtruderName { get; set; }
         public int SequenceNo { get; set; }
+        //True when the running recipe requires a scan on this extruder. A machine may carry
+        //extruders a recipe does not use, and those are listed but not demanded.
+        public bool IsRequired { get; set; }
         public string MesItemCountTag { get; set; }
         public string ExtruderScanOkTag { get; set; }
         public string ExtruderHooterTag { get; set; }

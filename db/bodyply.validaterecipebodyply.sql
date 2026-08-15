@@ -114,11 +114,15 @@ BEGIN
         SELECT count(*)
           INTO _count
           FROM dbo.bomextrudermapping b
+          JOIN dbo.equipment_extruder_lookup l
+                 ON l.extruderid = b.extruderid
+                AND l.equipmentid = b.equipmentid
          WHERE b.equipmentid      = _equipmentid::int
-           AND b.sequenceno       = _sequenceno::int
+           AND l.sequenceno       = _sequenceno::int
            AND b.consumeitemcode  = _itemname
            AND (b.bomcode = _mesrecipename OR b.bomcode = _recipename)
-           AND b.isactive = true;
+           AND b.isactive = true
+           AND l.isdeleted = false;
 
         IF _count = 0 THEN
             result := json_build_object(
@@ -129,19 +133,17 @@ BEGIN
             RETURN;
         END IF;
 
-        --The same rows name the schema holding the production record for this
-        --feeder, so the aging and lab checks read the right one without naming
-        --it here.
-        SELECT b.schemaname
+        --Where the material on this feeder was produced. It is a property of the
+        --machine and the feeder, not of the recipe or the item, so it is read
+        --from the equipment lookup alone.
+        SELECT l.schemaname
           INTO _schemaname
-          FROM dbo.bomextrudermapping b
-         WHERE b.equipmentid     = _equipmentid::int
-           AND b.sequenceno      = _sequenceno::int
-           AND b.consumeitemcode = _itemname
-           AND (b.bomcode = _mesrecipename OR b.bomcode = _recipename)
-           AND b.isactive = true
-           AND b.schemaname IS NOT NULL
-           AND b.schemaname <> ''
+          FROM dbo.equipment_extruder_lookup l
+         WHERE l.equipmentid = _equipmentid::int
+           AND l.sequenceno  = _sequenceno::int
+           AND l.isdeleted = false
+           AND l.schemaname IS NOT NULL
+           AND l.schemaname <> ''
          LIMIT 1;
     END IF;
 

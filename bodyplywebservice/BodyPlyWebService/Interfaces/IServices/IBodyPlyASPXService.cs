@@ -21,6 +21,6 @@ namespace BodyPlyWebService.Interfaces.IServices
         string GetFeederScanMaterialService(string FeederName,int equipment_id);
         string PrintTagAndSaveDataService(string UserName, string RecipeName, string ProgressLength, string ProgressWidth, string machineName);
         string PrintTagPRNDublicateService(string ProductionId,string machineName);
-        void ResetExtruderMaterial(int equipmentId);
+        void ResetExtruderMaterial(int equipmentId, string recipe);
     }
 }

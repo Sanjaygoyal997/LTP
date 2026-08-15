@@ -277,10 +277,55 @@ namespace BodyPlyWebService.Repositories
             return dt;
         }
 
-        //Extruder configuration is read directly from the tables instead of through a
-        //stored procedure. The grouping collapses the many bom/consume item rows that
-        //exist per extruder down to one row per extruder, and the ordering is applied
-        //here because the caller iterates the rows in the order they are returned.
+        //Which feeder positions the running recipe actually requires a scan on. A machine
+        //may carry extruders a recipe does not use, and those must not be made to demand a
+        //scan or sound a hooter. The recipe read from the PLC is plcbomname while the mapping
+        //stores formulacode, so it is compared against either.
+        public DataTable GetRequiredExtruderPositions(string equipmentId, string plcBomName)
+        {
+            DataTable dt = new DataTable();
+            try
+            {
+                int equipment = 0;
+                if (!int.TryParse(equipmentId, out equipment))
+                {
+                    LogEvent("BodyPlyRepository", "GetRequiredExtruderPositions",
+                        $"Invalid equipmentId: {equipmentId}", _transaction_Id, "NA");
+                    return dt;
+                }
+
+                string plcBom = QuotedText(plcBomName, 50);
+
+                string query =
+                    "SELECT l.sequenceno AS sequenceno " +
+                    "FROM dbo.bomextrudermapping b " +
+                    "JOIN dbo.equipment_extruder_lookup l " +
+                    "  ON l.extruderid = b.extruderid AND l.equipmentid = b.equipmentid " +
+                    "LEFT JOIN dbo.bom o ON o.formulacode = b.bomcode " +
+                    "WHERE b.equipmentid = " + equipment + " " +
+                    "AND (o.plcbomname = '" + plcBom + "' OR b.bomcode = '" + plcBom + "') " +
+                    "AND b.isactive = true AND l.isdeleted = false " +
+                    "GROUP BY l.sequenceno " +
+                    "ORDER BY l.sequenceno";
+
+                dt = _dBOperations.OprationWithDB("Text", query, "");
+            }
+            catch (Exception exc)
+            {
+                // Log unexpected error in catch block and log into DB
+                LogError("BodyPlyRepository", "GetRequiredExtruderPositions", exc, _transaction_Id);
+            }
+            return dt;
+        }
+
+        //The feeder list is what the machine physically has, so it comes from
+        //dbo.equipment_extruder_lookup joined to the extruder catalogue, and never from the
+        //bill of materials. A machine may carry extruders a given recipe does not use, and
+        //the list is the same whichever recipe is running. Which of them a recipe requires a
+        //scan on is a separate question, answered by GetRequiredExtruderPositions.
+        //
+        //The ordering is applied here because the caller iterates the rows in the order they
+        //are returned.
         //Resolves the extruder that a scanned item belongs to at a given feeder position.
         //dbo.bomextrudermapping records the bom and the consumed item for each extruder, so a
         //row returned here is the scanned material being valid on that feeder, and the service
@@ -319,13 +364,15 @@ namespace BodyPlyWebService.Repositories
                 string query =
                     "SELECT m.name AS extrudername " +
                     "FROM dbo.bomextrudermapping b " +
+                    "JOIN dbo.equipment_extruder_lookup l " +
+                    "  ON l.extruderid = b.extruderid AND l.equipmentid = b.equipmentid " +
                     "JOIN dbo.master_extruder m ON m.id = b.extruderid " +
                     "LEFT JOIN dbo.bom o ON o.formulacode = b.bomcode " +
                     "WHERE b.equipmentid = " + equipment + " " +
-                    "AND b.sequenceno = " + sequence + " " +
+                    "AND l.sequenceno = " + sequence + " " +
                     "AND (o.plcbomname = '" + plcBom + "' OR b.bomcode = '" + plcBom + "') " +
                     "AND b.consumeitemcode = '" + consumeItem + "' " +
-                    "AND b.isactive = true AND m.isdeleted = false " +
+                    "AND b.isactive = true AND l.isdeleted = false AND m.isdeleted = false " +
                     "GROUP BY m.name";
 
                 dt = _dBOperations.OprationWithDB("Text", query, "");
@@ -371,16 +418,14 @@ namespace BodyPlyWebService.Repositories
                 }
 
                 string query =
-                    "SELECT m.name AS extrudername, b.sequenceno AS sequenceno, " +
-                    "b.mesitemcount AS mesitemcount, b.extruderscanok AS extruderscanok, " +
-                    "b.extruderhooter AS extruderhooter " +
-                    "FROM dbo.bomextrudermapping b " +
-                    "JOIN dbo.master_extruder m ON m.id = b.extruderid " +
-                    "WHERE b.equipmentid = " + equipment + " " +
-                    "AND b.isactive = true AND m.isdeleted = false " +
-                    "GROUP BY m.name, b.sequenceno, b.mesitemcount, " +
-                    "b.extruderscanok, b.extruderhooter " +
-                    "ORDER BY b.sequenceno";
+                    "SELECT m.name AS extrudername, l.sequenceno AS sequenceno, " +
+                    "m.mesitemcount AS mesitemcount, m.extruderscanok AS extruderscanok, " +
+                    "m.extruderhooter AS extruderhooter " +
+                    "FROM dbo.equipment_extruder_lookup l " +
+                    "JOIN dbo.master_extruder m ON m.id = l.extruderid " +
+                    "WHERE l.equipmentid = " + equipment + " " +
+                    "AND l.isdeleted = false AND m.isdeleted = false " +
+                    "ORDER BY l.sequenceno";
 
                 dt = _dBOperations.OprationWithDB("Text", query, "");
             }
