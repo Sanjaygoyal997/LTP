@@ -42,22 +42,15 @@ public sealed class PlantConfiguration
 
     /// <summary>
     /// Loads the plant definition. A '.txt' path is read as the plant's existing SCADA
-    /// press configuration; anything else is read as an asset file.
+    /// equipment configuration; anything else is read as an asset file.
     /// </summary>
-    /// <param name="gaugeTags">
-    /// Group name to gauge tag. The legacy press configuration carries no trench pressure
-    /// tag, so it is supplied from settings rather than by editing a file the old system
-    /// still reads.
-    /// </param>
-    /// <param name="tilePitch">
-    /// Legacy box width, used to turn a trench panel width from <c>trenchSize.txt</c> into
-    /// boxes per row.
+    /// <param name="groupLabelFormat">
+    /// How an equipment group is labelled, given its number from the configuration.
     /// </param>
     public static PlantConfiguration Load(
         string path,
         string title,
-        IReadOnlyDictionary<string, string>? gaugeTags = null,
-        int tilePitch = 46)
+        string groupLabelFormat = "Group {0}")
     {
         if (!File.Exists(path))
         {
@@ -69,7 +62,7 @@ public sealed class PlantConfiguration
 
         if (Path.GetExtension(path).Equals(".txt", StringComparison.OrdinalIgnoreCase))
         {
-            var legacy = LegacyPressConfig.Read(path);
+            var legacy = LegacyPressConfig.Read(path, groupLabelFormat);
             assets = legacy.Assets;
             groups = legacy.Groups;
         }

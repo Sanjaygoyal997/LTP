@@ -16,13 +16,15 @@ namespace CuringMonitor.Api.Configuration;
 /// <code>
 /// RowNo#PressName#PressTitle#CommunicationCheck#PressOpen_Close#Alarm#RecipeCode#ProdCountA#ProdCountB#ProdCountC#Flag
 /// </code>
-/// <c>RowNo</c> is the trench. The mimic captions each box with <c>PressTitle</c>, not
-/// <c>PressName</c> — the two differ in practice.
+/// <c>RowNo</c> is the equipment group — a bay, line or trench, depending on the site. The
+/// mimic captions each box with <c>PressTitle</c>, not <c>PressName</c>; the two differ in
+/// practice.
 /// </remarks>
 public static class LegacyPressConfig
 {
     private const int MinimumColumns = 10;
-    private const string TrenchSizeFileName = "trenchSize.txt";
+    /// <summary>Companion file giving each group's panel geometry, if the site ships one.</summary>
+    private const string PanelSizeFileName = "trenchSize.txt";
 
     private static readonly char[] CandidateDelimiters = ['#', ','];
 
@@ -30,11 +32,11 @@ public static class LegacyPressConfig
         IReadOnlyList<AssetDefinition> Assets,
         IReadOnlyList<GroupDefinition> Groups);
 
-    public static Result Read(string path)
+    public static Result Read(string path, string groupLabelFormat = "Group {0}")
     {
         var assets = new List<AssetDefinition>();
         var counts = new Dictionary<int, int>();
-        var trenchOrder = new List<int>();
+        var groupOrder = new List<int>();
         var usedIds = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         var lineNumber = 0;
         var delimiter = '#';
@@ -62,10 +64,10 @@ public static class LegacyPressConfig
                     $"{MinimumColumns} '#'-separated columns, found {columns.Length}.");
             }
 
-            if (!int.TryParse(columns[0].Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out var trench))
+            if (!int.TryParse(columns[0].Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out var groupNo))
             {
                 throw new InvalidOperationException(
-                    $"{Path.GetFileName(path)} line {lineNumber}: '{columns[0]}' is not a trench number.");
+                    $"{Path.GetFileName(path)} line {lineNumber}: '{columns[0]}' is not a group number.");
             }
 
             var name = columns[1].Trim();
@@ -75,27 +77,27 @@ public static class LegacyPressConfig
                     $"{Path.GetFileName(path)} line {lineNumber}: press name is blank.");
             }
 
-            if (!trenchOrder.Contains(trench))
+            if (!groupOrder.Contains(groupNo))
             {
-                trenchOrder.Add(trench);
+                groupOrder.Add(groupNo);
             }
 
-            var position = counts.GetValueOrDefault(trench) + 1;
-            counts[trench] = position;
+            var position = counts.GetValueOrDefault(groupNo) + 1;
+            counts[groupNo] = position;
 
             assets.Add(new AssetDefinition
             {
-                // The same press name legitimately appears in more than one trench, so the
-                // identifier has to carry the trench; the caption is unaffected.
-                Id = UniqueId(usedIds, trench, name),
+                // The same name legitimately appears in more than one group, so the
+                // identifier has to carry the group; the caption is unaffected.
+                Id = UniqueId(usedIds, groupNo, name),
                 Kind = AssetKinds.Press,
                 Label = Optional(columns[2]) ?? name,
-                Group = GroupName(trench),
+                Group = GroupName(groupNo, groupLabelFormat),
                 Position = position,
                 Attributes =
                 {
-                    ["trench"] = trench.ToString(CultureInfo.InvariantCulture),
-                    ["pressName"] = name
+                    ["group"] = groupNo.ToString(CultureInfo.InvariantCulture),
+                    ["name"] = name
                 },
                 Signals = Signals(columns)
             });
@@ -103,23 +105,23 @@ public static class LegacyPressConfig
 
         if (assets.Count == 0)
         {
-            throw new InvalidOperationException($"{Path.GetFileName(path)} defines no boxes.");
+            throw new InvalidOperationException($"{Path.GetFileName(path)} defines no equipment.");
         }
 
-        var panels = ReadTrenchPanels(Path.Combine(Path.GetDirectoryName(path) ?? ".", TrenchSizeFileName));
+        var panels = ReadPanels(Path.Combine(Path.GetDirectoryName(path) ?? ".", PanelSizeFileName));
 
-        // Trenches are drawn in the order the configuration lists them. Panels are matched by
-        // trench number: trenchSize.txt's id column is the RowNo from the press
-        // configuration, so the two files line up by trench rather than by position.
-        var groups = trenchOrder
-            .Select((trench, index) =>
+        // Groups are drawn in the order the configuration lists them. Panels are matched by
+        // group number: the panel file's id column is the RowNo from the equipment
+        // configuration, so the two files line up by group rather than by position.
+        var groups = groupOrder
+            .Select((groupNo, index) =>
             {
-                var hasPanel = panels.TryGetValue(trench, out var panel);
+                var hasPanel = panels.TryGetValue(groupNo, out var panel);
 
                 return new GroupDefinition
                 {
-                    Key = GroupName(trench),
-                    Label = GroupName(trench),
+                    Key = GroupName(groupNo, groupLabelFormat),
+                    Label = GroupName(groupNo, groupLabelFormat),
                     Order = index,
                     PanelWidth = hasPanel ? panel.Width : null,
                     PanelHeight = hasPanel ? panel.Height : null
@@ -143,12 +145,12 @@ public static class LegacyPressConfig
     }
 
     /// <summary>
-    /// Reads <c>trenchSize.txt</c>: a header line (<c>id,w,h</c>), then one comma-separated
-    /// line per trench. The <c>id</c> is the trench number — the same <c>RowNo</c> the press
-    /// configuration uses — so the two files are joined on it, not on row position. A trench
+    /// Reads the panel geometry file: a header line (<c>id,w,h</c>), then one comma-separated
+    /// line per group. The <c>id</c> is the group number — the same <c>RowNo</c> the equipment
+    /// configuration uses — so the two files are joined on it, not on row position. A group
     /// with no line, or an unreadable one, simply has no panel.
     /// </summary>
-    private static IReadOnlyDictionary<int, (int Width, int Height)> ReadTrenchPanels(string path)
+    private static IReadOnlyDictionary<int, (int Width, int Height)> ReadPanels(string path)
     {
         var panels = new Dictionary<int, (int, int)>();
 
@@ -185,9 +187,9 @@ public static class LegacyPressConfig
             ? value
             : 0;
 
-    private static string UniqueId(HashSet<string> used, int trench, string name)
+    private static string UniqueId(HashSet<string> used, int groupNo, string name)
     {
-        var id = $"{trench}/{name}";
+        var id = $"{groupNo}/{name}";
         if (used.Add(id))
         {
             return id;
@@ -251,8 +253,8 @@ public static class LegacyPressConfig
         return best.Candidate;
     }
 
-    private static string GroupName(int trench) =>
-        $"Trench {trench.ToString(CultureInfo.InvariantCulture)}";
+    private static string GroupName(int groupNo, string format) =>
+        string.Format(CultureInfo.InvariantCulture, format, groupNo);
 
     private static string? Optional(string value) =>
         string.IsNullOrWhiteSpace(value) ? null : value.Trim();

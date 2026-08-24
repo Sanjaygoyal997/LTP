@@ -1,6 +1,6 @@
 {
-  "id": "curing-wall",
-  "title": "Curing Press Status",
+  "id": "equipment-status",
+  "title": "Equipment Status",
   "theme": {
     "floor": "#d4d4d4",
     "panel": "#000000",
@@ -34,7 +34,7 @@
         "colour": "status",
         "tooltip": [
           {
-            "label": "Press",
+            "label": "Equipment",
             "field": "asset.label"
           },
           {
@@ -59,23 +59,6 @@
             "unit": "kg/cm\u00b2"
           }
         ]
-      },
-      "tileByKind": {
-        "gauge": {
-          "sub": "asset.attributes.unit",
-          "value": "signal.value",
-          "tooltip": [
-            {
-              "label": "Header pressure",
-              "field": "asset.group"
-            },
-            {
-              "label": "Reading",
-              "field": "signal.value",
-              "unit": "kg/cm\u00b2"
-            }
-          ]
-        }
       }
     },
     {
@@ -105,7 +88,7 @@
     {
       "type": "kpi-panel",
       "region": "footer",
-      "title": "Press",
+      "title": "Equipment",
       "orientation": "rows",
       "items": [
         {

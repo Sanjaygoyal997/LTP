@@ -41,6 +41,12 @@ public sealed class PlantOptions
 
     public RunStopOptions RunStop { get; set; } = new();
 
+    /// <summary>
+    /// How an equipment group is labelled, given the group number from the configuration.
+    /// Sites call these bays, lines or trenches; the screen should use the plant's word.
+    /// </summary>
+    public string GroupLabelFormat { get; set; } = "Group {0}";
+
     public OpcOptions Opc { get; set; } = new();
 }
 

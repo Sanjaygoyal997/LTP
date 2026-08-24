@@ -1,8 +1,8 @@
 namespace CuringMonitor.Api.Domain;
 
 /// <summary>
-/// A group of boxes — a trench, a bay, a line. Carries the order the plant lists it in and,
-/// where the source configuration says so, how many boxes fit across one row of it.
+/// A group of equipment — a bay, a line, a trench. Carries the order the plant lists it in
+/// and, where the source configuration says so, the panel it is drawn in.
 /// </summary>
 public sealed class GroupDefinition
 {
@@ -14,7 +14,7 @@ public sealed class GroupDefinition
     public int Order { get; init; }
 
     /// <summary>
-    /// Panel width the legacy screen drew this trench in, from <c>trenchSize.txt</c>.
+    /// Panel width the legacy screen drew this group in, from its panel geometry file.
     /// Boxes were fitted into the panel rather than wrapped at a fixed count, so the client
     /// derives box size and row width from this and the box count.
     /// </summary>

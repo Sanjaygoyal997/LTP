@@ -25,24 +25,29 @@ press configuration, anything else as a layout file:
 }
 ```
 
-Everything comes from that file: box names, group (trench) membership, order within the
-group, and the three status tags, recipe tag and three shift-counter tags per press. The
-box caption is `PressTitle` (column 2), not `PressName` — the two differ in practice.
+Everything comes from that file: box names, group membership, order within the group, and
+the three status tags, recipe tag and three shift-counter tags per item. The box caption is
+`PressTitle` (column 2), not `PressName` — the two differ in practice.
+
+`RowNo` is the group number. What a group is called on screen is
+`Plant:GroupLabelFormat` — sites say bay, line or trench, and the screen should use the
+plant's word.
 
 The copy committed here is the plant's own file: **137 boxes across trenches 6, 5, 4, 2, 1
 and 7**, in that order. Note what it contains, because it shapes the loader:
 
 * `T_6`, `T_5`, `T_4`, `TRH`, `T_2`, `T_1` are ordinary entries with their own tags — the
-  trench summary boxes are configured, not synthesised.
-* Trench 7 holds `NewChina` and `OldChina`, which are painting-line weight checks rather
-  than presses.
-* Press `9201` appears twice, in two different trenches, so a box identifier carries its
-  trench (`6/9201`) and the loader does not treat a repeated name as an error.
-* Trench 3 does not exist.
+  summary boxes are configured, not synthesised.
+* Group 7 holds `NewChina` and `OldChina`, which are painting-line weight checks rather
+  than presses — the screen shows equipment of any kind, not only curing presses.
+* `9201` appears twice, in two different groups, so a box identifier carries its group
+  (`6/9201`) and the loader does not treat a repeated name as an error.
+* Group 3 does not exist.
 
-**`trenchSize.txt`**, if the site ships it beside the config, is read too. The legacy
-screen never stated a boxes-per-row figure — it sized each trench panel in pixels and
-fitted the boxes into it, so the panel dimensions are what the client works from:
+**`trenchSize.txt`**, if the site ships it beside the config, is read too — it gives each
+group's panel geometry. The legacy screen never stated a boxes-per-row figure; it sized
+each panel in pixels and fitted the boxes into it, so the panel dimensions are what the
+client works from:
 
 ```
 areaPerBox = panelWidth * panelHeight * 0.8 / boxCount
@@ -52,11 +57,11 @@ shrink boxWidth until floor(w/boxWidth) * floor(h/boxHeight) >= boxCount
 boxesPerRow = floor(panelWidth / boxWidth)
 ```
 
-Format is a header line (`id,w,h`), then one comma-separated line per trench. **`id` is the
-trench number — the same `RowNo` the press configuration uses**, so the two files are joined
-on it rather than by row position. A trench with no line (trench 7 in the plant's file), or
-an unreadable one, falls back to the screen's own row width; a line for a trench with no
-presses (trench 3) is simply unused.
+Format is a header line (`id,w,h`), then one comma-separated line per group. **`id` is the
+group number — the same `RowNo` the equipment configuration uses**, so the two files are
+joined on it rather than by row position. A group with no line (group 7 in the plant's
+file), or an unreadable one, falls back to the screen's own row width; a line for a group
+with no equipment (group 3) is simply unused.
 
 Group **order** comes from the configuration too — the sequence the plant lists its trenches
 in, which is not necessarily alphabetical and is the one operators know.
@@ -115,7 +120,7 @@ with a query rather than listing them:
 
 ```json
 "source": {
-  "where":  { "asset.attributes.trench": "6" },
+  "where":  { "asset.attributes.group": "6" },
   "groupBy": "asset.group",
   "orderBy": "asset.position",
   "wrap": "auto",
@@ -163,7 +168,7 @@ API happens to send:
 | Root | Resolves to | Example |
 |---|---|---|
 | `asset.*` | identity and placement | `asset.label`, `asset.group`, `asset.position` |
-| `asset.attributes.*` | whatever the plant configuration carries | `asset.attributes.trench` |
+| `asset.attributes.*` | whatever the plant configuration carries | `asset.attributes.group` |
 | `signal.*` | any signal wired up for that box | `signal.recipe`, `signal.count`, `signal.pressure` |
 | `status` / `status.label` | state, or its display text | `status.label` |
 | `production.*` | per-shift production | `production.a`, `production.total` |
@@ -215,13 +220,12 @@ rather than sitting grey.
 
 | Setting | Default | Meaning |
 |---|---|---|
-| `Plant:LayoutFile` | `config_AB.txt` | legacy `.txt` config, or a layout file |
+| `Plant:LayoutFile` | `config_AB.txt` | legacy `.txt` config, or an asset file |
+| `Plant:GroupLabelFormat` | `Group {0}` | how a group is labelled, given its number |
 | `Plant:Provider` | `simulated` | `simulated` or `opc` |
 | `Plant:PollInterval` | 2 s | how often the full tag set is read |
 | `Plant:RunStop:From` | `pressOpen` | how run and stop are told apart: `pressOpen` (legacy) or `pressure` |
 | `Plant:RunStop:Threshold` | 1.0 | pressure at or above which a press is running, when `From` is `pressure` |
-| `Plant:GaugeTags` | `{}` | group name → gauge tag |
-| `Plant:LegacyTilePitch` | 46 | box width in pixels, for converting `trenchSize.txt` widths into boxes per row |
 | `Plant:Shifts:*StartHour` | 7 / 15 / 23 | shift boundaries |
 | `AllowedOrigins` | `http://localhost:5173` | CORS origins for the display |
 

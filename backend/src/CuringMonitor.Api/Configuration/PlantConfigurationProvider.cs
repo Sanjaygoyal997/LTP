@@ -6,7 +6,7 @@ namespace CuringMonitor.Api.Configuration;
 /// Holds the current plant definition and keeps it in step with the file it came from.
 ///
 /// The plant configuration is a file the plant maintains — presses are commissioned,
-/// renamed and moved between trenches — so an edit has to reach the wall display without
+/// renamed and moved between groups — so an edit has to reach the wall display without
 /// anyone restarting a service. Readers take <see cref="Current"/> per cycle; a reload
 /// swaps it wholesale, so no reader ever sees a half-applied plant.
 /// </summary>
@@ -105,7 +105,7 @@ public sealed class PlantConfigurationProvider : IDisposable
     }
 
     private PlantConfiguration Load() =>
-        PlantConfiguration.Load(_path, _options.Title);
+        PlantConfiguration.Load(_path, _options.Title, _options.GroupLabelFormat);
 
     public void Dispose()
     {

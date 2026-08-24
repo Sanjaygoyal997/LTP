@@ -132,21 +132,12 @@ Iterates the tile controls and counts **by colour**, with a 10 ms pause per tile
 
 Grey and blinking-red tiles are counted in neither.
 
-### Header pressures — `backgroundWorker2_DoWork`, 1000 ms
+### Header pressures — out of scope
 
-A **second, separate OPC group** (`opcTrench`), five slots, fixed order:
-
-| Slot | Label |
-|---|---|
-| 0 | MP — medium-pressure steam |
-| 1 | LP — low-pressure steam |
-| 2 | HWSP — hot water supply pressure |
-| 3 | HWRP — hot water return pressure |
-| 4 | HYDP — hydraulic pressure |
-
-Shown in the "Trench Pressure Detail in Kg/Cm²" group box. Tags come from
-`trenchConfig.txt`; `trenchLimit.txt` supplies limits (comma-separated, five rows,
-columns 1 and 2) — presumably low/high for colouring.
+`backgroundWorker2_DoWork` reads a second OPC group (`opcTrench`) of five header pressures
+— MP, LP, HWSP, HWRP, HYDP — into the "Trench Pressure Detail in Kg/Cm²" box, from
+`trenchConfig.txt` with limits in `trenchLimit.txt`. **Not being ported:** this screen shows
+equipment status, and the header pressures are a utility reading rather than equipment.
 
 ### Tile control — `pressControl.dll`
 
@@ -249,10 +240,10 @@ purely a SQL Server site.
 
 ## 7. What cannot be settled without more artefacts
 
-1. `trenchLimit.txt` — limits for the five header pressures. `trenchConfig.txt` supplies
-   the tags themselves and is in hand.
-2. `configPara.txt` — the parameter-detail panel. Out of scope: dashboard only.
-3. `configDB.mdb` — alarm and trend definitions. Out of scope for the dashboard.
+1. `configPara.txt` — the parameter-detail panel. Out of scope: dashboard only.
+2. `configDB.mdb` — alarm and trend definitions. Out of scope for the dashboard.
+3. `trenchConfig.txt` / `trenchLimit.txt` — header pressures. Out of scope: equipment
+   status only.
 
 Settled since: the `T_4` / `T_5` / `T_6` / `TRH` boxes are ordinary configured entries;
 `config_AB.txt` is the file to read; and `trenchSize.txt` joins to it on the trench

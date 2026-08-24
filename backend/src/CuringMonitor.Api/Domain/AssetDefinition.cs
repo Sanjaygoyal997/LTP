@@ -19,7 +19,7 @@ public sealed class AssetDefinition
     /// <summary>Text on the box. Defaults to the id, but nothing requires it to match.</summary>
     public string? Label { get; init; }
 
-    /// <summary>Group the box is drawn in — a trench, a bay, a line, whatever the site uses.</summary>
+    /// <summary>Equipment group the box is drawn in — a bay, a line, a trench.</summary>
     public string? Group { get; init; }
 
     /// <summary>Order within the group.</summary>
