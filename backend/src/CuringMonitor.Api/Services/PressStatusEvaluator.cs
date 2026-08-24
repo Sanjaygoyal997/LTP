@@ -51,7 +51,7 @@ public sealed class PressStatusEvaluator(IOptions<PlantOptions> options)
 
         return new PlantSnapshot(
             now,
-            shift.Name,
+            shift.Name.ToString(),
             shift.ProductionDate,
             sourceConnected,
             new ProductionTotals(productionA, productionB, productionC),

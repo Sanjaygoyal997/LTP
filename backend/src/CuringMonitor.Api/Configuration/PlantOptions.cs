@@ -8,8 +8,19 @@ public sealed class PlantOptions
     /// <summary>Title shown on the wall display.</summary>
     public string Title { get; set; } = "Curing Press Status";
 
-    /// <summary>Path to the layout/tag definition file, absolute or relative to the content root.</summary>
+    /// <summary>
+    /// Plant definition to load, absolute or relative to the content root. A '.txt' file is
+    /// read as the plant's existing SCADA press configuration (config_AB.txt and friends);
+    /// anything else is read as a layout file.
+    /// </summary>
     public string LayoutFile { get; set; } = "plant-layout.json";
+
+    /// <summary>
+    /// Trench number to header-pressure tag. The legacy press configuration carries no
+    /// trench pressure tag, so it is supplied here rather than by editing a file the plant
+    /// still maintains for the old system. Trenches left out show as no-communication.
+    /// </summary>
+    public Dictionary<int, string> TrenchPressureTags { get; set; } = [];
 
     /// <summary>How often the whole tag set is read.</summary>
     public TimeSpan PollInterval { get; set; } = TimeSpan.FromSeconds(2);

@@ -1,3 +1,5 @@
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using CuringMonitor.Api.Configuration;
 using CuringMonitor.Api.Endpoints;
 using CuringMonitor.Api.Realtime;
@@ -9,7 +11,7 @@ using Microsoft.Extensions.Options;
 if (args is ["import-legacy", var legacyPath, var outputPath, ..])
 {
     var title = args.Length > 3 ? args[3] : "Curing Press Status";
-    File.WriteAllText(outputPath, LegacyConfigImporter.Convert(legacyPath, title));
+    File.WriteAllText(outputPath, LegacyPressConfig.ToLayoutJson(legacyPath, title));
     Console.WriteLine($"Wrote {outputPath}");
     return;
 }
@@ -31,7 +33,7 @@ builder.Services.AddSingleton(sp =>
         ? options.LayoutFile
         : Path.Combine(builder.Environment.ContentRootPath, options.LayoutFile);
 
-    return PlantConfiguration.Load(path, options.Title);
+    return PlantConfiguration.Load(path, options.Title, options.TrenchPressureTags);
 });
 
 builder.Services.AddSingleton<IShiftService, ShiftService>();
@@ -49,8 +51,16 @@ builder.Services.AddSingleton<IPressDataProvider>(sp =>
 
     if (string.Equals(options.Provider, "opc", StringComparison.OrdinalIgnoreCase))
     {
-        // Register an IOpcSession for the site's OPC stack (classic DA via interop, or UA)
-        // and this provider drives it. See docs/BACKEND.md.
+        // The OPC stack itself is a site decision (classic DA via interop, or UA), so the
+        // session is registered by the deployment rather than baked in here.
+        if (sp.GetService<IOpcSession>() is null)
+        {
+            throw new InvalidOperationException(
+                "Plant:Provider is 'opc' but no IOpcSession is registered. Register the " +
+                "site's OPC session implementation, or set Plant:Provider to 'simulated'. " +
+                "See docs/ARCHITECTURE.md.");
+        }
+
         return ActivatorUtilities.CreateInstance<OpcPressDataProvider>(sp);
     }
 
@@ -60,7 +70,17 @@ builder.Services.AddSingleton<IPressDataProvider>(sp =>
 
 builder.Services.AddHostedService<PlantPollingService>();
 
-builder.Services.AddSignalR();
+// Status reaches the client as "running", never as 3. Minimal APIs and SignalR each
+// carry their own serializer options, so both need the converter.
+var jsonEnumConverter = new JsonStringEnumConverter(JsonNamingPolicy.CamelCase);
+
+builder.Services.ConfigureHttpJsonOptions(options =>
+    options.SerializerOptions.Converters.Add(jsonEnumConverter));
+
+builder.Services.AddSignalR()
+    .AddJsonProtocol(options =>
+        options.PayloadSerializerOptions.Converters.Add(jsonEnumConverter));
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 

@@ -2,10 +2,13 @@ using CuringMonitor.Api.Domain;
 
 namespace CuringMonitor.Api.Contracts;
 
-/// <summary>State of the whole plant at one instant — the payload the wall display renders.</summary>
+/// <summary>
+/// State of the whole plant at one instant — the payload the wall display renders.
+/// </summary>
+/// <param name="Shift">Shift letter: "A", "B" or "C".</param>
 public sealed record PlantSnapshot(
     DateTimeOffset Timestamp,
-    ShiftName Shift,
+    string Shift,
     DateOnly ProductionDate,
     bool SourceConnected,
     ProductionTotals Production,

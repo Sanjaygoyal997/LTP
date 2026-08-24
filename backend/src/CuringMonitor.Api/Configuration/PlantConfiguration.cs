@@ -22,9 +22,14 @@ public sealed class PlantConfiguration
         Presses = presses;
         Trenches = trenches;
         _pressesById = presses.ToDictionary(p => p.Id, StringComparer.OrdinalIgnoreCase);
+        var trenchTags = trenches
+            .Select(t => t.PressureTag)
+            .Where(tag => !string.IsNullOrWhiteSpace(tag))
+            .Select(tag => tag!);
+
         AllTags = presses
             .SelectMany(p => p.Tags.All())
-            .Concat(trenches.Select(t => t.PressureTag).Where(t => !string.IsNullOrWhiteSpace(t))!)
+            .Concat(trenchTags)
             .Distinct(StringComparer.OrdinalIgnoreCase)
             .ToArray();
     }
@@ -41,7 +46,48 @@ public sealed class PlantConfiguration
     public PressDefinition? Find(string pressId) =>
         _pressesById.TryGetValue(pressId, out var press) ? press : null;
 
-    public static PlantConfiguration Load(string path, string title)
+    /// <summary>
+    /// Loads the plant definition. A '.txt' path is read as the plant's existing SCADA
+    /// press configuration; anything else is read as a layout file.
+    /// </summary>
+    /// <param name="trenchPressureTags">
+    /// Optional trench number to pressure tag map. The legacy config carries no trench
+    /// pressure tag, so it is supplied from application settings instead of being edited
+    /// into a file the plant maintains for the old system.
+    /// </param>
+    public static PlantConfiguration Load(
+        string path,
+        string title,
+        IReadOnlyDictionary<int, string>? trenchPressureTags = null)
+    {
+        if (!File.Exists(path))
+        {
+            throw new FileNotFoundException($"Plant configuration '{path}' was not found.", path);
+        }
+
+        var (presses, trenches) = Path.GetExtension(path).Equals(".txt", StringComparison.OrdinalIgnoreCase)
+            ? ReadLegacy(path)
+            : ReadLayoutFile(path);
+
+        if (trenchPressureTags is { Count: > 0 })
+        {
+            trenches = trenches
+                .Select(trench => trenchPressureTags.TryGetValue(trench.Number, out var tag)
+                    ? WithPressureTag(trench, tag)
+                    : trench)
+                .ToArray();
+        }
+
+        return new PlantConfiguration(title, presses, trenches);
+    }
+
+    private static (IReadOnlyList<PressDefinition> Presses, IReadOnlyList<TrenchDefinition> Trenches) ReadLegacy(string path)
+    {
+        var result = LegacyPressConfig.Read(path);
+        return (result.Presses, result.Trenches);
+    }
+
+    private static (IReadOnlyList<PressDefinition> Presses, IReadOnlyList<TrenchDefinition> Trenches) ReadLayoutFile(string path)
     {
         using var stream = File.OpenRead(path);
         var file = JsonSerializer.Deserialize<PlantFile>(stream, SerializerOptions)
@@ -60,8 +106,16 @@ public sealed class PlantConfiguration
             throw new InvalidOperationException($"Press '{duplicate.Key}' is defined more than once.");
         }
 
-        return new PlantConfiguration(file.Title ?? title, file.Presses, file.Trenches);
+        return (file.Presses, file.Trenches);
     }
+
+    private static TrenchDefinition WithPressureTag(TrenchDefinition trench, string tag) => new()
+    {
+        Number = trench.Number,
+        Label = trench.Label,
+        PressureTag = tag,
+        Rows = trench.Rows
+    };
 
     /// <summary>Projects the definition into the layout the client draws.</summary>
     public PlantLayout ToLayout()
@@ -104,8 +158,6 @@ public sealed class PlantConfiguration
 
     private sealed class PlantFile
     {
-        public string? Title { get; init; }
-
         public List<TrenchDefinition> Trenches { get; init; } = [];
 
         public List<PressDefinition> Presses { get; init; } = [];
