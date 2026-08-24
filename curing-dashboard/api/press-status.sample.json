@@ -1,0 +1,12 @@
+{
+  "timestamp": "2026-08-24T10:15:00+05:30",
+  "shift": "A",
+  "production": { "A": 7706, "B": 2443, "C": 0 },
+  "presses": [
+    { "id": "4919", "status": "running", "spec": "140912_ULTIMA", "remaining": 10, "cures": 34, "curingLine": "A" },
+    { "id": "4918", "status": "running", "spec": "140912_ULTIMA", "remaining": 12, "cures": 31, "curingLine": "A" },
+    { "id": "9803", "status": "alarm",   "spec": "140912_ULTIMA", "remaining": 0,  "cures": 12, "curingLine": "B" },
+    { "id": "4920", "status": "no-comm", "spec": "140912_ULTIMA", "remaining": 0,  "cures": 0,  "curingLine": "A" },
+    { "id": "9201", "status": "stopped", "spec": "140912_ULTIMA", "remaining": 0,  "cures": 22, "curingLine": "B" }
+  ]
+}

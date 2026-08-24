@@ -1,0 +1,225 @@
+/* ---------- theme ---------- */
+:root {
+  --bg:            #2b2b2b;
+  --floor-bg:      #d4d4d4;
+  --panel-bg:      #000;
+  --panel-border:  #6b6b6b;
+  --tile-border:   #4a4a4a;
+  --text-dark:     #000;
+  --text-light:    #e8e8e8;
+  --accent:        #00a2e8;
+
+  --st-no-comm:    #9a9a9a;
+  --st-running:    #00e05a;
+  --st-stopped:    #ffe400;
+  --st-alarm:      #ff1e1e;
+
+  --tile-w:        clamp(52px, calc((100vw - 3rem) / 18 - 4px), 112px);
+  --gap:           4px;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  height: 100%;
+  background: var(--bg);
+  color: var(--text-light);
+  font-family: "Segoe UI", Tahoma, Arial, sans-serif;
+  overflow: hidden;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ---------- top bar ---------- */
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 14px;
+  background: #111;
+  border-bottom: 2px solid var(--accent);
+  flex: 0 0 auto;
+}
+
+.title { display: flex; align-items: baseline; gap: 14px; }
+.plant { font-size: clamp(15px, 1.5vw, 24px); font-weight: 700; letter-spacing: .5px; }
+.shift {
+  font-size: clamp(11px, 1vw, 15px);
+  background: #23384a;
+  border: 1px solid #3d6c8e;
+  border-radius: 3px;
+  padding: 2px 8px;
+}
+
+.topbar-right { display: flex; align-items: center; gap: 14px; }
+.clock { font-variant-numeric: tabular-nums; font-size: clamp(14px, 1.4vw, 22px); font-weight: 600; }
+
+.conn { display: inline-flex; align-items: center; gap: 6px; font-size: clamp(11px, 1vw, 14px); color: #bcbcbc; }
+.conn .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--st-stopped); }
+.conn.ok   .dot { background: var(--st-running); }
+.conn.down .dot { background: var(--st-alarm); }
+
+.btn {
+  background: #262626;
+  color: var(--text-light);
+  border: 1px solid #555;
+  border-radius: 3px;
+  font-size: 16px;
+  line-height: 1;
+  padding: 5px 9px;
+  cursor: pointer;
+}
+.btn:hover { background: #333; }
+
+/* ---------- floor ---------- */
+.floor {
+  flex: 1 1 auto;
+  background: var(--floor-bg);
+  padding: 10px 12px;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  gap: clamp(10px, 1.6vh, 26px);
+}
+
+.bay { display: flex; flex-direction: column; gap: var(--gap); }
+
+.row {
+  display: grid;
+  grid-template-columns: repeat(var(--cols, 17), var(--tile-w));
+  gap: var(--gap);
+}
+
+/* ---------- tiles ---------- */
+.tile {
+  border: 1px solid var(--tile-border);
+  background: #cfcfcf;
+  color: var(--text-dark);
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  line-height: 1.05;
+  cursor: default;
+  user-select: none;
+}
+
+.tile .no {
+  font-size: clamp(9px, .82vw, 14px);
+  font-weight: 700;
+  background: #f2f2f2;
+  border-bottom: 1px solid var(--tile-border);
+  padding: 1px 0;
+  letter-spacing: .2px;
+}
+
+.tile .spec {
+  font-size: clamp(5px, .48vw, 8px);
+  color: #333;
+  background: #f2f2f2;
+  padding: 0 1px 1px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tile .val {
+  font-size: clamp(9px, .85vw, 14px);
+  font-weight: 700;
+  padding: 1px 0 2px;
+  border-top: 1px solid var(--tile-border);
+}
+
+.tile.no-comm .val { background: var(--st-no-comm); }
+.tile.running .val { background: var(--st-running); }
+.tile.stopped .val { background: var(--st-stopped); }
+.tile.alarm   .val { background: var(--st-alarm); }
+
+/* alarm: whole tile flags red, matching the reference screen */
+.tile.alarm .no { background: var(--st-alarm); color: #fff; }
+.tile.alarm .spec { background: var(--st-alarm); color: #ffe9e9; }
+.tile.alarm { animation: alarmPulse 1.4s ease-in-out infinite; }
+@keyframes alarmPulse { 50% { filter: brightness(1.45); } }
+
+.tile.no-comm .no,
+.tile.no-comm .spec { background: var(--st-no-comm); color: #2b2b2b; }
+
+/* label tiles (T 1, TRH, …) */
+.tile.label .no { background: #e6e6e6; }
+.tile.label .val { background: #d0d0d0; }
+
+.cell.gap { visibility: hidden; }
+
+.tile.hl { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+/* ---------- status bar ---------- */
+.statusbar {
+  flex: 0 0 auto;
+  background: var(--panel-bg);
+  display: flex;
+  align-items: stretch;
+  gap: 14px;
+  padding: 8px 14px 12px;
+}
+
+.panel {
+  border: 1px solid var(--panel-border);
+  border-radius: 3px;
+  margin: 0;
+  padding: 4px 12px 8px;
+}
+.panel legend { font-size: clamp(10px, .9vw, 13px); color: #cfcfcf; padding: 0 5px; }
+
+.counters { display: flex; gap: 16px; }
+.counter { text-align: center; }
+.counter .k { font-size: clamp(11px, 1.05vw, 16px); font-weight: 700; margin-bottom: 3px; }
+.counter .v,
+.total-value {
+  background: #fff;
+  color: #0000cc;
+  border: 1px solid #7a7a7a;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  font-size: clamp(14px, 1.5vw, 24px);
+  padding: 2px 10px;
+  min-width: 68px;
+  display: inline-block;
+  text-align: center;
+}
+
+.press-totals { display: flex; flex-direction: column; justify-content: center; gap: 6px; }
+.total-row { display: flex; align-items: center; gap: 12px; }
+.total-label { font-size: clamp(11px, 1.05vw, 16px); font-weight: 700; min-width: 11em; }
+
+.legend-items { display: grid; grid-template-columns: 1fr; gap: 3px; }
+.legend-item { display: flex; align-items: center; gap: 8px; font-size: clamp(10px, .95vw, 14px); font-weight: 600; }
+.swatch { width: 26px; height: 13px; border: 1px solid #777; }
+.swatch.no-comm { background: var(--st-no-comm); }
+.swatch.running { background: var(--st-running); }
+.swatch.stopped { background: var(--st-stopped); }
+.swatch.alarm   { background: var(--st-alarm); }
+
+/* ---------- tooltip ---------- */
+.tooltip {
+  position: fixed;
+  z-index: 20;
+  background: #111;
+  color: #f0f0f0;
+  border: 1px solid var(--accent);
+  border-radius: 3px;
+  padding: 7px 10px;
+  font-size: 12px;
+  line-height: 1.5;
+  pointer-events: none;
+  box-shadow: 0 4px 14px rgba(0,0,0,.55);
+  white-space: nowrap;
+}
+.tooltip b { color: var(--accent); }
+
+@media (max-width: 900px) {
+  .statusbar { flex-wrap: wrap; }
+}
