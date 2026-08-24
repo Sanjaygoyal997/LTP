@@ -1,0 +1,9 @@
+# Node
+node_modules/
+dist/
+*.local
+
+# .NET
+bin/
+obj/
+*.user

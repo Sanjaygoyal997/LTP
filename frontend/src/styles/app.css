@@ -1,0 +1,348 @@
+/* Wall-display theme. Tuned for 1080p and 4K shop-floor screens viewed from a distance. */
+:root {
+  --bg: #2b2b2b;
+  --floor-bg: #d4d4d4;
+  --panel-bg: #000;
+  --panel-border: #6b6b6b;
+  --tile-border: #4a4a4a;
+  --text-light: #e8e8e8;
+  --accent: #00a2e8;
+
+  --status-noCommunication: #9a9a9a;
+  --status-running: #00e05a;
+  --status-stopped: #ffe400;
+  --status-alarm: #ff1e1e;
+
+  --columns: 18;
+  --tile-width: clamp(52px, calc((100vw - 3rem) / var(--columns) - 4px), 112px);
+  --tile-gap: 4px;
+}
+
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  background: var(--bg);
+  color: var(--text-light);
+  font-family: 'Segoe UI', Tahoma, Arial, sans-serif;
+}
+
+/* ---------- top bar ---------- */
+.topbar {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 14px;
+  background: #111;
+  border-bottom: 2px solid var(--accent);
+}
+
+.topbar__title {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+}
+
+.topbar__plant {
+  font-size: clamp(15px, 1.5vw, 24px);
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.topbar__shift {
+  padding: 2px 8px;
+  font-size: clamp(11px, 1vw, 15px);
+  background: #23384a;
+  border: 1px solid #3d6c8e;
+  border-radius: 3px;
+}
+
+.topbar__right {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.topbar__clock {
+  font-size: clamp(14px, 1.4vw, 22px);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.topbar__button {
+  padding: 5px 9px;
+  color: var(--text-light);
+  background: #262626;
+  border: 1px solid #555;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.topbar__button:hover {
+  background: #333;
+}
+
+.feed {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: clamp(11px, 1vw, 14px);
+  color: #bcbcbc;
+}
+
+.feed__dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--status-stopped);
+}
+
+.feed--ok .feed__dot {
+  background: var(--status-running);
+}
+
+.feed--down .feed__dot {
+  background: var(--status-alarm);
+}
+
+/* ---------- floor ---------- */
+.floor {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  justify-content: space-evenly;
+  gap: clamp(10px, 1.6vh, 26px);
+  padding: 10px 12px;
+  overflow: auto;
+  background: var(--floor-bg);
+}
+
+.floor--empty {
+  align-items: center;
+  justify-content: center;
+  color: #333;
+  font-size: clamp(14px, 1.4vw, 20px);
+}
+
+.trench {
+  display: flex;
+  flex-direction: column;
+  gap: var(--tile-gap);
+}
+
+.trench__row {
+  display: grid;
+  grid-template-columns: repeat(var(--cells), var(--tile-width));
+  gap: var(--tile-gap);
+}
+
+/* ---------- tiles ---------- */
+.tile {
+  display: flex;
+  flex-direction: column;
+  color: #000;
+  text-align: center;
+  line-height: 1.05;
+  background: #cfcfcf;
+  border: 1px solid var(--tile-border);
+  user-select: none;
+}
+
+.tile__no {
+  padding: 1px 0;
+  font-size: clamp(9px, 0.82vw, 14px);
+  font-weight: 700;
+  background: #f2f2f2;
+  border-bottom: 1px solid var(--tile-border);
+}
+
+.tile__recipe {
+  padding: 0 1px 1px;
+  font-size: clamp(5px, 0.48vw, 8px);
+  color: #333;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  background: #f2f2f2;
+  min-height: 0.9em;
+}
+
+.tile__value {
+  padding: 1px 0 2px;
+  font-size: clamp(9px, 0.85vw, 14px);
+  font-weight: 700;
+  border-top: 1px solid var(--tile-border);
+}
+
+.tile--running .tile__value {
+  background: var(--status-running);
+}
+
+.tile--stopped .tile__value {
+  background: var(--status-stopped);
+}
+
+.tile--noCommunication .tile__value {
+  background: var(--status-noCommunication);
+}
+
+.tile--alarm .tile__value {
+  background: var(--status-alarm);
+}
+
+/* An alarm has to be findable from across the shop floor, so the whole tile flags red. */
+.tile--alarm {
+  animation: alarm-pulse 1.4s ease-in-out infinite;
+}
+
+.tile--alarm .tile__no {
+  color: #fff;
+  background: var(--status-alarm);
+}
+
+.tile--alarm .tile__recipe {
+  color: #ffe9e9;
+  background: var(--status-alarm);
+}
+
+.tile--noCommunication .tile__no,
+.tile--noCommunication .tile__recipe {
+  color: #2b2b2b;
+  background: var(--status-noCommunication);
+}
+
+.tile--marker .tile__no {
+  background: #e6e6e6;
+}
+
+.tile--marker .tile__value {
+  background: #d0d0d0;
+}
+
+.tile--gap {
+  visibility: hidden;
+}
+
+@keyframes alarm-pulse {
+  50% {
+    filter: brightness(1.45);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tile--alarm {
+    animation: none;
+  }
+}
+
+/* ---------- status bar ---------- */
+.statusbar {
+  display: flex;
+  flex: 0 0 auto;
+  gap: 14px;
+  padding: 8px 14px 12px;
+  background: var(--panel-bg);
+}
+
+.panel {
+  margin: 0;
+  padding: 4px 12px 8px;
+  border: 1px solid var(--panel-border);
+  border-radius: 3px;
+}
+
+.panel legend {
+  padding: 0 5px;
+  font-size: clamp(10px, 0.9vw, 13px);
+  color: #cfcfcf;
+}
+
+.panel--totals {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 6px;
+}
+
+.counters {
+  display: flex;
+  gap: 16px;
+}
+
+.counter {
+  text-align: center;
+}
+
+.counter__label {
+  margin-bottom: 3px;
+  font-size: clamp(11px, 1.05vw, 16px);
+  font-weight: 700;
+}
+
+.value-box {
+  display: inline-block;
+  min-width: 68px;
+  padding: 2px 10px;
+  color: #0000cc;
+  font-size: clamp(14px, 1.5vw, 24px);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+  background: #fff;
+  border: 1px solid #7a7a7a;
+}
+
+.total-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.total-row__label {
+  min-width: 11em;
+  font-size: clamp(11px, 1.05vw, 16px);
+  font-weight: 700;
+}
+
+.legend {
+  display: grid;
+  gap: 3px;
+}
+
+.legend__item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: clamp(10px, 0.95vw, 14px);
+  font-weight: 600;
+}
+
+.legend__swatch {
+  width: 26px;
+  height: 13px;
+  border: 1px solid #777;
+}
+
+.legend__swatch--noCommunication {
+  background: var(--status-noCommunication);
+}
+
+.legend__swatch--running {
+  background: var(--status-running);
+}
+
+.legend__swatch--stopped {
+  background: var(--status-stopped);
+}
+
+.legend__swatch--alarm {
+  background: var(--status-alarm);
+}
+
+@media (max-width: 900px) {
+  .statusbar {
+    flex-wrap: wrap;
+  }
+}
