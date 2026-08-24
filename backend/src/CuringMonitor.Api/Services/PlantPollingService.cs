@@ -11,7 +11,7 @@ namespace CuringMonitor.Api.Services;
 /// are open, costs the plant network nothing extra.
 /// </summary>
 public sealed class PlantPollingService(
-    PlantConfiguration plant,
+    PlantConfigurationProvider plantProvider,
     IPressDataProvider provider,
     PressStatusEvaluator evaluator,
     IShiftService shifts,
@@ -24,6 +24,7 @@ public sealed class PlantPollingService(
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
+        var plant = plantProvider.Current;
         logger.LogInformation(
             "Polling {TagCount} tags across {AssetCount} boxes every {Interval}.",
             plant.AllTags.Count,
@@ -55,6 +56,10 @@ public sealed class PlantPollingService(
     private async Task PollOnceAsync(CancellationToken cancellationToken)
     {
         var now = DateTimeOffset.UtcNow;
+
+        // Taken per cycle: a configuration reload is picked up on the next tick, with no
+        // restart and no torn read of a half-applied plant.
+        var plant = plantProvider.Current;
         var values = await provider.ReadAsync(plant.AllTags, cancellationToken).ConfigureAwait(false);
 
         var snapshot = evaluator.Evaluate(

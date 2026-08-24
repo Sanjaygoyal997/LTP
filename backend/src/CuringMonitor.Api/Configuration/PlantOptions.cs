@@ -26,10 +26,17 @@ public sealed class PlantOptions
     public string ScreensDirectory { get; set; } = "screens";
 
     /// <summary>
-    /// Watch the screen directory and push changes to connected displays. On by default in
-    /// development, where editing a screen and seeing it land is the point.
+    /// Watch the screen directory and push changes to connected displays, so saving an edit
+    /// re-renders every wall panel.
     /// </summary>
-    public bool WatchScreens { get; set; }
+    public bool WatchScreens { get; set; } = true;
+
+    /// <summary>
+    /// Watch the plant configuration file and reload it in place. On by default: presses
+    /// are commissioned, renamed and moved, and that should reach the display without
+    /// anyone restarting a service.
+    /// </summary>
+    public bool WatchConfiguration { get; set; } = true;
 
     /// <summary>How often the whole tag set is read.</summary>
     public TimeSpan PollInterval { get; set; } = TimeSpan.FromSeconds(2);

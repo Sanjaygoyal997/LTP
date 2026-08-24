@@ -51,6 +51,17 @@ public sealed class PressStatusEvaluator(IOptions<PlantOptions> options)
             productionC += CounterValue(definition, ShiftName.C, tags);
         }
 
+        // A reload can remove boxes; drop their staleness entries so the map tracks the
+        // plant rather than everything the service has ever seen.
+        if (_lastGoodReading.Count > plant.Assets.Count)
+        {
+            var live = plant.Assets.Select(a => a.Id).ToHashSet(StringComparer.OrdinalIgnoreCase);
+            foreach (var id in _lastGoodReading.Keys.Where(id => !live.Contains(id)).ToArray())
+            {
+                _lastGoodReading.Remove(id);
+            }
+        }
+
         return new PlantSnapshot(
             now,
             shift.Name.ToString(),

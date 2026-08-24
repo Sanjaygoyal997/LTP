@@ -36,7 +36,9 @@ public sealed class OpcPressDataProvider : IPressDataProvider, IDisposable
     private readonly SemaphoreSlim _connectLock = new(1, 1);
 
     private DateTimeOffset _nextConnectAttempt = DateTimeOffset.MinValue;
-    private bool _subscribed;
+
+    /// <summary>Tags currently subscribed, so a configuration reload triggers a resubscribe.</summary>
+    private HashSet<string>? _subscribedTags;
 
     public OpcPressDataProvider(
         IOpcSession session,
@@ -82,7 +84,7 @@ public sealed class OpcPressDataProvider : IPressDataProvider, IDisposable
         catch (Exception ex) when (ex is not OperationCanceledException)
         {
             _logger.LogError(ex, "OPC read failed; marking all tags bad until the session recovers.");
-            _subscribed = false;
+            _subscribedTags = null;
             _nextConnectAttempt = DateTimeOffset.UtcNow + _options.ReconnectDelay;
             return AllBad(tags);
         }
@@ -90,7 +92,7 @@ public sealed class OpcPressDataProvider : IPressDataProvider, IDisposable
 
     private async Task<bool> EnsureConnectedAsync(IReadOnlyList<string> tags, CancellationToken cancellationToken)
     {
-        if (_session.IsConnected && _subscribed)
+        if (_session.IsConnected && _subscribedTags is not null && _subscribedTags.SetEquals(tags))
         {
             return true;
         }
@@ -109,10 +111,11 @@ public sealed class OpcPressDataProvider : IPressDataProvider, IDisposable
                 await _session.ConnectAsync(cancellationToken).ConfigureAwait(false);
             }
 
-            if (!_subscribed)
+            if (_subscribedTags is null || !_subscribedTags.SetEquals(tags))
             {
                 await _session.SubscribeAsync(tags, cancellationToken).ConfigureAwait(false);
-                _subscribed = true;
+                _subscribedTags = new HashSet<string>(tags, StringComparer.OrdinalIgnoreCase);
+                _logger.LogInformation("Subscribed to {TagCount} tags.", tags.Count);
             }
 
             return true;

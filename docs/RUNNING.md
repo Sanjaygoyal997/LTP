@@ -129,10 +129,18 @@ the config is obvious.
 `?screen=<id>`. `default` serves the first screen alphabetically, so a wall panel can be
 configured once and never revisited.
 
-**Live editing.** With `Plant:WatchScreens` true (the default in development) the service
-watches the directory and pushes a change signal over SignalR; every open display re-fetches
-its screen and re-renders. Save the file, watch the wall change. A malformed file is logged
-and skipped — the previous catalogue keeps serving, so a bad edit cannot blank the screen.
+**Live editing.** Both configuration files are watched, so an edit reaches the wall
+without restarting anything:
+
+| Edit | How it reaches the display | Setting |
+|---|---|---|
+| A screen document | the service pushes a change signal over SignalR; every open display re-fetches and re-renders | `Plant:WatchScreens` |
+| The plant configuration (`config_AB.txt`) | reloaded in place; the next poll publishes the new set of boxes, so a renamed press is renamed and a commissioned one appears | `Plant:WatchConfiguration` |
+
+Both default to on. A malformed or half-saved file is logged and skipped — the previous
+configuration keeps serving, so a bad edit cannot blank the screen. A reload that changes
+the tag set also resubscribes the OPC session, so newly commissioned boxes get values
+rather than sitting grey.
 
 ## What still has to happen before it runs on the shop floor
 

@@ -26,17 +26,10 @@ builder.Services.AddOptions<PlantOptions>()
     .Validate(o => o.StaleAfter > o.PollInterval, "Plant:StaleAfter must exceed Plant:PollInterval.")
     .ValidateOnStart();
 
-// The plant definition is static for the life of the process: load it once, fail fast if
-// it is missing or malformed rather than starting a display that can never render.
-builder.Services.AddSingleton(sp =>
-{
-    var options = sp.GetRequiredService<IOptions<PlantOptions>>().Value;
-    var path = Path.IsPathRooted(options.LayoutFile)
-        ? options.LayoutFile
-        : Path.Combine(builder.Environment.ContentRootPath, options.LayoutFile);
-
-    return PlantConfiguration.Load(path, options.Title, options.GaugeTags);
-});
+// The plant definition is loaded at start-up and reloaded whenever the file changes.
+// Loading fails fast: a display that can never render is worse than a service that refuses
+// to start and says why.
+builder.Services.AddSingleton<PlantConfigurationProvider>();
 
 builder.Services.AddSingleton<IShiftService, ShiftService>();
 builder.Services.AddSingleton<PressStatusEvaluator>();
