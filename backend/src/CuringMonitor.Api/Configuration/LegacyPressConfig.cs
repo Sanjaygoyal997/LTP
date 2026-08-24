@@ -6,46 +6,39 @@ using CuringMonitor.Api.Domain;
 namespace CuringMonitor.Api.Configuration;
 
 /// <summary>
-/// Reads the SCADA press configuration the plant already maintains
-/// (<c>config_AB.txt</c> and its siblings) so the existing tag map stays the single
-/// source of truth — no conversion step, no second copy to keep in step.
+/// Reads the SCADA press configuration the plant already maintains — <c>config_AB.txt</c>
+/// and its companion <c>trenchSize.txt</c> — so the existing tag map stays the single
+/// source of truth, with no conversion step and no second copy to keep in step.
 /// </summary>
 /// <remarks>
-/// One press per line, '#'-separated, with a header line:
+/// One box per line, '#'-separated, after a header line:
 /// <code>
 /// RowNo#PressName#PressTitle#CommunicationCheck#PressOpen_Close#Alarm#RecipeCode#ProdCountA#ProdCountB#ProdCountC#Flag
 /// </code>
-/// <c>RowNo</c> is the trench number. Trailing columns are ignored: the legacy file carries
-/// a flag the display does not use, and revisions have added columns before now.
+/// <c>RowNo</c> is the trench. The mimic captions each box with <c>PressTitle</c>, not
+/// <c>PressName</c> — the two differ in practice.
 /// </remarks>
 public static class LegacyPressConfig
 {
     private const int MinimumColumns = 10;
-
-    /// <summary>Companion file giving each trench's panel size, if the site ships one.</summary>
     private const string TrenchSizeFileName = "trenchSize.txt";
 
     public sealed record Result(
         IReadOnlyList<AssetDefinition> Assets,
         IReadOnlyList<GroupDefinition> Groups);
 
-    /// <param name="tilePitch">
-    /// Width one box occupied on the legacy screen, used to turn a trench panel width from
-    /// <c>trenchSize.txt</c> into boxes per row. The mimic drew 40px buttons with a 3px
-    /// margin either side.
-    /// </param>
-    public static Result Read(string path, int tilePitch = 46)
+    public static Result Read(string path)
     {
         var assets = new List<AssetDefinition>();
-        var positionByTrench = new Dictionary<int, int>();
-        var trenches = new List<int>();
+        var counts = new Dictionary<int, int>();
+        var trenchOrder = new List<int>();
+        var usedIds = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         var lineNumber = 0;
 
         foreach (var line in File.ReadLines(path, Encoding.UTF8))
         {
             lineNumber++;
 
-            // Skip the header and any blank separator lines.
             if (lineNumber == 1 || string.IsNullOrWhiteSpace(line))
             {
                 continue;
@@ -65,125 +58,60 @@ public static class LegacyPressConfig
                     $"{Path.GetFileName(path)} line {lineNumber}: '{columns[0]}' is not a trench number.");
             }
 
-            var id = columns[1].Trim();
-            if (id.Length == 0)
+            var name = columns[1].Trim();
+            if (name.Length == 0)
             {
                 throw new InvalidOperationException(
                     $"{Path.GetFileName(path)} line {lineNumber}: press name is blank.");
             }
 
-            if (!trenches.Contains(trench))
+            if (!trenchOrder.Contains(trench))
             {
-                trenches.Add(trench);
+                trenchOrder.Add(trench);
             }
 
-            var position = positionByTrench.GetValueOrDefault(trench) + 1;
-            positionByTrench[trench] = position;
+            var position = counts.GetValueOrDefault(trench) + 1;
+            counts[trench] = position;
 
             assets.Add(new AssetDefinition
             {
-                Id = id,
+                // The same press name legitimately appears in more than one trench, so the
+                // identifier has to carry the trench; the caption is unaffected.
+                Id = UniqueId(usedIds, trench, name),
                 Kind = AssetKinds.Press,
-                Label = Optional(columns[2]) ?? id,
+                Label = Optional(columns[2]) ?? name,
                 Group = GroupName(trench),
                 Position = position,
-                Attributes = { ["trench"] = trench.ToString(CultureInfo.InvariantCulture) },
+                Attributes =
+                {
+                    ["trench"] = trench.ToString(CultureInfo.InvariantCulture),
+                    ["pressName"] = name
+                },
                 Signals = Signals(columns)
             });
         }
 
         if (assets.Count == 0)
         {
-            throw new InvalidOperationException($"{Path.GetFileName(path)} defines no presses.");
+            throw new InvalidOperationException($"{Path.GetFileName(path)} defines no boxes.");
         }
 
-        // Trench panel widths, if the site ships the companion file. The legacy screen never
-        // stated a boxes-per-row figure: it sized each trench panel in pixels and let the
-        // buttons wrap, so the width has to be converted back into a count.
-        var panelWidths = ReadTrenchWidths(Path.Combine(Path.GetDirectoryName(path) ?? ".", TrenchSizeFileName));
+        var panels = ReadTrenchPanels(Path.Combine(Path.GetDirectoryName(path) ?? ".", TrenchSizeFileName));
 
-        // Each trench gets its header-pressure box, as on the existing screen. The tag is
-        // supplied from settings; without one the box shows as no-communication.
-        foreach (var trench in trenches)
-        {
-            assets.Add(new AssetDefinition
-            {
-                Id = $"T{trench}",
-                Kind = AssetKinds.Gauge,
-                Label = $"T {trench}",
-                Group = GroupName(trench),
-                // Sorts after every press in the trench without needing to count them.
-                Position = int.MaxValue,
-                Attributes =
-                {
-                    ["trench"] = trench.ToString(CultureInfo.InvariantCulture),
-                    ["unit"] = "kg/cm²"
-                }
-            });
-        }
-
-        // Groups are drawn in the order the configuration lists them, not in name order:
-        // the plant's own sequence is the one operators know.
-        var groups = trenches
+        // Trenches are drawn in the order the configuration lists them; trenchSize.txt gives
+        // one panel per trench in that same order, which is what its id column numbers.
+        var groups = trenchOrder
             .Select((trench, index) => new GroupDefinition
             {
                 Key = GroupName(trench),
                 Label = GroupName(trench),
                 Order = index,
-                Wrap = WrapFor(panelWidths, index, tilePitch)
+                PanelWidth = index < panels.Count ? panels[index].Width : null,
+                PanelHeight = index < panels.Count ? panels[index].Height : null
             })
             .ToArray();
 
         return new Result(assets, groups);
-    }
-
-    /// <summary>
-    /// Reads <c>trenchSize.txt</c>: a header line, then one comma-separated line per trench
-    /// in the same order the presses are listed, with width in column 1 and height in
-    /// column 2. Missing or unreadable, the screen decides its own row width instead.
-    /// </summary>
-    private static IReadOnlyList<int> ReadTrenchWidths(string path)
-    {
-        if (!File.Exists(path))
-        {
-            return [];
-        }
-
-        var widths = new List<int>();
-
-        foreach (var line in File.ReadLines(path, Encoding.UTF8).Skip(1))
-        {
-            if (string.IsNullOrWhiteSpace(line))
-            {
-                continue;
-            }
-
-            var columns = line.Split(',');
-            if (columns.Length > 1 &&
-                int.TryParse(columns[1].Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out var width) &&
-                width > 0)
-            {
-                widths.Add(width);
-            }
-            else
-            {
-                // Keep the positions aligned: the k-th line describes the k-th trench, so a
-                // bad line must not shift every trench after it.
-                widths.Add(0);
-            }
-        }
-
-        return widths;
-    }
-
-    private static int? WrapFor(IReadOnlyList<int> panelWidths, int index, int tilePitch)
-    {
-        if (index >= panelWidths.Count || panelWidths[index] <= 0 || tilePitch <= 0)
-        {
-            return null;
-        }
-
-        return Math.Max(1, panelWidths[index] / tilePitch);
     }
 
     /// <summary>Exports the same content as an asset file, for sites that would rather edit that.</summary>
@@ -196,6 +124,64 @@ public static class LegacyPressConfig
         {
             WriteIndented = true
         });
+    }
+
+    /// <summary>
+    /// Reads <c>trenchSize.txt</c>: a header line, then one comma-separated line per trench
+    /// in configuration order, with width in column 1 and height in column 2. The legacy
+    /// mimic sized each trench panel from this and fitted the boxes into it.
+    /// </summary>
+    private static IReadOnlyList<(int Width, int Height)> ReadTrenchPanels(string path)
+    {
+        if (!File.Exists(path))
+        {
+            return [];
+        }
+
+        var panels = new List<(int, int)>();
+
+        foreach (var line in File.ReadLines(path, Encoding.UTF8).Skip(1))
+        {
+            if (string.IsNullOrWhiteSpace(line))
+            {
+                continue;
+            }
+
+            var columns = line.Split(',');
+            var width = Number(columns, 1);
+            var height = Number(columns, 2);
+
+            // Keep positions aligned: the k-th line describes the k-th trench, so an
+            // unreadable line must not shift every trench after it.
+            panels.Add((width, height));
+        }
+
+        return panels;
+    }
+
+    private static int Number(string[] columns, int index) =>
+        index < columns.Length &&
+        int.TryParse(columns[index].Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out var value) &&
+        value > 0
+            ? value
+            : 0;
+
+    private static string UniqueId(HashSet<string> used, int trench, string name)
+    {
+        var id = $"{trench}/{name}";
+        if (used.Add(id))
+        {
+            return id;
+        }
+
+        for (var suffix = 2; ; suffix++)
+        {
+            var candidate = $"{id}#{suffix}";
+            if (used.Add(candidate))
+            {
+                return candidate;
+            }
+        }
     }
 
     private static Dictionary<string, string> Signals(string[] columns)

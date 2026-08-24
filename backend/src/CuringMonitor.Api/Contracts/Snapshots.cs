@@ -17,10 +17,16 @@ public sealed record PlantSnapshot(
     IReadOnlyList<GroupSnapshot> Groups);
 
 /// <summary>
-/// A group of boxes. The client draws groups in <paramref name="Order"/> and, when
-/// <paramref name="Wrap"/> is set, wraps that group's boxes at that many per row.
+/// A group of boxes. Drawn in <paramref name="Order"/>; the panel dimensions, where the
+/// configuration supplies them, set how much of the screen the group gets and how its
+/// boxes are sized.
 /// </summary>
-public sealed record GroupSnapshot(string Key, string Label, int Order, int? Wrap);
+public sealed record GroupSnapshot(
+    string Key,
+    string Label,
+    int Order,
+    int? PanelWidth,
+    int? PanelHeight);
 
 /// <summary>
 /// One box. The client draws it entirely from this: which group it belongs to and where it

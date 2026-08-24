@@ -1,0 +1,2 @@
+MP,LP,HWSP,HWRP,HyDp
+Channel1.Trench.MP,Channel1.Trench.LP,Channel1.Trench.HWSP,Channel1.Trench.HWRP,Channel1.Trench.HyDp

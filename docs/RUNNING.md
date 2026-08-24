@@ -26,19 +26,36 @@ press configuration, anything else as a layout file:
 ```
 
 Everything comes from that file: box names, group (trench) membership, order within the
-group, and the three status tags, recipe tag and three shift-counter tags per press. A
-gauge box is added per trench for its header pressure. The copy committed here is the
-`config_AB.txt` from the sample project — 86 presses across trenches 4, 5 and 6, plus 3
-gauges, 524 distinct tags.
+group, and the three status tags, recipe tag and three shift-counter tags per press. The
+box caption is `PressTitle` (column 2), not `PressName` — the two differ in practice.
+
+The copy committed here is the plant's own file: **137 boxes across trenches 6, 5, 4, 2, 1
+and 7**, in that order. Note what it contains, because it shapes the loader:
+
+* `T_6`, `T_5`, `T_4`, `TRH`, `T_2`, `T_1` are ordinary entries with their own tags — the
+  trench summary boxes are configured, not synthesised.
+* Trench 7 holds `NewChina` and `OldChina`, which are painting-line weight checks rather
+  than presses.
+* Press `9201` appears twice, in two different trenches, so a box identifier carries its
+  trench (`6/9201`) and the loader does not treat a repeated name as an error.
+* Trench 3 does not exist.
 
 **`trenchSize.txt`**, if the site ships it beside the config, is read too. The legacy
-screen never stated a boxes-per-row figure: it sized each trench panel in pixels and let
-the 40px buttons wrap, so the width is converted back into a count —
-`floor(width / Plant:LegacyTilePitch)`, the pitch defaulting to 46 (a 40px button with a
-3px margin either side). Format is a header line, then one comma-separated line per trench
-**in the same order the presses are listed**, with width in column 1 and height in column 2.
-Trenches beyond the end of the file, or with an unreadable width, fall back to the screen's
-own row width.
+screen never stated a boxes-per-row figure — it sized each trench panel in pixels and
+fitted the boxes into it, so the panel dimensions are what the client works from:
+
+```
+areaPerBox = panelWidth * panelHeight * 0.8 / boxCount
+boxHeight  = round(sqrt(areaPerBox / 1.225))      # 1.225 is the mimic's box aspect
+boxWidth   = round(boxHeight * 1.225)
+shrink boxWidth until floor(w/boxWidth) * floor(h/boxHeight) >= boxCount
+boxesPerRow = floor(panelWidth / boxWidth)
+```
+
+Format is a header line (`id,w,h`), then one comma-separated line per trench **in the same
+order the trenches appear in the press configuration** — the `id` column numbers that
+sequence, it is not the trench number. Trenches beyond the end of the file fall back to the
+screen's own row width.
 
 Group **order** comes from the configuration too — the sequence the plant lists its trenches
 in, which is not necessarily alphabetical and is the one operators know.

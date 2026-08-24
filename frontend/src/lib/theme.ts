@@ -15,9 +15,11 @@ export function themeToCssVariables(theme: ScreenTheme | undefined): React.CSSPr
     style[`--status-${status}`] = colour;
   }
 
-  const min = theme.tile?.minWidth ?? 52;
-  const max = theme.tile?.maxWidth ?? 112;
-  style['--tile-width'] = `clamp(${min}px, calc((100vw - 3rem) / var(--columns) - 4px), ${max}px)`;
+  // Only the bounds come from the theme. The width itself is computed in the stylesheet,
+  // on the element that knows the column count — resolving var(--columns) here would
+  // capture the default rather than the grid's own value.
+  style['--tile-min'] = `${theme.tile?.minWidth ?? 52}px`;
+  style['--tile-max'] = `${theme.tile?.maxWidth ?? 112}px`;
 
   if (theme.alarmPulse === false) style['--alarm-animation'] = 'none';
 

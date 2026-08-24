@@ -1,6 +1,6 @@
 import { resolveField } from './fields';
 import type { AssetQuery } from '../screen';
-import type { AssetSnapshot, PlantSnapshot } from '../types';
+import type { AssetSnapshot, GroupSnapshot, PlantSnapshot } from '../types';
 
 export interface AssetGroup {
   key: string;
@@ -10,6 +10,34 @@ export interface AssetGroup {
 }
 
 const DEFAULT_WRAP = 16;
+
+/**
+ * Box aspect ratio the legacy mimic used, and the share of the panel it filled.
+ * It sized boxes from the panel area and the box count rather than wrapping at a fixed
+ * number, so the same arithmetic reproduces its arrangement at any screen size.
+ */
+const BOX_ASPECT = 1.225;
+const PANEL_FILL = 0.8;
+
+/**
+ * Boxes per row for a group drawn in a panel of the given proportions:
+ * fit `count` boxes of aspect 1.225 into 80% of the panel area, then shrink until the
+ * grid actually holds them all.
+ */
+export function boxesPerRow(panelWidth: number, panelHeight: number, count: number): number {
+  if (panelWidth <= 0 || panelHeight <= 0 || count <= 0) return DEFAULT_WRAP;
+
+  const areaPerBox = (panelWidth * panelHeight * PANEL_FILL) / count;
+  let height = Math.max(1, Math.round(Math.sqrt(areaPerBox / BOX_ASPECT)));
+  let width = Math.max(1, Math.round(height * BOX_ASPECT));
+
+  while (width > 1 && Math.floor(panelWidth / width) * Math.floor(panelHeight / height) < count) {
+    width -= 1;
+    height = Math.max(1, Math.round(width / BOX_ASPECT));
+  }
+
+  return Math.max(1, Math.floor(panelWidth / width));
+}
 
 /**
  * Turns the boxes in a snapshot into the grid a tile-grid widget draws.
@@ -58,7 +86,8 @@ export function selectAssets(snapshot: PlantSnapshot | null, query: AssetQuery |
       resolveField(orderBy, { snapshot, asset: b }),
     ));
 
-    const perRow = wrapFor(key, declared.get(key)?.wrap ?? null, query);
+    const group = declared.get(key);
+    const perRow = wrapFor(key, group, members.length, query);
 
     const rows: AssetSnapshot[][] = [];
     for (let i = 0; i < members.length; i += perRow) {
@@ -86,16 +115,23 @@ function matches(asset: AssetSnapshot, query: AssetQuery | undefined, snapshot: 
 }
 
 /**
- * Boxes per row for one group. A per-group override wins; then the width the plant
+ * Boxes per row for one group. A per-group override wins; then the panel the plant
  * configuration gives the group when the screen asks for "auto"; then the screen's own
  * number; then the default.
  */
-function wrapFor(key: string, declaredWrap: number | null, query: AssetQuery | undefined): number {
+function wrapFor(
+  key: string,
+  group: GroupSnapshot | undefined,
+  count: number,
+  query: AssetQuery | undefined,
+): number {
   const override = query?.wrapByGroup?.[key];
   if (override && override > 0) return override;
 
   if (query?.wrap === 'auto') {
-    return declaredWrap && declaredWrap > 0 ? declaredWrap : DEFAULT_WRAP;
+    return group?.panelWidth && group?.panelHeight
+      ? boxesPerRow(group.panelWidth, group.panelHeight, count)
+      : DEFAULT_WRAP;
   }
 
   return typeof query?.wrap === 'number' && query.wrap > 0 ? query.wrap : DEFAULT_WRAP;

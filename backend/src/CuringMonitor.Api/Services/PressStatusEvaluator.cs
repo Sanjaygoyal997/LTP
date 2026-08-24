@@ -71,7 +71,7 @@ public sealed class PressStatusEvaluator(IOptions<PlantOptions> options)
             new PressTotals(running, stopped, alarm, noComm),
             assets,
             plant.Groups
-                .Select(g => new GroupSnapshot(g.Key, g.DisplayLabel, g.Order, g.Wrap))
+                .Select(g => new GroupSnapshot(g.Key, g.DisplayLabel, g.Order, g.PanelWidth, g.PanelHeight))
                 .ToArray());
     }
 

@@ -16,8 +16,9 @@
 
   --chrome-bg: #111111;
   --columns: 18;
-  --tile-width: clamp(52px, calc((100vw - 3rem) / var(--columns) - 4px), 112px);
   --tile-gap: 4px;
+  --tile-min: 52px;
+  --tile-max: 112px;
   --alarm-animation: alarm-pulse 1.4s ease-in-out infinite;
 }
 
@@ -143,6 +144,12 @@
 }
 
 .floor {
+  /* Declared here so var(--columns), set per grid, resolves against the real count. */
+  --tile-width: clamp(
+    var(--tile-min),
+    calc((100vw - 3rem - (var(--columns) - 1) * var(--tile-gap)) / var(--columns)),
+    var(--tile-max)
+  );
   display: flex;
   flex: 1 1 auto;
   flex-direction: column;

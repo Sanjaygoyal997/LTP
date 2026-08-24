@@ -69,7 +69,7 @@ public sealed class PlantConfiguration
 
         if (Path.GetExtension(path).Equals(".txt", StringComparison.OrdinalIgnoreCase))
         {
-            var legacy = LegacyPressConfig.Read(path, tilePitch);
+            var legacy = LegacyPressConfig.Read(path);
             assets = legacy.Assets;
             groups = legacy.Groups;
         }
@@ -78,11 +78,6 @@ public sealed class PlantConfiguration
             var file = ReadAssetFile(path);
             assets = file.Assets;
             groups = file.Groups.Count > 0 ? file.Groups : GroupsFrom(assets);
-        }
-
-        if (gaugeTags is { Count: > 0 })
-        {
-            assets = assets.Select(asset => ApplyGaugeTag(asset, gaugeTags)).ToArray();
         }
 
         var duplicate = assets
@@ -117,31 +112,6 @@ public sealed class PlantConfiguration
         }
 
         return file;
-    }
-
-    private static AssetDefinition ApplyGaugeTag(
-        AssetDefinition asset,
-        IReadOnlyDictionary<string, string> gaugeTags)
-    {
-        if (!asset.Kind.Equals(AssetKinds.Gauge, StringComparison.OrdinalIgnoreCase) ||
-            asset.Signals.ContainsKey(SignalNames.Value) ||
-            !gaugeTags.TryGetValue(asset.DisplayGroup, out var tag))
-        {
-            return asset;
-        }
-
-        var signals = new Dictionary<string, string>(asset.Signals) { [SignalNames.Value] = tag };
-
-        return new AssetDefinition
-        {
-            Id = asset.Id,
-            Kind = asset.Kind,
-            Label = asset.Label,
-            Group = asset.Group,
-            Position = asset.Position,
-            Attributes = asset.Attributes,
-            Signals = signals
-        };
     }
 
     internal static readonly JsonSerializerOptions SerializerOptions = new(JsonSerializerDefaults.Web)

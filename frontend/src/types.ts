@@ -42,8 +42,9 @@ export interface GroupSnapshot {
   label: string;
   /** Order the plant configuration lists the group in. */
   order: number;
-  /** Boxes per row for this group, when the plant configuration specifies a width. */
-  wrap: number | null;
+  /** Panel the legacy screen drew this group in; boxes were fitted into it. */
+  panelWidth: number | null;
+  panelHeight: number | null;
 }
 
 export interface PlantSnapshot {

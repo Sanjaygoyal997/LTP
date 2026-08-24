@@ -14,10 +14,14 @@ public sealed class GroupDefinition
     public int Order { get; init; }
 
     /// <summary>
-    /// Boxes per row for this group, when the plant configuration specifies a width.
-    /// Null leaves the decision to the screen.
+    /// Panel width the legacy screen drew this trench in, from <c>trenchSize.txt</c>.
+    /// Boxes were fitted into the panel rather than wrapped at a fixed count, so the client
+    /// derives box size and row width from this and the box count.
     /// </summary>
-    public int? Wrap { get; init; }
+    public int? PanelWidth { get; init; }
+
+    /// <summary>Panel height, from the same file.</summary>
+    public int? PanelHeight { get; init; }
 
     public string DisplayLabel => Label ?? Key;
 }
