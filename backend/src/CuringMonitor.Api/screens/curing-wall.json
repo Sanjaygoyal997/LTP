@@ -21,23 +21,38 @@
     {
       "type": "tile-grid",
       "region": "floor",
-      "groupBy": "trench",
+
+      "source": {
+        "groupBy": "asset.group",
+        "groupDescending": true,
+        "orderBy": "asset.position",
+        "wrap": 16
+      },
+
       "tile": {
-        "header": "asset.title",
-        "sub": "signal.recipeCode",
+        "header": "asset.label",
+        "sub": "signal.recipe",
         "value": "signal.count",
         "colour": "status",
         "tooltip": [
-          { "label": "Press", "field": "asset.title" },
+          { "label": "Press", "field": "asset.label" },
+          { "label": "Group", "field": "asset.group" },
           { "label": "Status", "field": "status.label" },
-          { "label": "Recipe", "field": "signal.recipeCode" },
+          { "label": "Recipe", "field": "signal.recipe" },
           { "label": "Cures this shift", "field": "signal.count" },
           { "label": "Pressure", "field": "signal.pressure", "unit": "kg/cm²" }
         ]
       },
-      "trenchTile": {
-        "sub": "kg/cm²",
-        "value": "trench.pressure"
+
+      "tileByKind": {
+        "gauge": {
+          "sub": "asset.attributes.unit",
+          "value": "signal.value",
+          "tooltip": [
+            { "label": "Header pressure", "field": "asset.group" },
+            { "label": "Reading", "field": "signal.value", "unit": "kg/cm²" }
+          ]
+        }
       }
     },
     {

@@ -25,20 +25,24 @@ press configuration, anything else as a layout file:
 }
 ```
 
-Everything comes from that file: press numbers, trench (bay) grouping, tile order, and the
-three status tags, recipe tag and three shift-counter tags per press. Rows wrap at 16
-tiles per trench and the trench pressure tile closes the last row, as on the existing
-screen. The copy committed here is the `config_AB.txt` from the sample project — 86
-presses across trenches 4, 5 and 6, 524 distinct tags.
+Everything comes from that file: box names, group (trench) membership, order within the
+group, and the three status tags, recipe tag and three shift-counter tags per press. A
+gauge box is added per trench for its header pressure. The copy committed here is the
+`config_AB.txt` from the sample project — 86 presses across trenches 4, 5 and 6, plus 3
+gauges, 524 distinct tags.
+
+Sites that would rather edit a plain asset file than the legacy format can use one: any
+non-`.txt` path is read as JSON, with each asset carrying `id`, `kind`, `label`, `group`,
+`position`, `attributes` and `signals` (signal name to tag address).
 
 The legacy file carries no trench pressure tag, so those are supplied from settings rather
 than by editing a file the old system still reads:
 
 ```json
-"TrenchPressureTags": { "4": "TRENCH.T4.pressure", "6": "TRENCH.T6.pressure" }
+"GaugeTags": { "Trench 4": "TRENCH.T4.pressure", "Trench 6": "TRENCH.T6.pressure" }
 ```
 
-A trench with no tag shows as no-communication rather than inventing a value.
+A gauge with no tag shows as no-communication rather than inventing a value.
 
 ## Screens are configuration
 
@@ -69,17 +73,48 @@ changing a screen never means changing the backend.
 }
 ```
 
+### Two axes of configuration
+
+**Look and feel** is the `theme` block and the per-widget specs — colours, density, which
+field each line of a box shows.
+
+**Which boxes exist** is data. The service publishes every box as an *asset* carrying its
+own label, group, position, free-form attributes and signal values. A screen selects boxes
+with a query rather than listing them:
+
+```json
+"source": {
+  "where":  { "asset.attributes.trench": "6" },
+  "groupBy": "asset.group",
+  "orderBy": "asset.position",
+  "wrap": 16
+}
+```
+
+Commission a press into a group and its box appears; rename it in the plant configuration
+and the box is renamed; regroup it and it moves. None of that touches a screen document or
+a line of code. `where` matches on equality, and a list means "any of" — deliberately not
+an expression language, so a typo fails visibly instead of silently matching everything.
+
+Boxes have a `kind`. `press` is evaluated against the curing status rules; `gauge` just
+shows its `value` signal — that is what the trench header-pressure boxes are. `tileByKind`
+gives each kind its own field bindings inside the same grid.
+
 **Fields** are dotted paths named after what an engineer thinks in, not after the JSON the
 API happens to send:
 
 | Root | Resolves to | Example |
 |---|---|---|
-| `asset.*` | identity of the press | `asset.title` |
-| `signal.*` | live values | `signal.recipeCode`, `signal.count`, `signal.pressure` |
+| `asset.*` | identity and placement | `asset.label`, `asset.group`, `asset.position` |
+| `asset.attributes.*` | whatever the plant configuration carries | `asset.attributes.trench` |
+| `signal.*` | any signal wired up for that box | `signal.recipe`, `signal.count`, `signal.pressure` |
 | `status` / `status.label` | state, or its display text | `status.label` |
-| `trench.*` | trench header values | `trench.pressure` |
 | `production.*` | per-shift production | `production.a`, `production.total` |
 | `totals.*` | press counts by state | `totals.running`, `totals.stopped` |
+
+Signal names are the plant's vocabulary, not a fixed list: whatever the configuration binds
+to a tag is published under that name and can be shown on a box. `count` is published as
+well, resolving to whichever shift counter is currently running.
 
 Point a tile's `value` at `signal.pressure` instead of `signal.count` and the wall shows
 live pressure; change `theme.status.running` and the running colour changes. Neither is a
@@ -120,7 +155,7 @@ and skipped — the previous catalogue keeps serving, so a bad edit cannot blank
 | `Plant:PollInterval` | 2 s | how often the full tag set is read |
 | `Plant:StaleAfter` | 30 s | no good reading for longer → no-communication |
 | `Plant:MinRunningPressure` | 1.0 | pressure at or above which a closed press is running |
-| `Plant:TrenchPressureTags` | `{}` | trench number → header pressure tag |
+| `Plant:GaugeTags` | `{}` | group name → gauge tag |
 | `Plant:Shifts:*StartHour` | 7 / 15 / 23 | shift boundaries |
 | `AllowedOrigins` | `http://localhost:5173` | CORS origins for the display |
 
@@ -128,14 +163,16 @@ and skipped — the previous catalogue keeps serving, so a bad edit cannot blank
 
 | Endpoint | Purpose |
 |---|---|
-| `GET /api/layout` | tile grid: trenches, rows, cells |
-| `GET /api/snapshot` | latest state of every press; 503 until the first poll lands |
-| `GET /api/presses/{id}` | one press |
+| `GET /api/snapshot` | every box: label, group, position, status, attributes, signals; 503 until the first poll lands |
+| `GET /api/assets/{id}` | one box |
+| `GET /api/screens` | screens this service serves |
+| `GET /api/screens/{id}` | one screen document, verbatim (`default` for the first) |
 | `GET /health` | service and data-source state |
 | `/hubs/press-status` | SignalR feed; snapshot on connect, then pushes |
 
-`presses[].status` is one of `running`, `stopped`, `alarm`, `noCommunication`, and `shift`
-is the letter `A`, `B` or `C`.
+`assets[].status` is one of `running`, `stopped`, `alarm`, `noCommunication`, and `shift`
+is the letter `A`, `B` or `C`. There is no layout endpoint: the boxes and their arrangement
+come from the assets themselves plus the screen's query.
 
 ## Exporting the legacy config
 
@@ -143,5 +180,5 @@ If a site would rather edit a layout file than the legacy format:
 
 ```bash
 dotnet run --project src/CuringMonitor.Api -- import-legacy \
-  /path/to/config.txt src/CuringMonitor.Api/plant-layout.json "Curing Press Status"
+  /path/to/config.txt src/CuringMonitor.Api/assets.json "Curing Press Status"
 ```

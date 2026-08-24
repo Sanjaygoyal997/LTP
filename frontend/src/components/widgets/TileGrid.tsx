@@ -1,79 +1,50 @@
 import { useMemo } from 'react';
-import { resolveNumber, resolveText, type FieldContext } from '../../lib/fields';
-import type { TileGridWidget, TileSpec, TooltipRow, TrenchTileSpec } from '../../screen';
-import type { PlantLayout, PlantSnapshot, PressSnapshot, TrenchSnapshot } from '../../types';
+import { resolveText, type FieldContext } from '../../lib/fields';
+import { selectAssets } from '../../lib/query';
+import type { TileGridWidget, TileSpec, TooltipRow } from '../../screen';
+import type { AssetSnapshot, PlantSnapshot } from '../../types';
 
 interface TileGridProps {
   widget: TileGridWidget;
-  layout: PlantLayout;
   snapshot: PlantSnapshot | null;
 }
 
 const DEFAULT_TILE: TileSpec = {
-  header: 'asset.title',
-  sub: 'signal.recipeCode',
+  header: 'asset.label',
+  sub: 'signal.recipe',
   value: 'signal.count',
   colour: 'status',
 };
 
-/** The floor: one block per group, tiles laid out as the layout defines. */
-export function TileGrid({ widget, layout, snapshot }: TileGridProps) {
-  const tile = { ...DEFAULT_TILE, ...widget.tile };
-  const trenchTile = widget.trenchTile ?? {};
+/** The floor: one block per group, boxes wrapped into rows, all of it from the query. */
+export function TileGrid({ widget, snapshot }: TileGridProps) {
+  const groups = useMemo(() => selectAssets(snapshot, widget.source), [snapshot, widget.source]);
 
-  const pressesById = useMemo(
-    () => new Map((snapshot?.presses ?? []).map((press) => [press.id, press])),
-    [snapshot],
-  );
-
-  const trenchesByNumber = useMemo(
-    () => new Map((snapshot?.trenches ?? []).map((trench) => [trench.number, trench])),
-    [snapshot],
-  );
-
-  // Tiles size off the widest row so every group lines up on one grid.
+  // Boxes size off the widest row so every group lines up on one grid.
   const widestRow = useMemo(
-    () => Math.max(...layout.trenches.flatMap((group) => group.rows.map((row) => row.length)), 1),
-    [layout],
+    () => Math.max(...groups.flatMap((group) => group.rows.map((row) => row.length)), 1),
+    [groups],
   );
+
+  if (groups.length === 0) {
+    return <div className="floor floor--empty">No boxes match this screen&rsquo;s query.</div>;
+  }
 
   return (
     <div className="floor" style={{ ['--columns' as string]: widestRow }}>
-      {layout.trenches.map((group) => (
-        <section className="trench" key={group.number} aria-label={group.label}>
+      {groups.map((group) => (
+        <section className="trench" key={group.key} aria-label={group.key}>
+          {widget.showGroupLabel && <h2 className="trench__label">{group.key}</h2>}
+
           {group.rows.map((row, rowIndex) => (
             <div
               className="trench__row"
-              key={`${group.number}-${rowIndex}`}
+              key={`${group.key}-${rowIndex}`}
               style={{ ['--cells' as string]: row.length }}
             >
-              {row.map((cell, cellIndex) => {
-                if (cell.kind === 'gap') {
-                  return <div className="tile tile--gap" key={`gap-${cellIndex}`} />;
-                }
-
-                if (cell.kind === 'trench') {
-                  return (
-                    <TrenchTile
-                      key={`trench-${cell.id}`}
-                      label={cell.label}
-                      spec={trenchTile}
-                      trench={trenchesByNumber.get(Number(cell.id))}
-                      snapshot={snapshot}
-                    />
-                  );
-                }
-
-                return (
-                  <PressTile
-                    key={cell.id}
-                    label={cell.label}
-                    spec={tile}
-                    press={pressesById.get(cell.id)}
-                    snapshot={snapshot}
-                  />
-                );
-              })}
+              {row.map((asset) => (
+                <Tile key={asset.id} asset={asset} widget={widget} snapshot={snapshot} />
+              ))}
             </div>
           ))}
         </section>
@@ -82,45 +53,24 @@ export function TileGrid({ widget, layout, snapshot }: TileGridProps) {
   );
 }
 
-interface PressTileProps {
-  label: string;
-  spec: TileSpec;
-  press: PressSnapshot | undefined;
+interface TileProps {
+  asset: AssetSnapshot;
+  widget: TileGridWidget;
   snapshot: PlantSnapshot | null;
 }
 
-/**
- * A press with no snapshot renders grey rather than blank: on a wall display a missing
- * press must read as "not communicating", never as an empty slot.
- */
-function PressTile({ label, spec, press, snapshot }: PressTileProps) {
-  const context: FieldContext = { snapshot, press, label };
+function Tile({ asset, widget, snapshot }: TileProps) {
+  const spec: TileSpec = { ...DEFAULT_TILE, ...widget.tile, ...widget.tileByKind?.[asset.kind] };
+  const context: FieldContext = { snapshot, asset };
   const status = resolveText(spec.colour, context, 'noCommunication');
 
   return (
-    <div className={`tile tile--${status}`} title={tooltip(spec.tooltip, context, label)}>
-      <div className="tile__no">{resolveText(spec.header, context, label)}</div>
+    <div
+      className={`tile tile--${status} tile--kind-${asset.kind}`}
+      title={tooltip(spec.tooltip, context, asset.label)}
+    >
+      <div className="tile__no">{resolveText(spec.header, context, asset.label)}</div>
       <div className="tile__recipe">{resolveText(spec.sub, context, ' ')}</div>
-      <div className="tile__value">{resolveText(spec.value, context, '0')}</div>
-    </div>
-  );
-}
-
-interface TrenchTileProps {
-  label: string;
-  spec: TrenchTileSpec;
-  trench: TrenchSnapshot | undefined;
-  snapshot: PlantSnapshot | null;
-}
-
-function TrenchTile({ label, spec, trench, snapshot }: TrenchTileProps) {
-  const context: FieldContext = { snapshot, trench, label };
-  const healthy = trench?.isHealthy ?? false;
-
-  return (
-    <div className={`tile tile--marker ${healthy ? '' : 'tile--noCommunication'}`} title={label}>
-      <div className="tile__no">{label}</div>
-      <div className="tile__recipe">{spec.sub ?? ' '}</div>
       <div className="tile__value">{resolveText(spec.value, context, '0')}</div>
     </div>
   );
@@ -138,5 +88,3 @@ function tooltip(rows: TooltipRow[] | undefined, context: FieldContext, fallback
     .filter(Boolean)
     .join('\n');
 }
-
-export { resolveNumber };

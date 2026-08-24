@@ -9,11 +9,11 @@ using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Options;
 
 // Offline utility: convert a legacy SCADA press config into this service's layout file.
-//   dotnet run -- import-legacy <config_AB.txt> <plant-layout.json> [title]
+//   dotnet run -- import-legacy <config_AB.txt> <assets.json> [title]
 if (args is ["import-legacy", var legacyPath, var outputPath, ..])
 {
     var title = args.Length > 3 ? args[3] : "Curing Press Status";
-    File.WriteAllText(outputPath, LegacyPressConfig.ToLayoutJson(legacyPath, title));
+    File.WriteAllText(outputPath, LegacyPressConfig.ToAssetJson(legacyPath, title));
     Console.WriteLine($"Wrote {outputPath}");
     return;
 }
@@ -35,7 +35,7 @@ builder.Services.AddSingleton(sp =>
         ? options.LayoutFile
         : Path.Combine(builder.Environment.ContentRootPath, options.LayoutFile);
 
-    return PlantConfiguration.Load(path, options.Title, options.TrenchPressureTags);
+    return PlantConfiguration.Load(path, options.Title, options.GaugeTags);
 });
 
 builder.Services.AddSingleton<IShiftService, ShiftService>();

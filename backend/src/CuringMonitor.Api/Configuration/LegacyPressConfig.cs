@@ -15,24 +15,18 @@ namespace CuringMonitor.Api.Configuration;
 /// <code>
 /// RowNo#PressName#PressTitle#CommunicationCheck#PressOpen_Close#Alarm#RecipeCode#ProdCountA#ProdCountB#ProdCountC#Flag
 /// </code>
-/// <c>RowNo</c> is the trench number. Trailing columns beyond ProdCountC are ignored:
-/// the legacy file carries a flag the display does not use, and later revisions have
-/// added columns before now.
+/// <c>RowNo</c> is the trench number. Trailing columns are ignored: the legacy file carries
+/// a flag the display does not use, and revisions have added columns before now.
 /// </remarks>
 public static class LegacyPressConfig
 {
-    /// <summary>Presses per tile row, matching how the legacy mimic flowed a trench panel.</summary>
-    private const int TilesPerRow = 16;
-
     private const int MinimumColumns = 10;
 
-    public sealed record Result(IReadOnlyList<PressDefinition> Presses, IReadOnlyList<TrenchDefinition> Trenches);
-
-    public static Result Read(string path)
+    public static IReadOnlyList<AssetDefinition> Read(string path)
     {
-        var presses = new List<PressDefinition>();
-        var pressIdsByTrench = new Dictionary<int, List<string>>();
-        var trenchOrder = new List<int>();
+        var assets = new List<AssetDefinition>();
+        var positionByTrench = new Dictionary<int, int>();
+        var trenches = new List<int>();
         var lineNumber = 0;
 
         foreach (var line in File.ReadLines(path, Encoding.UTF8))
@@ -66,67 +60,58 @@ public static class LegacyPressConfig
                     $"{Path.GetFileName(path)} line {lineNumber}: press name is blank.");
             }
 
-            presses.Add(new PressDefinition
+            if (!trenches.Contains(trench))
             {
-                Id = id,
-                Title = Optional(columns[2]) ?? id,
-                Trench = trench,
-                Tags = new PressTags
-                {
-                    InternalPressure = columns[3].Trim(),
-                    PressOpen = columns[4].Trim(),
-                    PressFault = columns[5].Trim(),
-                    RecipeCode = Optional(columns[6]),
-                    ShiftCounterA = Optional(columns[7]),
-                    ShiftCounterB = Optional(columns[8]),
-                    ShiftCounterC = Optional(columns[9])
-                }
-            });
-
-            if (!pressIdsByTrench.TryGetValue(trench, out var members))
-            {
-                members = [];
-                pressIdsByTrench[trench] = members;
-                trenchOrder.Add(trench);
+                trenches.Add(trench);
             }
 
-            members.Add(id);
+            var position = positionByTrench.GetValueOrDefault(trench) + 1;
+            positionByTrench[trench] = position;
+
+            assets.Add(new AssetDefinition
+            {
+                Id = id,
+                Kind = AssetKinds.Press,
+                Label = Optional(columns[2]) ?? id,
+                Group = GroupName(trench),
+                Position = position,
+                Attributes = { ["trench"] = trench.ToString(CultureInfo.InvariantCulture) },
+                Signals = Signals(columns)
+            });
         }
 
-        if (presses.Count == 0)
+        if (assets.Count == 0)
         {
             throw new InvalidOperationException($"{Path.GetFileName(path)} defines no presses.");
         }
 
-        var duplicate = presses
-            .GroupBy(p => p.Id, StringComparer.OrdinalIgnoreCase)
-            .FirstOrDefault(g => g.Count() > 1);
-        if (duplicate is not null)
+        // Each trench gets its header-pressure box, as on the existing screen. The tag is
+        // supplied from settings; without one the box shows as no-communication.
+        foreach (var trench in trenches)
         {
-            throw new InvalidOperationException(
-                $"{Path.GetFileName(path)}: press '{duplicate.Key}' is defined more than once.");
+            assets.Add(new AssetDefinition
+            {
+                Id = $"T{trench}",
+                Kind = AssetKinds.Gauge,
+                Label = $"T {trench}",
+                Group = GroupName(trench),
+                // Sorts after every press in the trench without needing to count them.
+                Position = int.MaxValue,
+                Attributes =
+                {
+                    ["trench"] = trench.ToString(CultureInfo.InvariantCulture),
+                    ["unit"] = "kg/cm²"
+                }
+            });
         }
 
-        // Trenches are drawn highest-first, as the legacy screen did.
-        var trenches = trenchOrder
-            .OrderByDescending(number => number)
-            .Select(number => BuildTrench(number, pressIdsByTrench[number]))
-            .ToArray();
-
-        return new Result(presses, trenches);
+        return assets;
     }
 
-    /// <summary>Exports the same content as a layout file, for sites that want to edit it directly.</summary>
-    public static string ToLayoutJson(string legacyConfigPath, string title)
+    /// <summary>Exports the same content as an asset file, for sites that would rather edit that.</summary>
+    public static string ToAssetJson(string legacyConfigPath, string title)
     {
-        var result = Read(legacyConfigPath);
-
-        var document = new
-        {
-            title,
-            trenches = result.Trenches,
-            presses = result.Presses
-        };
+        var document = new { title, assets = Read(legacyConfigPath) };
 
         return JsonSerializer.Serialize(document, new JsonSerializerOptions(PlantConfiguration.SerializerOptions)
         {
@@ -134,34 +119,34 @@ public static class LegacyPressConfig
         });
     }
 
-    private static TrenchDefinition BuildTrench(int number, IReadOnlyList<string> pressIds)
+    private static Dictionary<string, string> Signals(string[] columns)
     {
-        var rows = new List<IReadOnlyList<string>>();
-        for (var i = 0; i < pressIds.Count; i += TilesPerRow)
+        var signals = new Dictionary<string, string>
         {
-            rows.Add(pressIds.Skip(i).Take(TilesPerRow).ToList());
-        }
-
-        // The trench pressure tile closes the last row, as it does on the existing screen.
-        var lastRow = rows.Count > 0 ? rows[^1].ToList() : [];
-        lastRow.Add($"trench:T {number}");
-        if (rows.Count > 0)
-        {
-            rows[^1] = lastRow;
-        }
-        else
-        {
-            rows.Add(lastRow);
-        }
-
-        return new TrenchDefinition
-        {
-            Number = number,
-            Label = $"Trench {number}",
-            PressureTag = null,
-            Rows = rows
+            [SignalNames.Pressure] = columns[3].Trim(),
+            [SignalNames.Open] = columns[4].Trim(),
+            [SignalNames.Fault] = columns[5].Trim()
         };
+
+        Add(signals, SignalNames.Recipe, columns[6]);
+        Add(signals, SignalNames.Counter(ShiftName.A), columns[7]);
+        Add(signals, SignalNames.Counter(ShiftName.B), columns[8]);
+        Add(signals, SignalNames.Counter(ShiftName.C), columns[9]);
+
+        return signals;
     }
+
+    private static void Add(Dictionary<string, string> signals, string name, string value)
+    {
+        var tag = Optional(value);
+        if (tag is not null)
+        {
+            signals[name] = tag;
+        }
+    }
+
+    private static string GroupName(int trench) =>
+        $"Trench {trench.ToString(CultureInfo.InvariantCulture)}";
 
     private static string? Optional(string value) =>
         string.IsNullOrWhiteSpace(value) ? null : value.Trim();

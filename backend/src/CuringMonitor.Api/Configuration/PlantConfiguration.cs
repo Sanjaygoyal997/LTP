@@ -1,152 +1,116 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using CuringMonitor.Api.Contracts;
 using CuringMonitor.Api.Domain;
 
 namespace CuringMonitor.Api.Configuration;
 
 /// <summary>
-/// The plant's static definition: which presses exist, which tags describe them and how
-/// the tiles are laid out. Loaded once at start-up and never mutated afterwards.
+/// Every box the plant has, and the tags behind them. Loaded once at start-up from
+/// whichever source the deployment points at, and never mutated afterwards.
 /// </summary>
 public sealed class PlantConfiguration
 {
-    private readonly Dictionary<string, PressDefinition> _pressesById;
+    private readonly Dictionary<string, AssetDefinition> _assetsById;
 
-    private PlantConfiguration(
-        string title,
-        IReadOnlyList<PressDefinition> presses,
-        IReadOnlyList<TrenchDefinition> trenches)
+    private PlantConfiguration(string title, IReadOnlyList<AssetDefinition> assets)
     {
         Title = title;
-        Presses = presses;
-        Trenches = trenches;
-        _pressesById = presses.ToDictionary(p => p.Id, StringComparer.OrdinalIgnoreCase);
-        var trenchTags = trenches
-            .Select(t => t.PressureTag)
+        Assets = assets;
+        _assetsById = assets.ToDictionary(a => a.Id, StringComparer.OrdinalIgnoreCase);
+        AllTags = assets
+            .SelectMany(a => a.Signals.Values)
             .Where(tag => !string.IsNullOrWhiteSpace(tag))
-            .Select(tag => tag!);
-
-        AllTags = presses
-            .SelectMany(p => p.Tags.All())
-            .Concat(trenchTags)
             .Distinct(StringComparer.OrdinalIgnoreCase)
             .ToArray();
     }
 
     public string Title { get; }
 
-    public IReadOnlyList<PressDefinition> Presses { get; }
-
-    public IReadOnlyList<TrenchDefinition> Trenches { get; }
+    public IReadOnlyList<AssetDefinition> Assets { get; }
 
     /// <summary>Every distinct tag address the poller needs to read.</summary>
     public IReadOnlyList<string> AllTags { get; }
 
-    public PressDefinition? Find(string pressId) =>
-        _pressesById.TryGetValue(pressId, out var press) ? press : null;
+    public AssetDefinition? Find(string assetId) =>
+        _assetsById.TryGetValue(assetId, out var asset) ? asset : null;
 
     /// <summary>
     /// Loads the plant definition. A '.txt' path is read as the plant's existing SCADA
-    /// press configuration; anything else is read as a layout file.
+    /// press configuration; anything else is read as an asset file.
     /// </summary>
-    /// <param name="trenchPressureTags">
-    /// Optional trench number to pressure tag map. The legacy config carries no trench
-    /// pressure tag, so it is supplied from application settings instead of being edited
-    /// into a file the plant maintains for the old system.
+    /// <param name="gaugeTags">
+    /// Group name to gauge tag. The legacy press configuration carries no trench pressure
+    /// tag, so it is supplied from settings rather than by editing a file the old system
+    /// still reads.
     /// </param>
     public static PlantConfiguration Load(
         string path,
         string title,
-        IReadOnlyDictionary<int, string>? trenchPressureTags = null)
+        IReadOnlyDictionary<string, string>? gaugeTags = null)
     {
         if (!File.Exists(path))
         {
             throw new FileNotFoundException($"Plant configuration '{path}' was not found.", path);
         }
 
-        var (presses, trenches) = Path.GetExtension(path).Equals(".txt", StringComparison.OrdinalIgnoreCase)
-            ? ReadLegacy(path)
-            : ReadLayoutFile(path);
+        var assets = Path.GetExtension(path).Equals(".txt", StringComparison.OrdinalIgnoreCase)
+            ? LegacyPressConfig.Read(path)
+            : ReadAssetFile(path);
 
-        if (trenchPressureTags is { Count: > 0 })
+        if (gaugeTags is { Count: > 0 })
         {
-            trenches = trenches
-                .Select(trench => trenchPressureTags.TryGetValue(trench.Number, out var tag)
-                    ? WithPressureTag(trench, tag)
-                    : trench)
-                .ToArray();
+            assets = assets.Select(asset => ApplyGaugeTag(asset, gaugeTags)).ToArray();
         }
 
-        return new PlantConfiguration(title, presses, trenches);
-    }
-
-    private static (IReadOnlyList<PressDefinition> Presses, IReadOnlyList<TrenchDefinition> Trenches) ReadLegacy(string path)
-    {
-        var result = LegacyPressConfig.Read(path);
-        return (result.Presses, result.Trenches);
-    }
-
-    private static (IReadOnlyList<PressDefinition> Presses, IReadOnlyList<TrenchDefinition> Trenches) ReadLayoutFile(string path)
-    {
-        using var stream = File.OpenRead(path);
-        var file = JsonSerializer.Deserialize<PlantFile>(stream, SerializerOptions)
-                   ?? throw new InvalidOperationException($"Layout file '{path}' is empty.");
-
-        if (file.Presses.Count == 0)
-        {
-            throw new InvalidOperationException($"Layout file '{path}' defines no presses.");
-        }
-
-        var duplicate = file.Presses
-            .GroupBy(p => p.Id, StringComparer.OrdinalIgnoreCase)
+        var duplicate = assets
+            .GroupBy(a => a.Id, StringComparer.OrdinalIgnoreCase)
             .FirstOrDefault(g => g.Count() > 1);
         if (duplicate is not null)
         {
-            throw new InvalidOperationException($"Press '{duplicate.Key}' is defined more than once.");
+            throw new InvalidOperationException(
+                $"{Path.GetFileName(path)}: asset '{duplicate.Key}' is defined more than once.");
         }
 
-        return (file.Presses, file.Trenches);
+        return new PlantConfiguration(title, assets);
     }
 
-    private static TrenchDefinition WithPressureTag(TrenchDefinition trench, string tag) => new()
+    private static IReadOnlyList<AssetDefinition> ReadAssetFile(string path)
     {
-        Number = trench.Number,
-        Label = trench.Label,
-        PressureTag = tag,
-        Rows = trench.Rows
-    };
+        using var stream = File.OpenRead(path);
+        var file = JsonSerializer.Deserialize<AssetFile>(stream, SerializerOptions)
+                   ?? throw new InvalidOperationException($"Asset file '{path}' is empty.");
 
-    /// <summary>Projects the definition into the layout the client draws.</summary>
-    public PlantLayout ToLayout()
-    {
-        var trenches = Trenches
-            .Select(trench => new TrenchLayout(
-                trench.Number,
-                trench.DisplayName,
-                trench.Rows.Select(row => row.Select(cell => ToCell(trench, cell)).ToArray()).ToArray()))
-            .ToArray();
+        if (file.Assets.Count == 0)
+        {
+            throw new InvalidOperationException($"Asset file '{path}' defines no assets.");
+        }
 
-        return new PlantLayout(Title, trenches);
+        return file.Assets;
     }
 
-    private LayoutCell ToCell(TrenchDefinition trench, string cell)
+    private static AssetDefinition ApplyGaugeTag(
+        AssetDefinition asset,
+        IReadOnlyDictionary<string, string> gaugeTags)
     {
-        if (cell.StartsWith("trench:", StringComparison.OrdinalIgnoreCase))
+        if (!asset.Kind.Equals(AssetKinds.Gauge, StringComparison.OrdinalIgnoreCase) ||
+            asset.Signals.ContainsKey(SignalNames.Value) ||
+            !gaugeTags.TryGetValue(asset.DisplayGroup, out var tag))
         {
-            var label = cell["trench:".Length..];
-            return new LayoutCell("trench", trench.Number.ToString(), label);
+            return asset;
         }
 
-        if (string.IsNullOrWhiteSpace(cell) || cell == "-")
-        {
-            return new LayoutCell("gap", string.Empty, string.Empty);
-        }
+        var signals = new Dictionary<string, string>(asset.Signals) { [SignalNames.Value] = tag };
 
-        var press = Find(cell);
-        return press is null
-            ? new LayoutCell("gap", string.Empty, string.Empty)
-            : new LayoutCell("press", press.Id, press.DisplayName);
+        return new AssetDefinition
+        {
+            Id = asset.Id,
+            Kind = asset.Kind,
+            Label = asset.Label,
+            Group = asset.Group,
+            Position = asset.Position,
+            Attributes = asset.Attributes,
+            Signals = signals
+        };
     }
 
     internal static readonly JsonSerializerOptions SerializerOptions = new(JsonSerializerDefaults.Web)
@@ -156,10 +120,8 @@ public sealed class PlantConfiguration
         Converters = { new JsonStringEnumConverter() }
     };
 
-    private sealed class PlantFile
+    private sealed class AssetFile
     {
-        public List<TrenchDefinition> Trenches { get; init; } = [];
-
-        public List<PressDefinition> Presses { get; init; } = [];
+        public List<AssetDefinition> Assets { get; init; } = [];
     }
 }

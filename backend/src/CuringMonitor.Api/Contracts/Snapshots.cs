@@ -3,7 +3,7 @@ using CuringMonitor.Api.Domain;
 namespace CuringMonitor.Api.Contracts;
 
 /// <summary>
-/// State of the whole plant at one instant — the payload the wall display renders.
+/// State of the whole plant at one instant — the payload the display renders.
 /// </summary>
 /// <param name="Shift">Shift letter: "A", "B" or "C".</param>
 public sealed record PlantSnapshot(
@@ -13,22 +13,22 @@ public sealed record PlantSnapshot(
     bool SourceConnected,
     ProductionTotals Production,
     PressTotals Totals,
-    IReadOnlyList<PressSnapshot> Presses,
-    IReadOnlyList<TrenchSnapshot> Trenches);
+    IReadOnlyList<AssetSnapshot> Assets);
 
-/// <summary>One press tile.</summary>
-public sealed record PressSnapshot(
+/// <summary>
+/// One box. The client draws it entirely from this: which group it belongs to and where it
+/// sits, what it is called, its state, and every signal value it carries.
+/// </summary>
+public sealed record AssetSnapshot(
     string Id,
-    string Title,
-    int Trench,
+    string Kind,
+    string Label,
+    string Group,
+    int Position,
     PressStatus Status,
-    string? RecipeCode,
-    int Count,
-    double? Pressure,
+    IReadOnlyDictionary<string, string> Attributes,
+    IReadOnlyDictionary<string, object?> Signals,
     DateTimeOffset UpdatedAt);
-
-/// <summary>Trench header pressure, in kg/cm².</summary>
-public sealed record TrenchSnapshot(int Number, string Label, double? Pressure, bool IsHealthy);
 
 /// <summary>Per-shift production counts, summed over every press.</summary>
 public sealed record ProductionTotals(int A, int B, int C)
@@ -36,7 +36,7 @@ public sealed record ProductionTotals(int A, int B, int C)
     public int Total => A + B + C;
 }
 
-/// <summary>Press counts by status, driving the "Total Curing Running / Stop" panel.</summary>
+/// <summary>Press counts by status, driving the running/stopped panel.</summary>
 public sealed record PressTotals(int Running, int Stopped, int Alarm, int NoCommunication)
 {
     public int Total => Running + Stopped + Alarm + NoCommunication;

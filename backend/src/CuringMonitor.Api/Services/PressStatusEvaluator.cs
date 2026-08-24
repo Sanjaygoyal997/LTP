@@ -6,14 +6,14 @@ using Microsoft.Extensions.Options;
 namespace CuringMonitor.Api.Services;
 
 /// <summary>
-/// Turns a set of raw tag readings into the snapshot the display renders: one status,
-/// recipe and production count per press, plus the plant-wide totals.
+/// Turns raw tag readings into the snapshot the display renders: a state and a set of
+/// signal values per box, plus the plant-wide totals.
 /// </summary>
 public sealed class PressStatusEvaluator(IOptions<PlantOptions> options)
 {
     private readonly PlantOptions _options = options.Value;
 
-    /// <summary>Last time each press produced a good reading, used for the stale check.</summary>
+    /// <summary>Last time each asset produced a good reading, used for the stale check.</summary>
     private readonly Dictionary<string, DateTimeOffset> _lastGoodReading = new(StringComparer.OrdinalIgnoreCase);
 
     public PlantSnapshot Evaluate(
@@ -23,16 +23,22 @@ public sealed class PressStatusEvaluator(IOptions<PlantOptions> options)
         bool sourceConnected,
         DateTimeOffset now)
     {
-        var presses = new List<PressSnapshot>(plant.Presses.Count);
+        var assets = new List<AssetSnapshot>(plant.Assets.Count);
         int running = 0, stopped = 0, alarm = 0, noComm = 0;
         int productionA = 0, productionB = 0, productionC = 0;
 
-        foreach (var definition in plant.Presses)
+        foreach (var definition in plant.Assets)
         {
-            var press = EvaluatePress(definition, tags, shift, now);
-            presses.Add(press);
+            var asset = EvaluateAsset(definition, tags, shift, now);
+            assets.Add(asset);
 
-            switch (press.Status)
+            // Only presses count towards the press totals; a gauge is not a machine.
+            if (!definition.Kind.Equals(AssetKinds.Press, StringComparison.OrdinalIgnoreCase))
+            {
+                continue;
+            }
+
+            switch (asset.Status)
             {
                 case PressStatus.Running: running++; break;
                 case PressStatus.Stopped: stopped++; break;
@@ -40,14 +46,10 @@ public sealed class PressStatusEvaluator(IOptions<PlantOptions> options)
                 default: noComm++; break;
             }
 
-            productionA += CounterValue(definition.Tags.ShiftCounterA, tags);
-            productionB += CounterValue(definition.Tags.ShiftCounterB, tags);
-            productionC += CounterValue(definition.Tags.ShiftCounterC, tags);
+            productionA += CounterValue(definition, ShiftName.A, tags);
+            productionB += CounterValue(definition, ShiftName.B, tags);
+            productionC += CounterValue(definition, ShiftName.C, tags);
         }
-
-        var trenches = plant.Trenches
-            .Select(trench => EvaluateTrench(trench, tags))
-            .ToArray();
 
         return new PlantSnapshot(
             now,
@@ -56,103 +58,114 @@ public sealed class PressStatusEvaluator(IOptions<PlantOptions> options)
             sourceConnected,
             new ProductionTotals(productionA, productionB, productionC),
             new PressTotals(running, stopped, alarm, noComm),
-            presses,
-            trenches);
+            assets);
     }
 
-    private PressSnapshot EvaluatePress(
-        PressDefinition definition,
+    private AssetSnapshot EvaluateAsset(
+        AssetDefinition definition,
         IReadOnlyDictionary<string, TagValue> tags,
         Shift shift,
         DateTimeOffset now)
     {
-        var pressure = Read(definition.Tags.InternalPressure, tags);
-        var open = Read(definition.Tags.PressOpen, tags);
-        var fault = Read(definition.Tags.PressFault, tags);
+        // Every configured signal is published, whether or not the status rules use it, so a
+        // screen can bind to anything the plant chose to wire up.
+        var signals = new Dictionary<string, object?>(StringComparer.OrdinalIgnoreCase);
+        var communicating = false;
 
-        var hasPressure = pressure.TryGetDouble(out var pressureValue);
-        var communicating = hasPressure || open.IsGood || fault.IsGood;
+        foreach (var (name, address) in definition.Signals)
+        {
+            var reading = Read(address, tags);
+            signals[name] = reading.IsGood ? reading.Value : null;
+            communicating |= reading.IsGood;
+        }
+
+        // The current shift's counter is also published under a stable name, so a screen
+        // does not have to know which shift is running.
+        if (definition.Signals.ContainsKey(SignalNames.Counter(shift.Name)))
+        {
+            signals["count"] = signals[SignalNames.Counter(shift.Name)] ?? 0;
+        }
 
         if (communicating)
         {
             _lastGoodReading[definition.Id] = now;
         }
 
-        var status = ResolveStatus(definition.Id, communicating, hasPressure, pressureValue, open, fault, now);
+        var status = definition.Kind.Equals(AssetKinds.Press, StringComparison.OrdinalIgnoreCase)
+            ? PressState(definition, tags, communicating, now)
+            : GaugeState(definition, communicating, now);
 
-        return new PressSnapshot(
+        return new AssetSnapshot(
             definition.Id,
-            definition.DisplayName,
-            definition.Trench,
+            definition.Kind,
+            definition.DisplayLabel,
+            definition.DisplayGroup,
+            definition.Position,
             status,
-            Read(definition.Tags.RecipeCode, tags).AsString(),
-            CounterValue(definition.Tags.CounterFor(shift.Name), tags),
-            hasPressure ? Math.Round(pressureValue, 1) : null,
+            definition.Attributes,
+            signals,
             _lastGoodReading.TryGetValue(definition.Id, out var last) ? last : now);
     }
 
     /// <summary>
-    /// Status precedence matches the legacy mimic: a press that is not talking is grey
-    /// whatever its last values said, a fault outranks the open/closed state, and pressure
-    /// only decides between run and stop once the press is known to be closed.
+    /// Status precedence matches the mimic this replaces: a press that is not talking is
+    /// grey whatever its last values said, a fault outranks the open/closed state, and
+    /// pressure only decides between run and stop once the press is known to be closed.
     /// </summary>
-    private PressStatus ResolveStatus(
-        string pressId,
+    private PressStatus PressState(
+        AssetDefinition definition,
+        IReadOnlyDictionary<string, TagValue> tags,
         bool communicating,
-        bool hasPressure,
-        double pressureValue,
-        TagValue open,
-        TagValue fault,
         DateTimeOffset now)
     {
-        if (!communicating && IsStale(pressId, now))
+        if (!communicating && IsStale(definition.Id, now))
         {
             return PressStatus.NoCommunication;
         }
 
-        if (fault.TryGetBoolean(out var faulted) && faulted)
+        if (Signal(definition, SignalNames.Fault, tags).TryGetBoolean(out var faulted) && faulted)
         {
             return PressStatus.Alarm;
         }
 
-        if (open.TryGetBoolean(out var isOpen) && isOpen)
+        if (Signal(definition, SignalNames.Open, tags).TryGetBoolean(out var isOpen) && isOpen)
         {
             return PressStatus.Stopped;
         }
 
-        if (!hasPressure)
+        if (!Signal(definition, SignalNames.Pressure, tags).TryGetDouble(out var pressure))
         {
             return PressStatus.Stopped;
         }
 
-        return pressureValue >= _options.MinRunningPressure
+        return pressure >= _options.MinRunningPressure
             ? PressStatus.Running
             : PressStatus.Stopped;
     }
 
-    private bool IsStale(string pressId, DateTimeOffset now) =>
-        !_lastGoodReading.TryGetValue(pressId, out var last) || now - last > _options.StaleAfter;
+    private PressStatus GaugeState(AssetDefinition definition, bool communicating, DateTimeOffset now) =>
+        communicating || !IsStale(definition.Id, now)
+            ? PressStatus.Running
+            : PressStatus.NoCommunication;
 
-    private static TrenchSnapshot EvaluateTrench(
-        TrenchDefinition trench,
-        IReadOnlyDictionary<string, TagValue> tags)
+    private bool IsStale(string assetId, DateTimeOffset now) =>
+        !_lastGoodReading.TryGetValue(assetId, out var last) || now - last > _options.StaleAfter;
+
+    private static int CounterValue(
+        AssetDefinition definition,
+        ShiftName shift,
+        IReadOnlyDictionary<string, TagValue> tags) =>
+        Signal(definition, SignalNames.Counter(shift), tags).TryGetInt32(out var value) ? value : 0;
+
+    private static TagValue Signal(
+        AssetDefinition definition,
+        string name,
+        IReadOnlyDictionary<string, TagValue> tags) =>
+        definition.Signals.TryGetValue(name, out var address) ? Read(address, tags) : default;
+
+    private static TagValue Read(string? address, IReadOnlyDictionary<string, TagValue> tags)
     {
-        var reading = Read(trench.PressureTag, tags);
-        var hasValue = reading.TryGetDouble(out var pressure);
-
-        return new TrenchSnapshot(
-            trench.Number,
-            trench.DisplayName,
-            hasValue ? Math.Round(pressure, 1) : null,
-            hasValue);
-    }
-
-    private static int CounterValue(string? tag, IReadOnlyDictionary<string, TagValue> tags) =>
-        Read(tag, tags).TryGetInt32(out var value) ? value : 0;
-
-    private static TagValue Read(string? tag, IReadOnlyDictionary<string, TagValue> tags)
-    {
-        if (string.IsNullOrWhiteSpace(tag) || !tags.TryGetValue(tag, out var value))
+        if (string.IsNullOrWhiteSpace(address) || !tags.TryGetValue(address, out var value))
         {
             return default;
         }

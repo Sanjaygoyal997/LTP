@@ -1,27 +1,24 @@
-/** Contracts served by CuringMonitor.Api. Keep in step with backend/src/CuringMonitor.Api/Contracts. */
+/** Contracts served by CuringMonitor.Api. Keep in step with backend Contracts/Snapshots.cs. */
 
 export type PressStatus = 'noCommunication' | 'running' | 'stopped' | 'alarm';
 
-export type ShiftName = 'A' | 'B' | 'C';
-
-export interface PressSnapshot {
+/**
+ * One box on the screen. Everything the client draws comes from here — the label, the
+ * group it belongs to, its order within that group, and every signal the plant wired up.
+ */
+export interface AssetSnapshot {
   id: string;
-  title: string;
-  trench: number;
-  status: PressStatus;
-  recipeCode: string | null;
-  /** Cures booked by this press in the current shift. */
-  count: number;
-  /** Internal pressure in kg/cm², null when the tag is unreadable. */
-  pressure: number | null;
-  updatedAt: string;
-}
-
-export interface TrenchSnapshot {
-  number: number;
+  /** "press" is evaluated against the curing rules; "gauge" just shows its value. */
+  kind: string;
   label: string;
-  pressure: number | null;
-  isHealthy: boolean;
+  group: string;
+  position: number;
+  status: PressStatus;
+  /** Free-form metadata from the plant configuration. */
+  attributes: Record<string, string>;
+  /** Signal name to current value; names are the plant's own vocabulary. */
+  signals: Record<string, unknown>;
+  updatedAt: string;
 }
 
 export interface ProductionTotals {
@@ -41,40 +38,20 @@ export interface PressTotals {
 
 export interface PlantSnapshot {
   timestamp: string;
-  shift: ShiftName;
+  shift: string;
   productionDate: string;
   sourceConnected: boolean;
   production: ProductionTotals;
   totals: PressTotals;
-  presses: PressSnapshot[];
-  trenches: TrenchSnapshot[];
+  assets: AssetSnapshot[];
 }
 
-export type LayoutCellKind = 'press' | 'trench' | 'gap';
-
-export interface LayoutCell {
-  kind: LayoutCellKind;
-  id: string;
-  label: string;
-}
-
-export interface TrenchLayout {
-  number: number;
-  label: string;
-  rows: LayoutCell[][];
-}
-
-export interface PlantLayout {
-  title: string;
-  trenches: TrenchLayout[];
-}
-
-export const STATUS_LABELS: Record<PressStatus, string> = {
+export const STATUS_LABELS: Record<string, string> = {
   noCommunication: 'No Communication',
   running: 'Curing Run / Pressure Ok',
   stopped: 'Curing Stop',
   alarm: 'Alarm',
 };
 
-/** Legend order, matching the operator-facing screen this replaces. */
+/** Legend order used when a screen does not specify one. */
 export const LEGEND_ORDER: PressStatus[] = ['noCommunication', 'running', 'stopped', 'alarm'];

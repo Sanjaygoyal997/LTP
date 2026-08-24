@@ -25,9 +25,9 @@ public sealed class PlantPollingService(
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         logger.LogInformation(
-            "Polling {TagCount} tags across {PressCount} presses every {Interval}.",
+            "Polling {TagCount} tags across {AssetCount} boxes every {Interval}.",
             plant.AllTags.Count,
-            plant.Presses.Count,
+            plant.Assets.Count,
             _options.PollInterval);
 
         using var timer = new PeriodicTimer(_options.PollInterval);

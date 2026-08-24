@@ -1,4 +1,4 @@
-import type { PlantLayout, PlantSnapshot } from '../types';
+import type { PlantSnapshot } from '../types';
 
 /** Base URL of CuringMonitor.Api; empty string means same-origin (production build). */
 export const API_BASE = import.meta.env.VITE_API_BASE ?? '';
@@ -10,7 +10,5 @@ async function getJson<T>(path: string, signal?: AbortSignal): Promise<T> {
   }
   return (await response.json()) as T;
 }
-
-export const fetchLayout = (signal?: AbortSignal) => getJson<PlantLayout>('/api/layout', signal);
 
 export const fetchSnapshot = (signal?: AbortSignal) => getJson<PlantSnapshot>('/api/snapshot', signal);

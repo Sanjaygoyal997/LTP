@@ -1,12 +1,11 @@
 import type { KpiPanelWidget, LegendWidget, TileGridWidget, Widget } from '../../screen';
-import type { PlantLayout, PlantSnapshot } from '../../types';
+import type { PlantSnapshot } from '../../types';
 import { KpiPanel } from './KpiPanel';
 import { Legend } from './Legend';
 import { TileGrid } from './TileGrid';
 
 export interface WidgetProps {
   widget: Widget;
-  layout: PlantLayout | null;
   snapshot: PlantSnapshot | null;
 }
 
@@ -15,8 +14,7 @@ export interface WidgetProps {
  * service passes screen documents through untouched and never needs to know about it.
  */
 const REGISTRY: Record<string, (props: WidgetProps) => React.ReactElement | null> = {
-  'tile-grid': ({ widget, layout, snapshot }) =>
-    layout ? <TileGrid widget={widget as TileGridWidget} layout={layout} snapshot={snapshot} /> : null,
+  'tile-grid': ({ widget, snapshot }) => <TileGrid widget={widget as TileGridWidget} snapshot={snapshot} />,
 
   'kpi-panel': ({ widget, snapshot }) => <KpiPanel widget={widget as KpiPanelWidget} snapshot={snapshot} />,
 

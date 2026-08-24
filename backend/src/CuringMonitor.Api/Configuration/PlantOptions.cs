@@ -11,16 +11,16 @@ public sealed class PlantOptions
     /// <summary>
     /// Plant definition to load, absolute or relative to the content root. A '.txt' file is
     /// read as the plant's existing SCADA press configuration (config_AB.txt and friends);
-    /// anything else is read as a layout file.
+    /// anything else is read as an asset file.
     /// </summary>
-    public string LayoutFile { get; set; } = "plant-layout.json";
+    public string LayoutFile { get; set; } = "config_AB.txt";
 
     /// <summary>
-    /// Trench number to header-pressure tag. The legacy press configuration carries no
-    /// trench pressure tag, so it is supplied here rather than by editing a file the plant
-    /// still maintains for the old system. Trenches left out show as no-communication.
+    /// Group name to gauge tag, for gauge boxes whose source file carries no tag — the
+    /// legacy press configuration has none. Supplying it here avoids editing a file the
+    /// plant still maintains for the old system. Gauges left out show as no-communication.
     /// </summary>
-    public Dictionary<int, string> TrenchPressureTags { get; set; } = [];
+    public Dictionary<string, string> GaugeTags { get; set; } = [];
 
     /// <summary>Directory holding the screen documents, absolute or relative to the content root.</summary>
     public string ScreensDirectory { get; set; } = "screens";

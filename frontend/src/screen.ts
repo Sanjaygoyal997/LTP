@@ -21,12 +21,6 @@ export interface TileSpec {
   tooltip?: TooltipRow[];
 }
 
-export interface TrenchTileSpec {
-  /** Literal text rather than a field: the unit never varies. */
-  sub?: string;
-  value?: FieldPath;
-}
-
 export interface WidgetBase {
   type: string;
   /** Where the widget is placed. Defaults to "floor". */
@@ -34,11 +28,31 @@ export interface WidgetBase {
   title?: string;
 }
 
+/**
+ * Which boxes a widget draws, and how they are arranged. Membership is a query over the
+ * live assets rather than a hand-listed grid.
+ */
+export interface AssetQuery {
+  /** Field path to expected value, or to a list of accepted values. */
+  where?: Record<string, string | number | Array<string | number>>;
+  /** Field to group boxes by. Defaults to "asset.group". */
+  groupBy?: FieldPath;
+  /** Explicit group order; groups not listed follow in natural order. */
+  groupOrder?: string[];
+  groupDescending?: boolean;
+  /** Field to order boxes within a group by. Defaults to "asset.position". */
+  orderBy?: FieldPath;
+  /** Boxes per row. Defaults to 16. */
+  wrap?: number;
+}
+
 export interface TileGridWidget extends WidgetBase {
   type: 'tile-grid';
-  groupBy?: 'trench';
+  source?: AssetQuery;
+  showGroupLabel?: boolean;
   tile?: TileSpec;
-  trenchTile?: TrenchTileSpec;
+  /** Per-kind overrides, e.g. a gauge showing its reading instead of a cure count. */
+  tileByKind?: Record<string, TileSpec>;
 }
 
 export interface KpiItem {
