@@ -69,7 +69,10 @@ public sealed class PressStatusEvaluator(IOptions<PlantOptions> options)
             sourceConnected,
             new ProductionTotals(productionA, productionB, productionC),
             new PressTotals(running, stopped, alarm, noComm),
-            assets);
+            assets,
+            plant.Groups
+                .Select(g => new GroupSnapshot(g.Key, g.DisplayLabel, g.Order, g.Wrap))
+                .ToArray());
     }
 
     private AssetSnapshot EvaluateAsset(

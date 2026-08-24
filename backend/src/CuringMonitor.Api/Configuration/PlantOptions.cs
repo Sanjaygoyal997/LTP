@@ -22,6 +22,13 @@ public sealed class PlantOptions
     /// </summary>
     public Dictionary<string, string> GaugeTags { get; set; } = [];
 
+    /// <summary>
+    /// Width one box occupied on the legacy screen, in pixels. Only used to convert a trench
+    /// panel width from <c>trenchSize.txt</c> into boxes per row; the mimic drew 40px buttons
+    /// with a 3px margin either side.
+    /// </summary>
+    public int LegacyTilePitch { get; set; } = 46;
+
     /// <summary>Directory holding the screen documents, absolute or relative to the content root.</summary>
     public string ScreensDirectory { get; set; } = "screens";
 

@@ -105,7 +105,7 @@ public sealed class PlantConfigurationProvider : IDisposable
     }
 
     private PlantConfiguration Load() =>
-        PlantConfiguration.Load(_path, _options.Title, _options.GaugeTags);
+        PlantConfiguration.Load(_path, _options.Title, _options.GaugeTags, _options.LegacyTilePitch);
 
     public void Dispose()
     {

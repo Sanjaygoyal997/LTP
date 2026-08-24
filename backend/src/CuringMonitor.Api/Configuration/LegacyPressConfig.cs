@@ -22,7 +22,19 @@ public static class LegacyPressConfig
 {
     private const int MinimumColumns = 10;
 
-    public static IReadOnlyList<AssetDefinition> Read(string path)
+    /// <summary>Companion file giving each trench's panel size, if the site ships one.</summary>
+    private const string TrenchSizeFileName = "trenchSize.txt";
+
+    public sealed record Result(
+        IReadOnlyList<AssetDefinition> Assets,
+        IReadOnlyList<GroupDefinition> Groups);
+
+    /// <param name="tilePitch">
+    /// Width one box occupied on the legacy screen, used to turn a trench panel width from
+    /// <c>trenchSize.txt</c> into boxes per row. The mimic drew 40px buttons with a 3px
+    /// margin either side.
+    /// </param>
+    public static Result Read(string path, int tilePitch = 46)
     {
         var assets = new List<AssetDefinition>();
         var positionByTrench = new Dictionary<int, int>();
@@ -85,6 +97,11 @@ public static class LegacyPressConfig
             throw new InvalidOperationException($"{Path.GetFileName(path)} defines no presses.");
         }
 
+        // Trench panel widths, if the site ships the companion file. The legacy screen never
+        // stated a boxes-per-row figure: it sized each trench panel in pixels and let the
+        // buttons wrap, so the width has to be converted back into a count.
+        var panelWidths = ReadTrenchWidths(Path.Combine(Path.GetDirectoryName(path) ?? ".", TrenchSizeFileName));
+
         // Each trench gets its header-pressure box, as on the existing screen. The tag is
         // supplied from settings; without one the box shows as no-communication.
         foreach (var trench in trenches)
@@ -105,13 +122,75 @@ public static class LegacyPressConfig
             });
         }
 
-        return assets;
+        // Groups are drawn in the order the configuration lists them, not in name order:
+        // the plant's own sequence is the one operators know.
+        var groups = trenches
+            .Select((trench, index) => new GroupDefinition
+            {
+                Key = GroupName(trench),
+                Label = GroupName(trench),
+                Order = index,
+                Wrap = WrapFor(panelWidths, index, tilePitch)
+            })
+            .ToArray();
+
+        return new Result(assets, groups);
+    }
+
+    /// <summary>
+    /// Reads <c>trenchSize.txt</c>: a header line, then one comma-separated line per trench
+    /// in the same order the presses are listed, with width in column 1 and height in
+    /// column 2. Missing or unreadable, the screen decides its own row width instead.
+    /// </summary>
+    private static IReadOnlyList<int> ReadTrenchWidths(string path)
+    {
+        if (!File.Exists(path))
+        {
+            return [];
+        }
+
+        var widths = new List<int>();
+
+        foreach (var line in File.ReadLines(path, Encoding.UTF8).Skip(1))
+        {
+            if (string.IsNullOrWhiteSpace(line))
+            {
+                continue;
+            }
+
+            var columns = line.Split(',');
+            if (columns.Length > 1 &&
+                int.TryParse(columns[1].Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out var width) &&
+                width > 0)
+            {
+                widths.Add(width);
+            }
+            else
+            {
+                // Keep the positions aligned: the k-th line describes the k-th trench, so a
+                // bad line must not shift every trench after it.
+                widths.Add(0);
+            }
+        }
+
+        return widths;
+    }
+
+    private static int? WrapFor(IReadOnlyList<int> panelWidths, int index, int tilePitch)
+    {
+        if (index >= panelWidths.Count || panelWidths[index] <= 0 || tilePitch <= 0)
+        {
+            return null;
+        }
+
+        return Math.Max(1, panelWidths[index] / tilePitch);
     }
 
     /// <summary>Exports the same content as an asset file, for sites that would rather edit that.</summary>
     public static string ToAssetJson(string legacyConfigPath, string title)
     {
-        var document = new { title, assets = Read(legacyConfigPath) };
+        var result = Read(legacyConfigPath);
+        var document = new { title, groups = result.Groups, assets = result.Assets };
 
         return JsonSerializer.Serialize(document, new JsonSerializerOptions(PlantConfiguration.SerializerOptions)
         {

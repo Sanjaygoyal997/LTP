@@ -1,7 +1,6 @@
 {
   "id": "curing-wall",
   "title": "Curing Press Status",
-
   "theme": {
     "floor": "#d4d4d4",
     "panel": "#000000",
@@ -13,44 +12,68 @@
       "alarm": "#ff1e1e",
       "noCommunication": "#9a9a9a"
     },
-    "tile": { "minWidth": 52, "maxWidth": 112 },
+    "tile": {
+      "minWidth": 52,
+      "maxWidth": 112
+    },
     "alarmPulse": true
   },
-
   "widgets": [
     {
       "type": "tile-grid",
       "region": "floor",
-
       "source": {
         "groupBy": "asset.group",
-        "groupDescending": true,
         "orderBy": "asset.position",
-        "wrap": 16
+        "wrap": "auto"
       },
-
       "tile": {
         "header": "asset.label",
         "sub": "signal.recipe",
         "value": "signal.count",
         "colour": "status",
         "tooltip": [
-          { "label": "Press", "field": "asset.label" },
-          { "label": "Group", "field": "asset.group" },
-          { "label": "Status", "field": "status.label" },
-          { "label": "Recipe", "field": "signal.recipe" },
-          { "label": "Cures this shift", "field": "signal.count" },
-          { "label": "Pressure", "field": "signal.pressure", "unit": "kg/cm²" }
+          {
+            "label": "Press",
+            "field": "asset.label"
+          },
+          {
+            "label": "Group",
+            "field": "asset.group"
+          },
+          {
+            "label": "Status",
+            "field": "status.label"
+          },
+          {
+            "label": "Recipe",
+            "field": "signal.recipe"
+          },
+          {
+            "label": "Cures this shift",
+            "field": "signal.count"
+          },
+          {
+            "label": "Pressure",
+            "field": "signal.pressure",
+            "unit": "kg/cm\u00b2"
+          }
         ]
       },
-
       "tileByKind": {
         "gauge": {
           "sub": "asset.attributes.unit",
           "value": "signal.value",
           "tooltip": [
-            { "label": "Header pressure", "field": "asset.group" },
-            { "label": "Reading", "field": "signal.value", "unit": "kg/cm²" }
+            {
+              "label": "Header pressure",
+              "field": "asset.group"
+            },
+            {
+              "label": "Reading",
+              "field": "signal.value",
+              "unit": "kg/cm\u00b2"
+            }
           ]
         }
       }
@@ -61,10 +84,22 @@
       "title": "Production",
       "orientation": "columns",
       "items": [
-        { "label": "A", "field": "production.a" },
-        { "label": "B", "field": "production.b" },
-        { "label": "C", "field": "production.c" },
-        { "label": "Total", "field": "production.total" }
+        {
+          "label": "A",
+          "field": "production.a"
+        },
+        {
+          "label": "B",
+          "field": "production.b"
+        },
+        {
+          "label": "C",
+          "field": "production.c"
+        },
+        {
+          "label": "Total",
+          "field": "production.total"
+        }
       ]
     },
     {
@@ -73,15 +108,26 @@
       "title": "Press",
       "orientation": "rows",
       "items": [
-        { "label": "Total Curing Running", "field": "totals.running" },
-        { "label": "Total Curing Stop", "field": "totals.stopped" }
+        {
+          "label": "Total Curing Running",
+          "field": "totals.running"
+        },
+        {
+          "label": "Total Curing Stop",
+          "field": "totals.stopped"
+        }
       ]
     },
     {
       "type": "legend",
       "region": "footer",
       "title": "Legends",
-      "order": ["noCommunication", "running", "stopped", "alarm"]
+      "order": [
+        "noCommunication",
+        "running",
+        "stopped",
+        "alarm"
+      ]
     }
   ]
 }

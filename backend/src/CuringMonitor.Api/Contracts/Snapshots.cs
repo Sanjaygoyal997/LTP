@@ -13,7 +13,14 @@ public sealed record PlantSnapshot(
     bool SourceConnected,
     ProductionTotals Production,
     PressTotals Totals,
-    IReadOnlyList<AssetSnapshot> Assets);
+    IReadOnlyList<AssetSnapshot> Assets,
+    IReadOnlyList<GroupSnapshot> Groups);
+
+/// <summary>
+/// A group of boxes. The client draws groups in <paramref name="Order"/> and, when
+/// <paramref name="Wrap"/> is set, wraps that group's boxes at that many per row.
+/// </summary>
+public sealed record GroupSnapshot(string Key, string Label, int Order, int? Wrap);
 
 /// <summary>
 /// One box. The client draws it entirely from this: which group it belongs to and where it

@@ -42,8 +42,14 @@ export interface AssetQuery {
   groupDescending?: boolean;
   /** Field to order boxes within a group by. Defaults to "asset.position". */
   orderBy?: FieldPath;
-  /** Boxes per row. Defaults to 16. */
-  wrap?: number;
+  /**
+   * Boxes per row. "auto" follows the width the plant configuration gives each group,
+   * falling back to 16 for groups that specify none. A number applies to every group.
+   */
+  wrap?: number | 'auto';
+
+  /** Per-group override, winning over both the group's own width and `wrap`. */
+  wrapByGroup?: Record<string, number>;
 }
 
 export interface TileGridWidget extends WidgetBase {

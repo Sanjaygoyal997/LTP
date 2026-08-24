@@ -12,10 +12,14 @@ public sealed class PlantConfiguration
 {
     private readonly Dictionary<string, AssetDefinition> _assetsById;
 
-    private PlantConfiguration(string title, IReadOnlyList<AssetDefinition> assets)
+    private PlantConfiguration(
+        string title,
+        IReadOnlyList<AssetDefinition> assets,
+        IReadOnlyList<GroupDefinition> groups)
     {
         Title = title;
         Assets = assets;
+        Groups = groups;
         _assetsById = assets.ToDictionary(a => a.Id, StringComparer.OrdinalIgnoreCase);
         AllTags = assets
             .SelectMany(a => a.Signals.Values)
@@ -27,6 +31,8 @@ public sealed class PlantConfiguration
     public string Title { get; }
 
     public IReadOnlyList<AssetDefinition> Assets { get; }
+
+    public IReadOnlyList<GroupDefinition> Groups { get; }
 
     /// <summary>Every distinct tag address the poller needs to read.</summary>
     public IReadOnlyList<string> AllTags { get; }
@@ -43,19 +49,36 @@ public sealed class PlantConfiguration
     /// tag, so it is supplied from settings rather than by editing a file the old system
     /// still reads.
     /// </param>
+    /// <param name="tilePitch">
+    /// Legacy box width, used to turn a trench panel width from <c>trenchSize.txt</c> into
+    /// boxes per row.
+    /// </param>
     public static PlantConfiguration Load(
         string path,
         string title,
-        IReadOnlyDictionary<string, string>? gaugeTags = null)
+        IReadOnlyDictionary<string, string>? gaugeTags = null,
+        int tilePitch = 46)
     {
         if (!File.Exists(path))
         {
             throw new FileNotFoundException($"Plant configuration '{path}' was not found.", path);
         }
 
-        var assets = Path.GetExtension(path).Equals(".txt", StringComparison.OrdinalIgnoreCase)
-            ? LegacyPressConfig.Read(path)
-            : ReadAssetFile(path);
+        IReadOnlyList<AssetDefinition> assets;
+        IReadOnlyList<GroupDefinition> groups;
+
+        if (Path.GetExtension(path).Equals(".txt", StringComparison.OrdinalIgnoreCase))
+        {
+            var legacy = LegacyPressConfig.Read(path, tilePitch);
+            assets = legacy.Assets;
+            groups = legacy.Groups;
+        }
+        else
+        {
+            var file = ReadAssetFile(path);
+            assets = file.Assets;
+            groups = file.Groups.Count > 0 ? file.Groups : GroupsFrom(assets);
+        }
 
         if (gaugeTags is { Count: > 0 })
         {
@@ -71,10 +94,18 @@ public sealed class PlantConfiguration
                 $"{Path.GetFileName(path)}: asset '{duplicate.Key}' is defined more than once.");
         }
 
-        return new PlantConfiguration(title, assets);
+        return new PlantConfiguration(title, assets, groups);
     }
 
-    private static IReadOnlyList<AssetDefinition> ReadAssetFile(string path)
+    /// <summary>Derives groups from the assets when the source file does not declare them.</summary>
+    private static IReadOnlyList<GroupDefinition> GroupsFrom(IReadOnlyList<AssetDefinition> assets) =>
+        assets
+            .Select(a => a.DisplayGroup)
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .Select((key, index) => new GroupDefinition { Key = key, Label = key, Order = index })
+            .ToArray();
+
+    private static AssetFile ReadAssetFile(string path)
     {
         using var stream = File.OpenRead(path);
         var file = JsonSerializer.Deserialize<AssetFile>(stream, SerializerOptions)
@@ -85,7 +116,7 @@ public sealed class PlantConfiguration
             throw new InvalidOperationException($"Asset file '{path}' defines no assets.");
         }
 
-        return file.Assets;
+        return file;
     }
 
     private static AssetDefinition ApplyGaugeTag(
@@ -123,5 +154,8 @@ public sealed class PlantConfiguration
     private sealed class AssetFile
     {
         public List<AssetDefinition> Assets { get; init; } = [];
+
+        /// <summary>Optional: without it, groups are derived from the assets in first-seen order.</summary>
+        public List<GroupDefinition> Groups { get; init; } = [];
     }
 }

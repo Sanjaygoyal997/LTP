@@ -31,9 +31,22 @@ gauge box is added per trench for its header pressure. The copy committed here i
 `config_AB.txt` from the sample project — 86 presses across trenches 4, 5 and 6, plus 3
 gauges, 524 distinct tags.
 
+**`trenchSize.txt`**, if the site ships it beside the config, is read too. The legacy
+screen never stated a boxes-per-row figure: it sized each trench panel in pixels and let
+the 40px buttons wrap, so the width is converted back into a count —
+`floor(width / Plant:LegacyTilePitch)`, the pitch defaulting to 46 (a 40px button with a
+3px margin either side). Format is a header line, then one comma-separated line per trench
+**in the same order the presses are listed**, with width in column 1 and height in column 2.
+Trenches beyond the end of the file, or with an unreadable width, fall back to the screen's
+own row width.
+
+Group **order** comes from the configuration too — the sequence the plant lists its trenches
+in, which is not necessarily alphabetical and is the one operators know.
+
 Sites that would rather edit a plain asset file than the legacy format can use one: any
 non-`.txt` path is read as JSON, with each asset carrying `id`, `kind`, `label`, `group`,
-`position`, `attributes` and `signals` (signal name to tag address).
+`position`, `attributes` and `signals` (signal name to tag address), and an optional
+`groups` list carrying each group's `order` and `wrap`.
 
 The legacy file carries no trench pressure tag, so those are supplied from settings rather
 than by editing a file the old system still reads:
@@ -87,9 +100,13 @@ with a query rather than listing them:
   "where":  { "asset.attributes.trench": "6" },
   "groupBy": "asset.group",
   "orderBy": "asset.position",
-  "wrap": 16
+  "wrap": "auto",
+  "wrapByGroup": { "Trench 4": 12 }
 }
 ```
+
+`wrap` is `"auto"` to follow the width the plant configuration gives each group, or a
+number to apply one width everywhere. `wrapByGroup` overrides both.
 
 Commission a press into a group and its box appears; rename it in the plant configuration
 and the box is renamed; regroup it and it moves. None of that touches a screen document or
@@ -164,6 +181,7 @@ rather than sitting grey.
 | `Plant:StaleAfter` | 30 s | no good reading for longer → no-communication |
 | `Plant:MinRunningPressure` | 1.0 | pressure at or above which a closed press is running |
 | `Plant:GaugeTags` | `{}` | group name → gauge tag |
+| `Plant:LegacyTilePitch` | 46 | box width in pixels, for converting `trenchSize.txt` widths into boxes per row |
 | `Plant:Shifts:*StartHour` | 7 / 15 / 23 | shift boundaries |
 | `AllowedOrigins` | `http://localhost:5173` | CORS origins for the display |
 

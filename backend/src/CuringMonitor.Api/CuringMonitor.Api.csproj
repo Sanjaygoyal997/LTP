@@ -14,6 +14,7 @@
 
   <ItemGroup>
     <None Update="config_AB.txt" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="trenchSize.txt" CopyToOutputDirectory="PreserveNewest" />
     <None Update="screens\**\*.json" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 

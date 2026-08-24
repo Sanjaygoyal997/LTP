@@ -36,6 +36,16 @@ export interface PressTotals {
   total: number;
 }
 
+/** A group of boxes — a trench, a bay, a line. */
+export interface GroupSnapshot {
+  key: string;
+  label: string;
+  /** Order the plant configuration lists the group in. */
+  order: number;
+  /** Boxes per row for this group, when the plant configuration specifies a width. */
+  wrap: number | null;
+}
+
 export interface PlantSnapshot {
   timestamp: string;
   shift: string;
@@ -44,6 +54,7 @@ export interface PlantSnapshot {
   production: ProductionTotals;
   totals: PressTotals;
   assets: AssetSnapshot[];
+  groups: GroupSnapshot[];
 }
 
 export const STATUS_LABELS: Record<string, string> = {

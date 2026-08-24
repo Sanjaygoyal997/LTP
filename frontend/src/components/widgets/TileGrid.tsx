@@ -33,8 +33,8 @@ export function TileGrid({ widget, snapshot }: TileGridProps) {
   return (
     <div className="floor" style={{ ['--columns' as string]: widestRow }}>
       {groups.map((group) => (
-        <section className="trench" key={group.key} aria-label={group.key}>
-          {widget.showGroupLabel && <h2 className="trench__label">{group.key}</h2>}
+        <section className="trench" key={group.key} aria-label={group.label}>
+          {widget.showGroupLabel && <h2 className="trench__label">{group.label}</h2>}
 
           {group.rows.map((row, rowIndex) => (
             <div
