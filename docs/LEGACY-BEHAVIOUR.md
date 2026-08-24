@@ -71,6 +71,26 @@ else                                                        -> Gray
 null check — presence of a value means the press is communicating. Run versus stop is
 decided entirely by `Press_Open`.
 
+Verified three ways:
+
+1. `readConfiguration` adds `columns[3]`, `[4]`, `[5]`… to the tag list in order, so the
+   per-press block is columns 3–9 at offsets +0…+6.
+2. That block layout is corroborated inside the worker itself: it reads +3 for the recipe
+   and +4/+5/+6 for the shift counters, which are exactly columns 6 and 7/8/9.
+3. The only numeric comparisons anywhere in the worker are the `DateTime.Hour` tests for
+   the shift. There is no `ldc.r8`, no `Parse`, no `ToDouble` — every colour decision is a
+   **string equality** against `"1"`, `"-1"`, `"true"`, `"0"`, `"false"`.
+
+A scan of the whole assembly confirms only `backgroundWorker1_DoWork` ever writes the band
+colour (four calls: Gray, Yellow, SpringGreen, Gray), and only `setColour_Event` writes
+`pressControl.pressColour`.
+
+Two things reconcile this with the expectation that pressure decides run/stop: the column
+is *named* `CommunicationCheck` and holds `internal_pressure`, so pressure is what proves
+the press is alive; and `Press_Open` is a PLC-side signal that may itself be derived from a
+pressure switch in ladder logic. The threshold, if there is one, lives in the PLC — not in
+this application.
+
 ### Header colour — same worker
 
 ```
@@ -132,8 +152,9 @@ Three stacked labels with auto-resizing fonts: `pressNameLabel` (background `MCC
 
 ### Layout
 
-`UserControl1.readConfiguration` reads `config.txt`; column 1 → control name, column 2 →
-tile caption. One `FlowLayoutPanel` per distinct RowNo (trench).
+`UserControl1.readConfiguration` reads `config.txt`, splitting on **`,`** (the exe's
+`config_AB.txt` is `#`-separated — same columns, different delimiter, different reader).
+Column 1 → control name, column 2 → tile caption. One `FlowLayoutPanel` per distinct RowNo (trench).
 
 `resize_FlowLayout_Child` sizes the boxes from the panel rather than wrapping them at a
 fixed count:
