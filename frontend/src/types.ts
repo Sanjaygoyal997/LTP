@@ -14,6 +14,8 @@ export interface AssetSnapshot {
   group: string;
   position: number;
   status: PressStatus;
+  /** Fault flag. Shown by flashing the box header, not by changing the band colour. */
+  alarm: boolean;
   /** Free-form metadata from the plant configuration. */
   attributes: Record<string, string>;
   /** Signal name to current value; names are the plant's own vocabulary. */

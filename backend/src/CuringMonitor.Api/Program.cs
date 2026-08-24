@@ -23,7 +23,6 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddOptions<PlantOptions>()
     .Bind(builder.Configuration.GetSection(PlantOptions.SectionName))
     .Validate(o => o.PollInterval > TimeSpan.Zero, "Plant:PollInterval must be positive.")
-    .Validate(o => o.StaleAfter > o.PollInterval, "Plant:StaleAfter must exceed Plant:PollInterval.")
     .ValidateOnStart();
 
 // The plant definition is loaded at start-up and reloaded whenever the file changes.

@@ -11,7 +11,8 @@ namespace CuringMonitor.Api.Configuration;
 /// source of truth, with no conversion step and no second copy to keep in step.
 /// </summary>
 /// <remarks>
-/// One box per line, '#'-separated, after a header line:
+/// One box per line after a header line, separated by '#' or ',' — the plant's files use
+/// both, so the delimiter is taken from the header rather than assumed:
 /// <code>
 /// RowNo#PressName#PressTitle#CommunicationCheck#PressOpen_Close#Alarm#RecipeCode#ProdCountA#ProdCountB#ProdCountC#Flag
 /// </code>
@@ -22,6 +23,8 @@ public static class LegacyPressConfig
 {
     private const int MinimumColumns = 10;
     private const string TrenchSizeFileName = "trenchSize.txt";
+
+    private static readonly char[] CandidateDelimiters = ['#', ','];
 
     public sealed record Result(
         IReadOnlyList<AssetDefinition> Assets,
@@ -34,17 +37,24 @@ public static class LegacyPressConfig
         var trenchOrder = new List<int>();
         var usedIds = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         var lineNumber = 0;
+        var delimiter = '#';
 
         foreach (var line in File.ReadLines(path, Encoding.UTF8))
         {
             lineNumber++;
 
-            if (lineNumber == 1 || string.IsNullOrWhiteSpace(line))
+            if (lineNumber == 1)
+            {
+                delimiter = DetectDelimiter(line, path);
+                continue;
+            }
+
+            if (string.IsNullOrWhiteSpace(line))
             {
                 continue;
             }
 
-            var columns = line.Split('#');
+            var columns = line.Split(delimiter);
             if (columns.Length < MinimumColumns)
             {
                 throw new InvalidOperationException(
@@ -217,6 +227,28 @@ public static class LegacyPressConfig
         {
             signals[name] = tag;
         }
+    }
+
+    /// <summary>
+    /// Picks the delimiter from the header line — whichever candidate splits it into the
+    /// most columns. Guessing per data line would let one odd value change the shape of the
+    /// file halfway through.
+    /// </summary>
+    private static char DetectDelimiter(string header, string path)
+    {
+        var best = CandidateDelimiters
+            .Select(candidate => (Candidate: candidate, Count: header.Split(candidate).Length))
+            .OrderByDescending(x => x.Count)
+            .First();
+
+        if (best.Count < MinimumColumns)
+        {
+            throw new InvalidOperationException(
+                $"{Path.GetFileName(path)}: the header line splits into at most {best.Count} " +
+                $"columns on '#' or ',', but {MinimumColumns} are required.");
+        }
+
+        return best.Candidate;
     }
 
     private static string GroupName(int trench) =>

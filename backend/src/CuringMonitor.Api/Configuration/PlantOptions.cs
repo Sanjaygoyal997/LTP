@@ -34,20 +34,12 @@ public sealed class PlantOptions
     /// <summary>How often the whole tag set is read.</summary>
     public TimeSpan PollInterval { get; set; } = TimeSpan.FromSeconds(2);
 
-    /// <summary>
-    /// A press with no good reading for longer than this drops to "no communication".
-    /// The legacy screen used ten five-second polls; keep it comfortably above
-    /// <see cref="PollInterval"/> so a single missed read does not flip the tile.
-    /// </summary>
-    public TimeSpan StaleAfter { get; set; } = TimeSpan.FromSeconds(30);
-
-    /// <summary>Internal pressure at or above which a closed press counts as "pressure ok".</summary>
-    public double MinRunningPressure { get; set; } = 1.0;
-
     /// <summary>Which data provider to use: "simulated" or "opc".</summary>
     public string Provider { get; set; } = "simulated";
 
     public ShiftOptions Shifts { get; set; } = new();
+
+    public RunStopOptions RunStop { get; set; } = new();
 
     public OpcOptions Opc { get; set; } = new();
 }
@@ -56,6 +48,24 @@ public sealed class PlantOptions
 /// Shift boundaries, as the hour each shift starts. Shift C spans midnight; hours before
 /// <see cref="AStartHour"/> are booked against the previous production day.
 /// </summary>
+/// <summary>
+/// How run and stop are told apart.
+///
+/// The legacy screen decides on the press-open signal alone and never compares the pressure
+/// value to anything — the threshold, if the plant has one, lives in the PLC. Sites where
+/// the pressure tag is genuinely analogue can switch to <c>pressure</c> instead.
+/// </summary>
+public sealed class RunStopOptions
+{
+    /// <summary>"pressOpen" (legacy behaviour) or "pressure".</summary>
+    public string From { get; set; } = "pressOpen";
+
+    /// <summary>Pressure at or above which a press counts as running, when From is "pressure".</summary>
+    public double Threshold { get; set; } = 1.0;
+
+    public bool UsesPressure => string.Equals(From, "pressure", StringComparison.OrdinalIgnoreCase);
+}
+
 public sealed class ShiftOptions
 {
     public int AStartHour { get; set; } = 7;

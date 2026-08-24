@@ -66,7 +66,7 @@ function Tile({ asset, widget, snapshot }: TileProps) {
 
   return (
     <div
-      className={`tile tile--${status} tile--kind-${asset.kind}`}
+      className={`tile tile--${status} tile--kind-${asset.kind}${asset.alarm ? ' tile--alarm' : ''}`}
       title={tooltip(spec.tooltip, context, asset.label)}
     >
       <div className="tile__no">{resolveText(spec.header, context, asset.label)}</div>

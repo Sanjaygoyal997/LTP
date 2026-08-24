@@ -135,6 +135,28 @@ Boxes have a `kind`. `press` is evaluated against the curing status rules; `gaug
 shows its `value` signal — that is what the trench header-pressure boxes are. `tileByKind`
 gives each kind its own field bindings inside the same grid.
 
+### Status rules
+
+Reproduced from the screen this replaces:
+
+| Result | Decided by |
+|---|---|
+| No communication (grey) | the pressure tag reads null or bad quality |
+| Curing stop (yellow) | `Press_Open` is `"1"`, `"-1"` or `"true"` |
+| Curing run (green) | `Press_Open` is `"0"` or `"false"` |
+| No communication (grey) | anything else — neither clearly open nor clearly closed |
+
+Values are compared as **text**, because OPC servers surface booleans as 1, -1 or True and
+the legacy screen compared strings.
+
+A **fault flashes the box header** red/azure at 1 Hz and leaves the band alone, so an
+alarmed press still reads as running or stopped — and still counts in the running or
+stopped totals, as it did before.
+
+`Plant:RunStop:From` switches run/stop to a pressure threshold for sites where that tag is
+genuinely analogue. The default matches the legacy screen, which never compares the
+pressure value to anything: the threshold, if the plant has one, lives in the PLC.
+
 **Fields** are dotted paths named after what an engineer thinks in, not after the JSON the
 API happens to send:
 
@@ -196,8 +218,8 @@ rather than sitting grey.
 | `Plant:LayoutFile` | `config_AB.txt` | legacy `.txt` config, or a layout file |
 | `Plant:Provider` | `simulated` | `simulated` or `opc` |
 | `Plant:PollInterval` | 2 s | how often the full tag set is read |
-| `Plant:StaleAfter` | 30 s | no good reading for longer → no-communication |
-| `Plant:MinRunningPressure` | 1.0 | pressure at or above which a closed press is running |
+| `Plant:RunStop:From` | `pressOpen` | how run and stop are told apart: `pressOpen` (legacy) or `pressure` |
+| `Plant:RunStop:Threshold` | 1.0 | pressure at or above which a press is running, when `From` is `pressure` |
 | `Plant:GaugeTags` | `{}` | group name → gauge tag |
 | `Plant:LegacyTilePitch` | 46 | box width in pixels, for converting `trenchSize.txt` widths into boxes per row |
 | `Plant:Shifts:*StartHour` | 7 / 15 / 23 | shift boundaries |

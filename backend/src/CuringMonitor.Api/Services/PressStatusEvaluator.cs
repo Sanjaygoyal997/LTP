@@ -1,3 +1,4 @@
+using System.Globalization;
 using CuringMonitor.Api.Configuration;
 using CuringMonitor.Api.Contracts;
 using CuringMonitor.Api.Domain;
@@ -6,15 +7,24 @@ using Microsoft.Extensions.Options;
 namespace CuringMonitor.Api.Services;
 
 /// <summary>
-/// Turns raw tag readings into the snapshot the display renders: a state and a set of
-/// signal values per box, plus the plant-wide totals.
+/// Turns raw tag readings into the snapshot the display renders, reproducing the rules the
+/// legacy mimic used: the band shows run, stop or no communication; a fault is a separate
+/// flag the display flashes on the box header; and the press totals count bands, so an
+/// alarmed press still counts as whatever its band shows.
 /// </summary>
 public sealed class PressStatusEvaluator(IOptions<PlantOptions> options)
 {
     private readonly PlantOptions _options = options.Value;
 
-    /// <summary>Last time each asset produced a good reading, used for the stale check.</summary>
-    private readonly Dictionary<string, DateTimeOffset> _lastGoodReading = new(StringComparer.OrdinalIgnoreCase);
+    /// <summary>
+    /// Values the legacy screen treats as true. It compares the tag's text rather than its
+    /// type, and OPC servers surface booleans variously as 1, -1 or True.
+    /// </summary>
+    private static readonly HashSet<string> TruthyValues =
+        new(["1", "-1", "true"], StringComparer.OrdinalIgnoreCase);
+
+    private static readonly HashSet<string> FalsyValues =
+        new(["0", "false"], StringComparer.OrdinalIgnoreCase);
 
     public PlantSnapshot Evaluate(
         PlantConfiguration plant,
@@ -24,7 +34,7 @@ public sealed class PressStatusEvaluator(IOptions<PlantOptions> options)
         DateTimeOffset now)
     {
         var assets = new List<AssetSnapshot>(plant.Assets.Count);
-        int running = 0, stopped = 0, alarm = 0, noComm = 0;
+        int running = 0, stopped = 0, alarms = 0, noComm = 0;
         int productionA = 0, productionB = 0, productionC = 0;
 
         foreach (var definition in plant.Assets)
@@ -32,34 +42,21 @@ public sealed class PressStatusEvaluator(IOptions<PlantOptions> options)
             var asset = EvaluateAsset(definition, tags, shift, now);
             assets.Add(asset);
 
-            // Only presses count towards the press totals; a gauge is not a machine.
-            if (!definition.Kind.Equals(AssetKinds.Press, StringComparison.OrdinalIgnoreCase))
-            {
-                continue;
-            }
-
             switch (asset.Status)
             {
                 case PressStatus.Running: running++; break;
                 case PressStatus.Stopped: stopped++; break;
-                case PressStatus.Alarm: alarm++; break;
                 default: noComm++; break;
+            }
+
+            if (asset.Alarm)
+            {
+                alarms++;
             }
 
             productionA += CounterValue(definition, ShiftName.A, tags);
             productionB += CounterValue(definition, ShiftName.B, tags);
             productionC += CounterValue(definition, ShiftName.C, tags);
-        }
-
-        // A reload can remove boxes; drop their staleness entries so the map tracks the
-        // plant rather than everything the service has ever seen.
-        if (_lastGoodReading.Count > plant.Assets.Count)
-        {
-            var live = plant.Assets.Select(a => a.Id).ToHashSet(StringComparer.OrdinalIgnoreCase);
-            foreach (var id in _lastGoodReading.Keys.Where(id => !live.Contains(id)).ToArray())
-            {
-                _lastGoodReading.Remove(id);
-            }
         }
 
         return new PlantSnapshot(
@@ -68,7 +65,7 @@ public sealed class PressStatusEvaluator(IOptions<PlantOptions> options)
             shift.ProductionDate,
             sourceConnected,
             new ProductionTotals(productionA, productionB, productionC),
-            new PressTotals(running, stopped, alarm, noComm),
+            new PressTotals(running, stopped, alarms, noComm),
             assets,
             plant.Groups
                 .Select(g => new GroupSnapshot(g.Key, g.DisplayLabel, g.Order, g.PanelWidth, g.PanelHeight))
@@ -81,33 +78,21 @@ public sealed class PressStatusEvaluator(IOptions<PlantOptions> options)
         Shift shift,
         DateTimeOffset now)
     {
-        // Every configured signal is published, whether or not the status rules use it, so a
-        // screen can bind to anything the plant chose to wire up.
+        // Every configured signal is published, whether or not the rules use it, so a screen
+        // can bind to anything the plant chose to wire up.
         var signals = new Dictionary<string, object?>(StringComparer.OrdinalIgnoreCase);
-        var communicating = false;
-
         foreach (var (name, address) in definition.Signals)
         {
             var reading = Read(address, tags);
             signals[name] = reading.IsGood ? reading.Value : null;
-            communicating |= reading.IsGood;
         }
 
-        // The current shift's counter is also published under a stable name, so a screen
-        // does not have to know which shift is running.
+        // The running shift's counter is also published under a stable name, so a screen does
+        // not have to know which shift it is.
         if (definition.Signals.ContainsKey(SignalNames.Counter(shift.Name)))
         {
             signals["count"] = signals[SignalNames.Counter(shift.Name)] ?? 0;
         }
-
-        if (communicating)
-        {
-            _lastGoodReading[definition.Id] = now;
-        }
-
-        var status = definition.Kind.Equals(AssetKinds.Press, StringComparison.OrdinalIgnoreCase)
-            ? PressState(definition, tags, communicating, now)
-            : GaugeState(definition, communicating, now);
 
         return new AssetSnapshot(
             definition.Id,
@@ -115,55 +100,52 @@ public sealed class PressStatusEvaluator(IOptions<PlantOptions> options)
             definition.DisplayLabel,
             definition.DisplayGroup,
             definition.Position,
-            status,
+            BandState(definition, tags),
+            IsTrue(Signal(definition, SignalNames.Fault, tags)),
             definition.Attributes,
             signals,
-            _lastGoodReading.TryGetValue(definition.Id, out var last) ? last : now);
+            now);
     }
 
     /// <summary>
-    /// Status precedence matches the mimic this replaces: a press that is not talking is
-    /// grey whatever its last values said, a fault outranks the open/closed state, and
-    /// pressure only decides between run and stop once the press is known to be closed.
+    /// The band colour, in the legacy screen's own order of precedence.
+    ///
+    /// A press that is not reporting its pressure tag at all is grey whatever else is known
+    /// about it. Otherwise the press-open signal decides — and anything that is neither
+    /// clearly open nor clearly closed is grey rather than guessed at.
     /// </summary>
-    private PressStatus PressState(
-        AssetDefinition definition,
-        IReadOnlyDictionary<string, TagValue> tags,
-        bool communicating,
-        DateTimeOffset now)
+    private PressStatus BandState(AssetDefinition definition, IReadOnlyDictionary<string, TagValue> tags)
     {
-        if (!communicating && IsStale(definition.Id, now))
+        var pressure = Signal(definition, SignalNames.Pressure, tags);
+        if (!pressure.IsGood || pressure.Value is null)
         {
             return PressStatus.NoCommunication;
         }
 
-        if (Signal(definition, SignalNames.Fault, tags).TryGetBoolean(out var faulted) && faulted)
+        if (_options.RunStop.UsesPressure)
         {
-            return PressStatus.Alarm;
+            return pressure.TryGetDouble(out var value) && value >= _options.RunStop.Threshold
+                ? PressStatus.Running
+                : PressStatus.Stopped;
         }
 
-        if (Signal(definition, SignalNames.Open, tags).TryGetBoolean(out var isOpen) && isOpen)
-        {
-            return PressStatus.Stopped;
-        }
-
-        if (!Signal(definition, SignalNames.Pressure, tags).TryGetDouble(out var pressure))
+        var open = Signal(definition, SignalNames.Open, tags);
+        if (IsTrue(open))
         {
             return PressStatus.Stopped;
         }
 
-        return pressure >= _options.MinRunningPressure
-            ? PressStatus.Running
-            : PressStatus.Stopped;
+        return IsFalse(open) ? PressStatus.Running : PressStatus.NoCommunication;
     }
 
-    private PressStatus GaugeState(AssetDefinition definition, bool communicating, DateTimeOffset now) =>
-        communicating || !IsStale(definition.Id, now)
-            ? PressStatus.Running
-            : PressStatus.NoCommunication;
+    private static bool IsTrue(TagValue tag) => Text(tag) is { } text && TruthyValues.Contains(text);
 
-    private bool IsStale(string assetId, DateTimeOffset now) =>
-        !_lastGoodReading.TryGetValue(assetId, out var last) || now - last > _options.StaleAfter;
+    private static bool IsFalse(TagValue tag) => Text(tag) is { } text && FalsyValues.Contains(text);
+
+    private static string? Text(TagValue tag) =>
+        tag.IsGood && tag.Value is not null
+            ? Convert.ToString(tag.Value, CultureInfo.InvariantCulture)?.Trim()
+            : null;
 
     private static int CounterValue(
         AssetDefinition definition,

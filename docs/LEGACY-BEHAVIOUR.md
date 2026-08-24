@@ -14,7 +14,11 @@ where a statement comes from decompiled IL rather than source, it says so.
 | `SmartLogic.dll`, `SmartOPCProject.dll` | **no source** — OPC wrapper; usage pattern also visible in `bodyplywebservice` |
 | `config_AB.txt` | present (86 presses, trenches 4–6) |
 | `config_AB.txt`, `trenchSize.txt`, `trenchConfig.txt` | supplied by the plant — 137 boxes across trenches 6, 5, 4, 2, 1, 7 |
-| `config.txt`, `trenchLimit.txt`, `configPara.txt` | **referenced by code, not supplied** |
+| `trenchLimit.txt`, `configPara.txt` | **referenced by code, not supplied** |
+
+`config.txt` is the name the mimic compiles in, but the plant maintains `config_AB.txt`
+and that is the file to read. The two carry the same columns and differ only in delimiter,
+so the reader takes the delimiter from the header line rather than assuming one.
 | `configDB.mdb`, `AlarmsLog`, `TrendsLog` | **not supplied** |
 
 ---
@@ -245,14 +249,14 @@ purely a SQL Server site.
 
 ## 7. What cannot be settled without more artefacts
 
-1. `config.txt` — the real, full press list. `config_AB.txt` covers trenches 4–6 only.
-2. `trenchConfig.txt` / `trenchLimit.txt` — the five header-pressure tags and their limits.
-3. `trenchSize.txt` — the real per-trench panel widths.
-4. `configPara.txt` — which 20 parameters the detail panel shows, and their types.
-5. `configDB.mdb` — alarm code list, trend channel definitions, project title.
-6. Whether the `T 4` / `T 5` / `T 6` / `TRH` boxes on the screenshot are ordinary entries
-   in `config.txt` (most likely, since the mimic has no per-trench tile concept) or
-   something else.
+1. `trenchLimit.txt` — limits for the five header pressures. `trenchConfig.txt` supplies
+   the tags themselves and is in hand.
+2. `configPara.txt` — the parameter-detail panel. Out of scope: dashboard only.
+3. `configDB.mdb` — alarm and trend definitions. Out of scope for the dashboard.
+
+Settled since: the `T_4` / `T_5` / `T_6` / `TRH` boxes are ordinary configured entries;
+`config_AB.txt` is the file to read; and `trenchSize.txt` joins to it on the trench
+number.
 
 ---
 

@@ -32,6 +32,11 @@ public sealed record GroupSnapshot(
 /// One box. The client draws it entirely from this: which group it belongs to and where it
 /// sits, what it is called, its state, and every signal value it carries.
 /// </summary>
+/// <param name="Status">Band state: running, stopped, or no communication.</param>
+/// <param name="Alarm">
+/// Fault flag. The legacy screen shows this by flashing the box header rather than by
+/// changing the band, so an alarmed press still reads as running or stopped.
+/// </param>
 public sealed record AssetSnapshot(
     string Id,
     string Kind,
@@ -39,6 +44,7 @@ public sealed record AssetSnapshot(
     string Group,
     int Position,
     PressStatus Status,
+    bool Alarm,
     IReadOnlyDictionary<string, string> Attributes,
     IReadOnlyDictionary<string, object?> Signals,
     DateTimeOffset UpdatedAt);

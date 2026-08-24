@@ -19,7 +19,8 @@
   --tile-gap: 4px;
   --tile-min: 52px;
   --tile-max: 112px;
-  --alarm-animation: alarm-pulse 1.4s ease-in-out infinite;
+  /* 1 Hz, matching the legacy screen's blink. */
+  --alarm-animation: alarm-pulse 1s steps(1, end) infinite;
 }
 
 .app {
@@ -226,19 +227,12 @@
   background: var(--status-alarm);
 }
 
-/* An alarm has to be findable from across the shop floor, so the whole tile flags red. */
-.tile--alarm {
-  animation: var(--alarm-animation);
-}
-
+/*
+ * A fault flashes the box header and leaves the band alone, as the screen it replaces did:
+ * an alarmed press is still visibly running or stopped.
+ */
 .tile--alarm .tile__no {
-  color: #fff;
-  background: var(--status-alarm);
-}
-
-.tile--alarm .tile__recipe {
-  color: #ffe9e9;
-  background: var(--status-alarm);
+  animation: var(--alarm-animation);
 }
 
 .tile--noCommunication .tile__no,
@@ -260,14 +254,24 @@
 }
 
 @keyframes alarm-pulse {
-  50% {
-    filter: brightness(1.45);
+  0%,
+  49% {
+    color: #fff;
+    background: var(--status-alarm);
+  }
+
+  50%,
+  100% {
+    color: #000;
+    background: #f0ffff; /* Azure, the header's normal colour */
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .tile--alarm {
+  .tile--alarm .tile__no {
     animation: none;
+    color: #fff;
+    background: var(--status-alarm);
   }
 }
 
