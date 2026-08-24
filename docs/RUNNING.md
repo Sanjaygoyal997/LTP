@@ -52,10 +52,11 @@ shrink boxWidth until floor(w/boxWidth) * floor(h/boxHeight) >= boxCount
 boxesPerRow = floor(panelWidth / boxWidth)
 ```
 
-Format is a header line (`id,w,h`), then one comma-separated line per trench **in the same
-order the trenches appear in the press configuration** — the `id` column numbers that
-sequence, it is not the trench number. Trenches beyond the end of the file fall back to the
-screen's own row width.
+Format is a header line (`id,w,h`), then one comma-separated line per trench. **`id` is the
+trench number — the same `RowNo` the press configuration uses**, so the two files are joined
+on it rather than by row position. A trench with no line (trench 7 in the plant's file), or
+an unreadable one, falls back to the screen's own row width; a line for a trench with no
+presses (trench 3) is simply unused.
 
 Group **order** comes from the configuration too — the sequence the plant lists its trenches
 in, which is not necessarily alphabetical and is the one operators know.

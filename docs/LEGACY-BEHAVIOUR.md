@@ -13,7 +13,8 @@ where a statement comes from decompiled IL rather than source, it says so.
 | `pressControl.dll` | **no source** — public surface recovered from metadata |
 | `SmartLogic.dll`, `SmartOPCProject.dll` | **no source** — OPC wrapper; usage pattern also visible in `bodyplywebservice` |
 | `config_AB.txt` | present (86 presses, trenches 4–6) |
-| `config.txt`, `trenchConfig.txt`, `trenchLimit.txt`, `trenchSize.txt`, `configPara.txt` | **referenced by code, not supplied** |
+| `config_AB.txt`, `trenchSize.txt`, `trenchConfig.txt` | supplied by the plant — 137 boxes across trenches 6, 5, 4, 2, 1, 7 |
+| `config.txt`, `trenchLimit.txt`, `configPara.txt` | **referenced by code, not supplied** |
 | `configDB.mdb`, `AlarmsLog`, `TrendsLog` | **not supplied** |
 
 ---
@@ -132,9 +133,22 @@ Three stacked labels with auto-resizing fonts: `pressNameLabel` (background `MCC
 ### Layout
 
 `UserControl1.readConfiguration` reads `config.txt`; column 1 → control name, column 2 →
-tile caption. One `FlowLayoutPanel` per distinct RowNo (trench), sized from
-`trenchSize.txt` (`width`, `height − 60`); 40×20 buttons flow and wrap inside it, so **the
-boxes-per-row is the panel width divided by the tile pitch**, per trench.
+tile caption. One `FlowLayoutPanel` per distinct RowNo (trench).
+
+`resize_FlowLayout_Child` sizes the boxes from the panel rather than wrapping them at a
+fixed count:
+
+```
+areaPerBox = panelWidth * panelHeight * 80 / 100 / boxCount
+boxHeight  = round(sqrt(areaPerBox / 1.225))
+boxWidth   = round(boxHeight * 1.225)
+shrink boxWidth until floor(w/boxWidth) * floor(h/boxHeight) >= boxCount
+```
+
+Panel dimensions come from `trenchSize.txt`, whose `id` column is the trench `RowNo`; the
+two files join on the trench number. Note that only `curingApplication.exe` reads
+`trenchSize.txt` — the mimic itself works from the runtime panel size, which the shell has
+already set from that file.
 
 ---
 

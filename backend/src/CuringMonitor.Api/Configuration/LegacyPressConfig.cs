@@ -98,16 +98,22 @@ public static class LegacyPressConfig
 
         var panels = ReadTrenchPanels(Path.Combine(Path.GetDirectoryName(path) ?? ".", TrenchSizeFileName));
 
-        // Trenches are drawn in the order the configuration lists them; trenchSize.txt gives
-        // one panel per trench in that same order, which is what its id column numbers.
+        // Trenches are drawn in the order the configuration lists them. Panels are matched by
+        // trench number: trenchSize.txt's id column is the RowNo from the press
+        // configuration, so the two files line up by trench rather than by position.
         var groups = trenchOrder
-            .Select((trench, index) => new GroupDefinition
+            .Select((trench, index) =>
             {
-                Key = GroupName(trench),
-                Label = GroupName(trench),
-                Order = index,
-                PanelWidth = index < panels.Count ? panels[index].Width : null,
-                PanelHeight = index < panels.Count ? panels[index].Height : null
+                var hasPanel = panels.TryGetValue(trench, out var panel);
+
+                return new GroupDefinition
+                {
+                    Key = GroupName(trench),
+                    Label = GroupName(trench),
+                    Order = index,
+                    PanelWidth = hasPanel ? panel.Width : null,
+                    PanelHeight = hasPanel ? panel.Height : null
+                };
             })
             .ToArray();
 
@@ -127,18 +133,19 @@ public static class LegacyPressConfig
     }
 
     /// <summary>
-    /// Reads <c>trenchSize.txt</c>: a header line, then one comma-separated line per trench
-    /// in configuration order, with width in column 1 and height in column 2. The legacy
-    /// mimic sized each trench panel from this and fitted the boxes into it.
+    /// Reads <c>trenchSize.txt</c>: a header line (<c>id,w,h</c>), then one comma-separated
+    /// line per trench. The <c>id</c> is the trench number — the same <c>RowNo</c> the press
+    /// configuration uses — so the two files are joined on it, not on row position. A trench
+    /// with no line, or an unreadable one, simply has no panel.
     /// </summary>
-    private static IReadOnlyList<(int Width, int Height)> ReadTrenchPanels(string path)
+    private static IReadOnlyDictionary<int, (int Width, int Height)> ReadTrenchPanels(string path)
     {
+        var panels = new Dictionary<int, (int, int)>();
+
         if (!File.Exists(path))
         {
-            return [];
+            return panels;
         }
-
-        var panels = new List<(int, int)>();
 
         foreach (var line in File.ReadLines(path, Encoding.UTF8).Skip(1))
         {
@@ -148,12 +155,14 @@ public static class LegacyPressConfig
             }
 
             var columns = line.Split(',');
+            var id = Number(columns, 0);
             var width = Number(columns, 1);
             var height = Number(columns, 2);
 
-            // Keep positions aligned: the k-th line describes the k-th trench, so an
-            // unreadable line must not shift every trench after it.
-            panels.Add((width, height));
+            if (id > 0 && width > 0 && height > 0)
+            {
+                panels[id] = (width, height);
+            }
         }
 
         return panels;
