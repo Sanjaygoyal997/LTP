@@ -1,0 +1,47 @@
+# Asset type: what a curing press IS. One document per class of equipment.
+# Adding presses is data; adding a new class of machine is one more document like this.
+id: curing-press
+label: Curing Press
+
+signals:
+  - { id: pressure, type: number, unit: "kg/cm²", label: Internal pressure }
+  - { id: open,     type: bool,   label: Press open }
+  - { id: fault,    type: bool,   label: Press fault }
+  - { id: recipe,   type: string, label: Recipe code }
+  - { id: counter,  type: int,    label: Cures this shift, scope: shift }
+
+params:
+  # Overridable per asset or per area, so one type covers presses with different duties.
+  minRunningPressure: 1.0
+  staleWindow: 30s
+
+states:
+  # First matching rule wins; the order is the precedence the operator sees.
+  rules:
+    - state: no-comm
+      when: stale(pressure, params.staleWindow) and stale(open, params.staleWindow)
+      label: No Communication
+      colour: grey
+    - state: alarm
+      when: fault
+      label: Alarm
+      colour: red
+      severity: critical
+    - state: stopped
+      when: open
+      label: Curing Stop
+      colour: yellow
+    - state: running
+      when: pressure >= params.minRunningPressure
+      label: Curing Run / Pressure Ok
+      colour: green
+    - state: stopped
+      when: true          # explicit fallback: closed but not up to pressure
+      label: Curing Stop
+      colour: yellow
+
+# What the history writer records for this type.
+history:
+  transitions: true       # every state change, with duration
+  counters: [counter]     # counter increments
+  trends: []              # raw sampling is opt-in; empty means none

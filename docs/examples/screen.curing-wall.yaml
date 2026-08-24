@@ -1,0 +1,44 @@
+# A screen document: what is drawn, for whom, at what density.
+# Editable in the Layout Designer; versioned, published and rollback-able.
+id: curing-wall
+title: Curing Press Status
+theme: floor-night
+audience: wall            # wall | desk | mobile — drives default density
+
+widgets:
+  - type: tile-grid
+    # Membership is a QUERY, not a hand-listed grid: commission a press into
+    # unit-2/trench-6 and it appears here with no layout edit.
+    source:
+      query: "path = unit-2/* and type = curing-press"
+      groupBy: path        # one block per trench
+      orderBy: position
+    tile:
+      header: asset.label
+      sub:    signal.recipe
+      value:  signal.counter
+      colour: state
+    columns: auto          # fit-to-screen; or a fixed number per group
+    # Optional: pin specific cells where the physical arrangement matters.
+    placement:
+      "unit-2/trench-6":
+        append: [{ type: signal, signal: area.trenchPressure, label: "T 6", unit: "kg/cm²" }]
+
+  - type: attention-panel
+    title: Needs attention
+    source:
+      query: "path = unit-2/* and type = curing-press"
+      rank: "duration(state == 'stopped') desc"
+      limit: 8
+
+  - type: kpi-row
+    items:
+      - { label: Production A,          expr: "sum(signal.counterA)" }
+      - { label: Production B,          expr: "sum(signal.counterB)" }
+      - { label: Production C,          expr: "sum(signal.counterC)" }
+      - { label: Total,                 expr: "sum(signal.counterA + signal.counterB + signal.counterC)" }
+      - { label: Total Curing Running,  expr: "count(state == 'running')" }
+      - { label: Total Curing Stop,     expr: "count(state == 'stopped')" }
+
+  - type: legend
+    source: { assetType: curing-press }   # legend is generated from the type's states

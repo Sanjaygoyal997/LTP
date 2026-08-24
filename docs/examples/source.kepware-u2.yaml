@@ -1,0 +1,37 @@
+# A data source. The edge agent that owns it, and how to reach it.
+id: kepware-u2
+agent: edge-unit-2
+kind: opc-ua
+endpoint: opc.tcp://scada-u2:49320
+security: { mode: SignAndEncrypt, identity: certificate }
+subscription:
+  publishingInterval: 1s
+  samplingInterval: 500ms
+  queueSize: 4
+---
+id: mes
+agent: edge-unit-2
+kind: sql
+connection: "@secret/mes-readonly"     # never inline credentials
+queries:
+  # Named, parameterised. Bindings reference these by name; no free SQL in a binding.
+  current-recipe:
+    sql: "SELECT recipe_code FROM press_status WHERE press_no = @press"
+    params: [press]
+    refresh: 30s
+---
+id: scada-logs
+agent: edge-unit-2
+kind: flat-file
+root: "\\\\scada-u2\\SmartScada\\Projects\\PCRCuring"
+# Used in Phase 0 to mirror the existing system with zero plant-side change.
+datasets:
+  TrendsLog:
+    path: "TrendsLog/{press}/{dd}{MMM}{yy}{shift}.txt"
+    format: { delimiter: "\t", timestampColumn: 0, timestampFormat: ole-automation }
+    tail: true
+  AlarmsLog:
+    path: "AlarmsLog/{dd}{MMM}{yy}.txt"
+    format: { delimiter: ",", timestampColumn: 0, timestampFormat: ole-automation }
+    columns: { alarmCode: 1, asset: 7 }
+    tail: true

@@ -1,0 +1,25 @@
+# One press instance. Generated in bulk from the existing SCADA config during migration,
+# hand-edited or designer-edited afterwards.
+asset: press/4919
+type: curing-press
+label: "4919"
+path: unit-2/trench-6
+position: 1
+
+bindings:
+  pressure: opc://kepware-u2/DH.4919.parameters.internal_pressure
+  open:     opc://kepware-u2/DH.4919.parameters.Press_Open
+  fault:    opc://kepware-u2/DH.4919.parameters.Press_Fault
+
+  # Recipe from the MES database rather than the PLC — same binding grammar, different source.
+  recipe:   sql://mes/current-recipe?press=4919
+
+  # The counter follows the shift, resolved by the core at evaluation time.
+  counter: shiftSwitch(
+             A: opc://kepware-u2/ProductionSimulation.4919.FIRST_SHIFT_COUNTER,
+             B: opc://kepware-u2/ProductionSimulation.4919.SECOND_SHIFT_COUNTER,
+             C: opc://kepware-u2/ProductionSimulation.4919.THIRD_SHIFT_COUNTER)
+
+# Per-asset override of a type parameter.
+params:
+  minRunningPressure: 1.2
