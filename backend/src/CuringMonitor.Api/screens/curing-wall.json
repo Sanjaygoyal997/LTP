@@ -1,0 +1,72 @@
+{
+  "id": "curing-wall",
+  "title": "Curing Press Status",
+
+  "theme": {
+    "floor": "#d4d4d4",
+    "panel": "#000000",
+    "chrome": "#111111",
+    "accent": "#00a2e8",
+    "status": {
+      "running": "#00e05a",
+      "stopped": "#ffe400",
+      "alarm": "#ff1e1e",
+      "noCommunication": "#9a9a9a"
+    },
+    "tile": { "minWidth": 52, "maxWidth": 112 },
+    "alarmPulse": true
+  },
+
+  "widgets": [
+    {
+      "type": "tile-grid",
+      "region": "floor",
+      "groupBy": "trench",
+      "tile": {
+        "header": "asset.title",
+        "sub": "signal.recipeCode",
+        "value": "signal.count",
+        "colour": "status",
+        "tooltip": [
+          { "label": "Press", "field": "asset.title" },
+          { "label": "Status", "field": "status.label" },
+          { "label": "Recipe", "field": "signal.recipeCode" },
+          { "label": "Cures this shift", "field": "signal.count" },
+          { "label": "Pressure", "field": "signal.pressure", "unit": "kg/cm²" }
+        ]
+      },
+      "trenchTile": {
+        "sub": "kg/cm²",
+        "value": "trench.pressure"
+      }
+    },
+    {
+      "type": "kpi-panel",
+      "region": "footer",
+      "title": "Production",
+      "orientation": "columns",
+      "items": [
+        { "label": "A", "field": "production.a" },
+        { "label": "B", "field": "production.b" },
+        { "label": "C", "field": "production.c" },
+        { "label": "Total", "field": "production.total" }
+      ]
+    },
+    {
+      "type": "kpi-panel",
+      "region": "footer",
+      "title": "Press",
+      "orientation": "rows",
+      "items": [
+        { "label": "Total Curing Running", "field": "totals.running" },
+        { "label": "Total Curing Stop", "field": "totals.stopped" }
+      ]
+    },
+    {
+      "type": "legend",
+      "region": "footer",
+      "title": "Legends",
+      "order": ["noCommunication", "running", "stopped", "alarm"]
+    }
+  ]
+}

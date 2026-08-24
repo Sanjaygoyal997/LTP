@@ -15,6 +15,7 @@
   <ItemGroup>
     <None Update="plant-layout.json" CopyToOutputDirectory="PreserveNewest" />
     <None Update="config_AB.txt" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="screens\**\*.json" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
 </Project>

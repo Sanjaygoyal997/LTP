@@ -22,6 +22,15 @@ public sealed class PlantOptions
     /// </summary>
     public Dictionary<int, string> TrenchPressureTags { get; set; } = [];
 
+    /// <summary>Directory holding the screen documents, absolute or relative to the content root.</summary>
+    public string ScreensDirectory { get; set; } = "screens";
+
+    /// <summary>
+    /// Watch the screen directory and push changes to connected displays. On by default in
+    /// development, where editing a screen and seeing it land is the point.
+    /// </summary>
+    public bool WatchScreens { get; set; }
+
     /// <summary>How often the whole tag set is read.</summary>
     public TimeSpan PollInterval { get; set; } = TimeSpan.FromSeconds(2);
 

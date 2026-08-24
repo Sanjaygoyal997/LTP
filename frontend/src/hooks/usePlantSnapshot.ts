@@ -10,6 +10,11 @@ interface SnapshotState {
   feed: FeedState;
 }
 
+interface SnapshotOptions {
+  /** Called when the service reports that a screen document changed on disk. */
+  onScreensChanged?: () => void;
+}
+
 /** How often the polling fallback re-reads the snapshot when the hub is unavailable. */
 const POLL_INTERVAL_MS = 5000;
 
@@ -20,9 +25,13 @@ const POLL_INTERVAL_MS = 5000;
  * polling the snapshot endpoint, so a proxy that blocks websockets degrades the refresh
  * rate instead of leaving the wall display blank.
  */
-export function usePlantSnapshot(): SnapshotState {
+export function usePlantSnapshot({ onScreensChanged }: SnapshotOptions = {}): SnapshotState {
   const [state, setState] = useState<SnapshotState>({ snapshot: null, feed: 'connecting' });
   const pollTimer = useRef<number | null>(null);
+
+  // Held in a ref so changing the callback does not tear down and rebuild the connection.
+  const onScreensChangedRef = useRef(onScreensChanged);
+  onScreensChangedRef.current = onScreensChanged;
 
   useEffect(() => {
     let disposed = false;
@@ -67,6 +76,10 @@ export function usePlantSnapshot(): SnapshotState {
       if (disposed) return;
       stopPolling();
       setState({ snapshot, feed: 'live' });
+    });
+
+    connection.on('ScreensChanged', () => {
+      if (!disposed) onScreensChangedRef.current?.();
     });
 
     connection.onreconnecting(() => {

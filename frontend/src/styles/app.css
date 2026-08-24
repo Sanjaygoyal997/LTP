@@ -9,13 +9,16 @@
   --accent: #00a2e8;
 
   --status-noCommunication: #9a9a9a;
+  --status-unknown: #9a9a9a;
   --status-running: #00e05a;
   --status-stopped: #ffe400;
   --status-alarm: #ff1e1e;
 
+  --chrome-bg: #111111;
   --columns: 18;
   --tile-width: clamp(52px, calc((100vw - 3rem) / var(--columns) - 4px), 112px);
   --tile-gap: 4px;
+  --alarm-animation: alarm-pulse 1.4s ease-in-out infinite;
 }
 
 .app {
@@ -35,7 +38,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 6px 14px;
-  background: #111;
+  background: var(--chrome-bg);
   border-bottom: 2px solid var(--accent);
 }
 
@@ -107,7 +110,38 @@
   background: var(--status-alarm);
 }
 
-/* ---------- floor ---------- */
+/* ---------- stage ---------- */
+/* The stage holds whatever floor-region widgets the screen document lists. */
+.stage {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--floor-bg);
+}
+
+.stage--empty {
+  align-items: center;
+  justify-content: center;
+  color: #333;
+  font-size: clamp(14px, 1.4vw, 20px);
+}
+
+.stage > .widget {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.widget-error {
+  padding: 1rem;
+  color: #7a1010;
+  background: #ffd9d9;
+  border: 1px solid #b03030;
+  font-size: 14px;
+}
+
 .floor {
   display: flex;
   flex: 1 1 auto;
@@ -117,13 +151,6 @@
   padding: 10px 12px;
   overflow: auto;
   background: var(--floor-bg);
-}
-
-.floor--empty {
-  align-items: center;
-  justify-content: center;
-  color: #333;
-  font-size: clamp(14px, 1.4vw, 20px);
 }
 
 .trench {
@@ -194,7 +221,7 @@
 
 /* An alarm has to be findable from across the shop floor, so the whole tile flags red. */
 .tile--alarm {
-  animation: alarm-pulse 1.4s ease-in-out infinite;
+  animation: var(--alarm-animation);
 }
 
 .tile--alarm .tile__no {
@@ -238,6 +265,16 @@
 }
 
 /* ---------- status bar ---------- */
+.statusbar > .widget { display: flex; }
+
+.kpi-columns { display: flex; gap: 16px; }
+
+.kpi-rows { display: flex; flex-direction: column; gap: 6px; }
+
+.panel--rows { display: flex; flex-direction: column; justify-content: center; }
+
+.value-box__unit { font-size: 0.6em; font-weight: 500; }
+
 .statusbar {
   display: flex;
   flex: 0 0 auto;

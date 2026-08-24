@@ -3,7 +3,9 @@ using System.Text.Json.Serialization;
 using CuringMonitor.Api.Configuration;
 using CuringMonitor.Api.Endpoints;
 using CuringMonitor.Api.Realtime;
+using CuringMonitor.Api.Screens;
 using CuringMonitor.Api.Services;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Options;
 
 // Offline utility: convert a legacy SCADA press config into this service's layout file.
@@ -68,6 +70,18 @@ builder.Services.AddSingleton<IPressDataProvider>(sp =>
         $"Unknown Plant:Provider '{options.Provider}'. Expected 'simulated' or 'opc'.");
 });
 
+// Screens are read from disk and watched, so editing one updates every display without a
+// restart. Watching is off by default in production, where config arrives by deployment.
+builder.Services.AddSingleton(sp =>
+{
+    var options = sp.GetRequiredService<IOptions<PlantOptions>>().Value;
+    var path = Path.IsPathRooted(options.ScreensDirectory)
+        ? options.ScreensDirectory
+        : Path.Combine(builder.Environment.ContentRootPath, options.ScreensDirectory);
+
+    return new ScreenCatalog(path, options.WatchScreens, sp.GetRequiredService<ILogger<ScreenCatalog>>());
+});
+
 builder.Services.AddHostedService<PlantPollingService>();
 
 // Status reaches the client as "running", never as 3. Minimal APIs and SignalR each
@@ -93,6 +107,11 @@ builder.Services.AddCors(options => options.AddPolicy(DisplayCorsPolicy, policy 
     .AllowCredentials()));
 
 var app = builder.Build();
+
+// Push config edits to the displays rather than making someone reload every wall panel.
+var screens = app.Services.GetRequiredService<ScreenCatalog>();
+var hub = app.Services.GetRequiredService<IHubContext<PressStatusHub, IPressStatusClient>>();
+screens.Changed += () => hub.Clients.All.ScreensChanged();
 
 if (app.Environment.IsDevelopment())
 {

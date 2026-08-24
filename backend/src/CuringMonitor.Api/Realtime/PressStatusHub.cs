@@ -8,6 +8,9 @@ namespace CuringMonitor.Api.Realtime;
 public interface IPressStatusClient
 {
     Task Snapshot(PlantSnapshot snapshot);
+
+    /// <summary>A screen document changed on disk; displays should re-fetch theirs.</summary>
+    Task ScreensChanged();
 }
 
 /// <summary>

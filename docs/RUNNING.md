@@ -40,6 +40,65 @@ than by editing a file the old system still reads:
 
 A trench with no tag shows as no-communication rather than inventing a value.
 
+## Screens are configuration
+
+What the display draws comes from a screen document in `backend/src/CuringMonitor.Api/screens/`,
+served verbatim at `/api/screens/{id}`. The service validates only the envelope — an id, a
+title and widgets that each name a type — and passes widget contents through untouched, so
+changing a screen never means changing the backend.
+
+```json
+{
+  "id": "curing-wall",
+  "title": "Curing Press Status",
+  "theme": {
+    "floor": "#d4d4d4",
+    "status": { "running": "#00e05a", "stopped": "#ffe400",
+                "alarm": "#ff1e1e", "noCommunication": "#9a9a9a" },
+    "tile": { "minWidth": 52, "maxWidth": 112 },
+    "alarmPulse": true
+  },
+  "widgets": [
+    { "type": "tile-grid", "region": "floor",
+      "tile": { "header": "asset.title", "sub": "signal.recipeCode",
+                "value": "signal.count", "colour": "status" } },
+    { "type": "kpi-panel", "region": "footer", "title": "Production",
+      "items": [ { "label": "A", "field": "production.a" } ] },
+    { "type": "legend", "region": "footer", "title": "Legends" }
+  ]
+}
+```
+
+**Fields** are dotted paths named after what an engineer thinks in, not after the JSON the
+API happens to send:
+
+| Root | Resolves to | Example |
+|---|---|---|
+| `asset.*` | identity of the press | `asset.title` |
+| `signal.*` | live values | `signal.recipeCode`, `signal.count`, `signal.pressure` |
+| `status` / `status.label` | state, or its display text | `status.label` |
+| `trench.*` | trench header values | `trench.pressure` |
+| `production.*` | per-shift production | `production.a`, `production.total` |
+| `totals.*` | press counts by state | `totals.running`, `totals.stopped` |
+
+Point a tile's `value` at `signal.pressure` instead of `signal.count` and the wall shows
+live pressure; change `theme.status.running` and the running colour changes. Neither is a
+code change.
+
+**Widget types** available today are `tile-grid`, `kpi-panel` and `legend`. A new type is a
+React component plus one entry in the registry — again, no backend change. An unknown type
+renders as a visible error on the screen rather than silently disappearing, so a typo in
+the config is obvious.
+
+**Several screens.** Drop more documents in the directory and point a panel at
+`?screen=<id>`. `default` serves the first screen alphabetically, so a wall panel can be
+configured once and never revisited.
+
+**Live editing.** With `Plant:WatchScreens` true (the default in development) the service
+watches the directory and pushes a change signal over SignalR; every open display re-fetches
+its screen and re-renders. Save the file, watch the wall change. A malformed file is logged
+and skipped — the previous catalogue keeps serving, so a bad edit cannot blank the screen.
+
 ## What still has to happen before it runs on the shop floor
 
 1. **Build it once.** The code has never been compiled — there was no .NET SDK available
