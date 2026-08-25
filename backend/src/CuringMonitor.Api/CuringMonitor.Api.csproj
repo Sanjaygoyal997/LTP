@@ -5,6 +5,12 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <!--
+      OPCDAAuto.dll, the OPC DA automation wrapper, is an in-process COM server and is
+      normally registered 32-bit only. A 64-bit process cannot load it and reports
+      "class not registered". Sites with the x64 Core Components can remove this.
+    -->
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
 
   <ItemGroup>

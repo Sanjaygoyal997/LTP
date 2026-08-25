@@ -81,6 +81,47 @@ Consequences of choosing DA, all inherent rather than incidental: the service ta
 `net8.0-windows`, needs the **OPC Core Components** on the host, and must be able to reach
 the server over DCOM.
 
+## Bitness — the first thing that goes wrong
+
+`OPCDAAuto.dll` is an **in-process** COM server, so it must match the bitness of the process
+loading it. It is normally registered **32-bit only**, while a .NET build defaults to 64-bit
+on x64 Windows. The result is:
+
+```
+System.Runtime.InteropServices.COMException (0x80040154):
+Retrieving the COM class factory for component with CLSID
+{28E68F9A-8D75-11D1-8DC3-3C302A000000} failed ... Class not registered
+```
+
+That CLSID is the automation wrapper's `OPCServer` coclass. "Class not registered" here
+almost never means the server is missing — it means the wrapper is registered for the other
+bitness.
+
+The project therefore sets `<PlatformTarget>x86</PlatformTarget>`. Sites that have the x64
+Core Components installed can remove it and run 64-bit.
+
+To check which is registered:
+
+```powershell
+# 64-bit registration
+reg query "HKCR\CLSID\{28E68F9A-8D75-11D1-8DC3-3C302A000000}\InprocServer32"
+
+# 32-bit registration
+reg query "HKCR\Wow6432Node\CLSID\{28E68F9A-8D75-11D1-8DC3-3C302A000000}\InprocServer32"
+```
+
+Whichever returns a path to `OPCDAAuto.dll` is the bitness the service must be built for. If
+neither does, the Core Components are not installed at all — Kepware ships them as the *OPC
+Core Components Redistributable*, and they can also be registered by hand:
+
+```powershell
+regsvr32 "C:\Windows\SysWOW64\OPCDAAuto.dll"   # 32-bit
+regsvr32 "C:\Windows\System32\OPCDAAuto.dll"   # 64-bit
+```
+
+Note that the Kepware **server** being 64-bit is irrelevant: it runs out of process, so only
+the wrapper's bitness matters.
+
 Should the site ever enable the UA endpoint on KEPServerEX V6, the swap is one new class
 behind the same interface — `OPCFoundation.NetStandard.Opc.Ua.Client` — and nothing else in
 the service changes.

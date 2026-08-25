@@ -37,6 +37,10 @@ public sealed class OpcPressDataProvider : IPressDataProvider, IDisposable
 
     private DateTimeOffset _nextConnectAttempt = DateTimeOffset.MinValue;
 
+    /// <summary>Last connect failure, so a retry loop reports a repeat briefly.</summary>
+    private string? _lastConnectError;
+    private int _repeatedFailures;
+
     /// <summary>Tags currently subscribed, so a configuration reload triggers a resubscribe.</summary>
     private HashSet<string>? _subscribedTags;
 
@@ -115,6 +119,8 @@ public sealed class OpcPressDataProvider : IPressDataProvider, IDisposable
             {
                 await _session.SubscribeAsync(tags, cancellationToken).ConfigureAwait(false);
                 _subscribedTags = new HashSet<string>(tags, StringComparer.OrdinalIgnoreCase);
+                _lastConnectError = null;
+                _repeatedFailures = 0;
                 _logger.LogInformation("Subscribed to {TagCount} tags.", tags.Count);
             }
 
@@ -122,7 +128,7 @@ public sealed class OpcPressDataProvider : IPressDataProvider, IDisposable
         }
         catch (Exception ex) when (ex is not OperationCanceledException)
         {
-            _logger.LogError(ex, "OPC connect failed; retrying in {Delay}.", _options.ReconnectDelay);
+            ReportConnectFailure(ex);
             _nextConnectAttempt = DateTimeOffset.UtcNow + _options.ReconnectDelay;
             return false;
         }
@@ -130,6 +136,30 @@ public sealed class OpcPressDataProvider : IPressDataProvider, IDisposable
         {
             _connectLock.Release();
         }
+    }
+
+    /// <summary>
+    /// Logs a connect failure in full the first time, then keeps repeats to one line. A
+    /// five-second retry loop that reprints a stack trace forever buries everything else in
+    /// the log, including the message that says what finally changed.
+    /// </summary>
+    private void ReportConnectFailure(Exception ex)
+    {
+        var message = ex.Message;
+
+        if (message == _lastConnectError)
+        {
+            _repeatedFailures++;
+            _logger.LogWarning(
+                "OPC connect still failing after {Count} attempts; retrying in {Delay}.",
+                _repeatedFailures,
+                _options.ReconnectDelay);
+            return;
+        }
+
+        _lastConnectError = message;
+        _repeatedFailures = 1;
+        _logger.LogError(ex, "OPC connect failed; retrying in {Delay}.", _options.ReconnectDelay);
     }
 
     private static IReadOnlyDictionary<string, TagValue> AllBad(IReadOnlyList<string> tags)

@@ -1,3 +1,4 @@
+using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
 using CuringMonitor.Api.Configuration;
 using CuringMonitor.Api.Domain;
@@ -23,6 +24,9 @@ public sealed class ClassicOpcSession : IOpcSession
     private const int QualityMask = 0xC0;
     private const int QualityGood = 0xC0;
 
+    /// <summary>REGDB_E_CLASSNOTREG — the automation wrapper is missing, or is the wrong bitness.</summary>
+    private const int ClassNotRegistered = unchecked((int)0x80040154);
+
     private readonly OpcOptions _options;
     private readonly ILogger<ClassicOpcSession> _logger;
     private readonly SemaphoreSlim _gate = new(1, 1);
@@ -37,6 +41,31 @@ public sealed class ClassicOpcSession : IOpcSession
     {
         _options = options.Value.Opc;
         _logger = logger;
+    }
+
+    /// <summary>
+    /// Creates the automation wrapper, turning the one failure everybody hits into an
+    /// explanation. OPCDAAuto.dll is an in-process COM server, so it has to match the
+    /// bitness of this process — a 64-bit build cannot load a 32-bit registration, and it
+    /// reports that as "class not registered" rather than as a bitness problem.
+    /// </summary>
+    private static OPCServer CreateServer()
+    {
+        try
+        {
+            return new OPCServer();
+        }
+        catch (COMException ex) when (ex.HResult == ClassNotRegistered)
+        {
+            throw new InvalidOperationException(
+                "The OPC DA automation wrapper (OPCDAAuto.dll) is not available to this " +
+                $"process, which is running as {(Environment.Is64BitProcess ? "64-bit" : "32-bit")}. " +
+                "Either the OPC Core Components are not installed, or the wrapper is " +
+                "registered for the other bitness. The usual fix is to build this service " +
+                "as x86, since OPCDAAuto.dll is normally registered 32-bit only. " +
+                "See docs/OPC-INTERFACE.md.",
+                ex);
+        }
     }
 
     public bool IsConnected
@@ -64,7 +93,7 @@ public sealed class ClassicOpcSession : IOpcSession
 
             _logger.LogInformation("Connecting to OPC server {Server}.", _options.ServerName);
 
-            _server = new OPCServer();
+            _server = CreateServer();
             _server.Connect(_options.ServerName, string.IsNullOrWhiteSpace(_options.Node) ? null! : _options.Node);
 
             _group = _server.OPCGroups.Add(_options.GroupName);
