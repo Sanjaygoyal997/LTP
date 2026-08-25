@@ -30,6 +30,17 @@
   </ItemGroup>
 
   <ItemGroup>
+    <!--
+      The built display, checked in at /display so the service can be published on a machine
+      that has no Node tooling. Linking it as wwwroot puts it in the output and in a publish,
+      so one process serves both the API and the screen on one port.
+    -->
+    <None Include="..\..\..\display\**\*"
+          Link="wwwroot\%(RecursiveDir)%(Filename)%(Extension)"
+          CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="config_AB.txt" CopyToOutputDirectory="PreserveNewest" />
     <None Update="trenchSize.txt" CopyToOutputDirectory="PreserveNewest" />
     <None Update="screens\**\*.json" CopyToOutputDirectory="PreserveNewest" />

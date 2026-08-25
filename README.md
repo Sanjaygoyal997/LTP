@@ -18,11 +18,16 @@ There are two ways to run this, and they need different things installed. Pick o
 
 **Nothing to install but Windows.** No .NET, no Node, no SDK, no `npm`.
 
-Build the package **once on a machine that has the tools**:
+Build the package **once on a machine that has the .NET 8 SDK** — Node is not needed, the
+display is checked in already built under `display/` and the project publishes it as
+`wwwroot`:
 
 ```powershell
 .\publish.ps1 -Output C:\CuringStatus
 ```
+
+The script fails loudly if the published folder ends up without `wwwroot\index.html`, which
+is what a blank browser page means.
 
 Copy that folder to the plant machine and run:
 

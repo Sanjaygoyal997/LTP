@@ -1,33 +1,45 @@
 <#
-    Builds a self-contained deployment: the display is compiled into the service's wwwroot
-    and the .NET runtime is included, so the target machine needs neither Node nor .NET.
+    Builds a self-contained deployment: the display and the .NET runtime are included, so the
+    target machine needs neither Node nor .NET.
 
-    Usage:  .\publish.ps1 [-Output C:\CuringStatus]
+    The display is checked in already built, under /display, and the project links it as
+    wwwroot. Node is therefore not needed to publish — only to change the display, which is
+    what -RebuildDisplay is for.
+
+    Usage:  .\publish.ps1 [-Output C:\CuringStatus] [-RebuildDisplay]
 #>
 param(
-    [string]$Output = "$PSScriptRoot\publish"
+    [string]$Output = "$PSScriptRoot\publish",
+    [switch]$RebuildDisplay
 )
 
 $ErrorActionPreference = 'Stop'
 
-Write-Host "1/3  Building the display..." -ForegroundColor Cyan
-Push-Location "$PSScriptRoot\frontend"
-npm ci
-npm run build
-Pop-Location
+if ($RebuildDisplay) {
+    Write-Host "Rebuilding the display..." -ForegroundColor Cyan
+    Push-Location "$PSScriptRoot\frontend"
+    npm ci
+    npm run build
+    Pop-Location
 
-Write-Host "2/3  Copying it into the service..." -ForegroundColor Cyan
-$webRoot = "$PSScriptRoot\backend\src\CuringMonitor.Api\wwwroot"
-if (Test-Path $webRoot) { Remove-Item $webRoot -Recurse -Force }
-New-Item -ItemType Directory -Path $webRoot | Out-Null
-Copy-Item "$PSScriptRoot\frontend\dist\*" $webRoot -Recurse
+    $display = "$PSScriptRoot\display"
+    if (Test-Path $display) { Remove-Item $display -Recurse -Force }
+    New-Item -ItemType Directory -Path $display | Out-Null
+    Copy-Item "$PSScriptRoot\frontend\dist\*" $display -Recurse
+    Write-Host "Commit /display so the next publish serves this build." -ForegroundColor Yellow
+}
 
-Write-Host "3/3  Publishing self-contained (win-x86)..." -ForegroundColor Cyan
+Write-Host "Publishing self-contained (win-x86)..." -ForegroundColor Cyan
 # x86 to match the OPC DA automation wrapper, which is normally registered 32-bit only.
 dotnet publish "$PSScriptRoot\backend\src\CuringMonitor.Api\CuringMonitor.Api.csproj" `
     -c Release -r win-x86 --self-contained true `
     -p:PublishSingleFile=false `
     -o $Output
+
+$index = Join-Path $Output 'wwwroot\index.html'
+if (-not (Test-Path $index)) {
+    throw "Published without a display: '$index' is missing. Check that /display is present."
+}
 
 Write-Host ""
 Write-Host "Done. Copy '$Output' to the target machine and run CuringMonitor.Api.exe." -ForegroundColor Green
