@@ -5,6 +5,7 @@ using CuringMonitor.Api.Endpoints;
 using CuringMonitor.Api.Realtime;
 using CuringMonitor.Api.Screens;
 using CuringMonitor.Api.Services;
+using CuringMonitor.Api.Services.Opc;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Options;
 
@@ -45,16 +46,6 @@ builder.Services.AddSingleton<IPressDataProvider>(sp =>
 
     if (string.Equals(options.Provider, "opc", StringComparison.OrdinalIgnoreCase))
     {
-        // The OPC stack itself is a site decision (classic DA via interop, or UA), so the
-        // session is registered by the deployment rather than baked in here.
-        if (sp.GetService<IOpcSession>() is null)
-        {
-            throw new InvalidOperationException(
-                "Plant:Provider is 'opc' but no IOpcSession is registered. Register the " +
-                "site's OPC session implementation, or set Plant:Provider to 'simulated'. " +
-                "See docs/ARCHITECTURE.md.");
-        }
-
         return ActivatorUtilities.CreateInstance<OpcPressDataProvider>(sp);
     }
 
@@ -73,6 +64,13 @@ builder.Services.AddSingleton(sp =>
 
     return new ScreenCatalog(path, options.WatchScreens, sp.GetRequiredService<ILogger<ScreenCatalog>>());
 });
+
+// Classic OPC DA over the Automation interface, matching the plant's other services.
+// Windows-only, which is inherent to DA rather than a choice of this service.
+if (OperatingSystem.IsWindows())
+{
+    builder.Services.AddSingleton<IOpcSession, ClassicOpcSession>();
+}
 
 builder.Services.AddHostedService<PlantPollingService>();
 

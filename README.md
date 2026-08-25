@@ -14,6 +14,8 @@ prototype/  the original static mock-up, kept for reference
 
 * [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
 * Node.js 20 or later
+* **Windows**, for the OPC DA client — the simulator provider runs anywhere, but the
+  project targets `net8.0-windows`
 
 ## Run it
 
@@ -56,14 +58,16 @@ Turn it back on once the build is clean.
 
    `trenchSize.txt` is read from the same folder if present.
 
-2. Switch the data source to OPC and register an `IOpcSession`:
+2. Switch the data source to OPC:
 
    ```json
-   "Provider": "opc"
+   "Provider": "opc",
+   "Opc": { "ServerName": "Kepware.KEPServerEX.V6", "Node": "" }
    ```
 
-   Without one the service stops at start-up and says so. See
-   [docs/OPC-INTERFACE.md](docs/OPC-INTERFACE.md).
+   Classic OPC DA over the Automation interface, as the plant's other services use. Needs
+   Windows and the OPC Core Components on the host; set `Node` to reach a server on another
+   machine. See [docs/OPC-INTERFACE.md](docs/OPC-INTERFACE.md).
 
 ## Change what is shown
 

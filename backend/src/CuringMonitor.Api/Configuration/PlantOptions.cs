@@ -83,12 +83,24 @@ public sealed class ShiftOptions
 
 public sealed class OpcOptions
 {
-    /// <summary>OPC server identity, e.g. "Kepware.KEPServerEX.V6" or an OPC UA endpoint URL.</summary>
+    /// <summary>Server ProgID, as the plant's other services use it.</summary>
     public string ServerName { get; set; } = "Kepware.KEPServerEX.V6";
 
-    /// <summary>Server-side update rate requested for the subscription group.</summary>
+    /// <summary>Machine hosting the server; empty for the local machine.</summary>
+    public string Node { get; set; } = string.Empty;
+
+    /// <summary>Name of the OPC group this service creates.</summary>
+    public string GroupName { get; set; } = "CuringMonitor";
+
+    /// <summary>Server-side update rate requested for the group.</summary>
     public TimeSpan UpdateRate { get; set; } = TimeSpan.FromSeconds(1);
 
     /// <summary>Reconnect back-off after a dropped session.</summary>
     public TimeSpan ReconnectDelay { get; set; } = TimeSpan.FromSeconds(5);
+
+    /// <summary>Tags added per AddItems call. One call for a plant-sized list is a long round trip.</summary>
+    public int AddItemsBatchSize { get; set; } = 500;
+
+    /// <summary>Tags read per SyncRead call.</summary>
+    public int ReadBatchSize { get; set; } = 500;
 }

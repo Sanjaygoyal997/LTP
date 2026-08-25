@@ -51,18 +51,39 @@ parallel collections held in a `AutoCompleteStringCollection` — a Windows Form
 web service. At 524 curing tags that pattern costs real time on every poll. A dictionary
 keyed by tag address replaces it.
 
-**Prefer OPC UA.** BodyPly uses classic DA because that is what it inherited. The plant
-runs **KEPServerEX V6, which exposes an OPC UA endpoint**, and UA gives us: no DCOM, no
-Windows-only dependency, proper certificates instead of null sessions, and quality codes
-carried natively. Recommended path for curing:
+## What was built
 
-| Option | When | Cost |
-|---|---|---|
-| **OPC UA client** (`OPCFoundation.NetStandard.Opc.Ua.Client`) | UA endpoint enabled on KEPServerEX V6 | certificate exchange with the server, one adapter class |
-| **Classic DA** via `OPCAutomation` interop | UA is not licensed or not enabled | Windows-only edge agent, DCOM configuration, and it must run near the server |
+**Classic OPC DA**, matching BodyPly, decided by the site. `ClassicOpcSession` implements
+`IOpcSession` over the same `Interop.OPCAutomation` assembly the existing services use:
 
-Either way it is one class behind `IOpcSession`; the decision does not reach the rest of
-the service.
+```
+new OPCServer()                          → Connect(ProgID, node)
+OPCGroups.Add("CuringMonitor")           → UpdateRate, IsActive = true
+OPCItems.AddItems(...)                   → tag address to server handle, in batches
+OPCGroup.SyncRead(OPCCache, ...)         → value + quality + timestamp, on our own cadence
+ServerState == OPCRunning                → IsConnected
+```
+
+Two deliberate differences from BodyPly:
+
+* **No DataChange callback.** The service already polls on a cadence, so it reads the group
+  cache instead of subscribing. That removes a COM apartment problem and makes the read
+  path a plain call rather than a shared mutable buffer.
+* **Quality travels with the value.** `SyncRead` returns quality and timestamp per item, so
+  a stale or bad tag is distinguishable from a fresh one — which is what makes the grey
+  "no communication" state trustworthy.
+
+Per-item `AddItems` errors are recorded rather than thrown: a mistyped address in the
+equipment configuration leaves that one box grey instead of stopping the whole subscription.
+This matters — six addresses in the plant's current file are malformed.
+
+Consequences of choosing DA, all inherent rather than incidental: the service targets
+`net8.0-windows`, needs the **OPC Core Components** on the host, and must be able to reach
+the server over DCOM.
+
+Should the site ever enable the UA endpoint on KEPServerEX V6, the swap is one new class
+behind the same interface — `OPCFoundation.NetStandard.Opc.Ua.Client` — and nothing else in
+the service changes.
 
 **Read-only.** BodyPly writes to the PLC (`WriteData` for OK/NOK codes) because it is part
 of an interlock. The curing display observes only, and `IOpcSession` has no write method —
