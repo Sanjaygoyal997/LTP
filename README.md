@@ -72,4 +72,5 @@ Turn it back on once the build is clean.
 * **Layout, colours, tile fields** — `backend/src/CuringMonitor.Api/screens/*.json`. Saving
   a change re-renders every open display.
 
-Both are covered in [docs/RUNNING.md](docs/RUNNING.md).
+Both are covered in [docs/RUNNING.md](docs/RUNNING.md), and every screen option is listed
+in [docs/SCREEN-REFERENCE.md](docs/SCREEN-REFERENCE.md).
