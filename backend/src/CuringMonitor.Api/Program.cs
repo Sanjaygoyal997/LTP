@@ -20,7 +20,20 @@ if (args is ["import-legacy", var legacyPath, var outputPath, ..])
     return;
 }
 
-var builder = WebApplication.CreateBuilder(args);
+// The host takes its content root from the working directory, so starting the executable
+// from anywhere other than the folder it was published to leaves it looking for settings,
+// the plant configuration, the screens and the display in the wrong place. Everything the
+// service needs is deployed beside the executable, so when the working directory holds no
+// settings file, root the host there instead.
+var contentRoot = File.Exists(Path.Combine(Directory.GetCurrentDirectory(), "appsettings.json"))
+    ? Directory.GetCurrentDirectory()
+    : ContentPaths.BaseDirectory;
+
+var builder = WebApplication.CreateBuilder(new WebApplicationOptions
+{
+    Args = args,
+    ContentRootPath = contentRoot
+});
 
 // Lets the same executable run as a Windows service or from a console: the host detects
 // which, answers the service control manager, and sends logs to the event log when there is
@@ -73,9 +86,7 @@ builder.Services.AddSingleton<IPressDataProvider>(sp =>
 builder.Services.AddSingleton(sp =>
 {
     var options = sp.GetRequiredService<IOptions<PlantOptions>>().Value;
-    var path = Path.IsPathRooted(options.ScreensDirectory)
-        ? options.ScreensDirectory
-        : Path.Combine(builder.Environment.ContentRootPath, options.ScreensDirectory);
+    var path = ContentPaths.Resolve(options.ScreensDirectory, builder.Environment.ContentRootPath);
 
     return new ScreenCatalog(path, options.WatchScreens, sp.GetRequiredService<ILogger<ScreenCatalog>>());
 });
@@ -158,4 +169,30 @@ if (Directory.Exists(Path.Combine(app.Environment.WebRootPath ?? string.Empty)))
     app.MapFallbackToFile("index.html");
 }
 
-app.Run();
+// A start-up failure surfaces as a dependency-injection stack forty frames deep, where the
+// one line that matters — a missing configuration file, a bad setting — is off the top of
+// the console. Say what actually went wrong, then rethrow so exit codes stay honest.
+try
+{
+    app.Run();
+}
+catch (Exception ex)
+{
+    var causes = new List<string>();
+    for (Exception? cause = ex; cause is not null; cause = cause.InnerException)
+    {
+        causes.Add($"{cause.GetType().Name}: {cause.Message}");
+    }
+
+    var log = app.Services.GetRequiredService<ILoggerFactory>().CreateLogger("Startup");
+    log.LogCritical(
+        "The service could not start. {Cause}{NewLine}Content root: {ContentRoot}{NewLine}"
+        + "Check that Plant:LayoutFile and Plant:ScreensDirectory in appsettings.json point at "
+        + "files that exist relative to the content root.",
+        string.Join(" -> ", causes),
+        Environment.NewLine,
+        app.Environment.ContentRootPath,
+        Environment.NewLine);
+
+    throw;
+}

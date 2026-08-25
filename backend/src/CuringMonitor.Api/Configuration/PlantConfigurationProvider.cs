@@ -32,9 +32,7 @@ public sealed class PlantConfigurationProvider : IDisposable
         _options = options.Value;
         _logger = logger;
 
-        _path = Path.IsPathRooted(_options.LayoutFile)
-            ? _options.LayoutFile
-            : Path.Combine(environment.ContentRootPath, _options.LayoutFile);
+        _path = ContentPaths.Resolve(_options.LayoutFile, environment.ContentRootPath);
 
         // Fail fast on the first load: a display that can never render is worse than a
         // service that refuses to start and says why.
