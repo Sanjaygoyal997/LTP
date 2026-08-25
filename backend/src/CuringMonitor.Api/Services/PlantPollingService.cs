@@ -1,5 +1,6 @@
 using CuringMonitor.Api.Configuration;
 using CuringMonitor.Api.Realtime;
+using CuringMonitor.Api.Services.Production;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Options;
 
@@ -15,6 +16,7 @@ public sealed class PlantPollingService(
     IPressDataProvider provider,
     PressStatusEvaluator evaluator,
     IShiftService shifts,
+    IProductionSource production,
     PlantStateStore store,
     IHubContext<PressStatusHub, IPressStatusClient> hub,
     IOptions<PlantOptions> options,
@@ -60,13 +62,17 @@ public sealed class PlantPollingService(
         // Taken per cycle: a configuration reload is picked up on the next tick, with no
         // restart and no torn read of a half-applied plant.
         var plant = plantProvider.Current;
+        var shift = shifts.Current(now);
+
         var values = await provider.ReadAsync(plant.AllTags, cancellationToken).ConfigureAwait(false);
+        var counts = await production.GetAsync(shift, cancellationToken).ConfigureAwait(false);
 
         var snapshot = evaluator.Evaluate(
             plant,
             values,
-            shifts.Current(now),
+            shift,
             provider.IsConnected,
+            counts,
             now);
 
         store.Publish(snapshot);

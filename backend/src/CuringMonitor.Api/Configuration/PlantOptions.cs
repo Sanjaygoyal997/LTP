@@ -39,7 +39,11 @@ public sealed class PlantOptions
 
     public ShiftOptions Shifts { get; set; } = new();
 
-    public RunStopOptions RunStop { get; set; } = new();
+    /// <summary>
+    /// Value the communication-check signal must reach for equipment to count as running,
+    /// where the configuration gives no per-item threshold.
+    /// </summary>
+    public double RunThreshold { get; set; } = 1.0;
 
     /// <summary>
     /// How an equipment group is labelled, given the group number from the configuration.
@@ -48,30 +52,14 @@ public sealed class PlantOptions
     public string GroupLabelFormat { get; set; } = "Group {0}";
 
     public OpcOptions Opc { get; set; } = new();
+
+    public ProductionOptions Production { get; set; } = new();
 }
 
 /// <summary>
 /// Shift boundaries, as the hour each shift starts. Shift C spans midnight; hours before
 /// <see cref="AStartHour"/> are booked against the previous production day.
 /// </summary>
-/// <summary>
-/// How run and stop are told apart.
-///
-/// The legacy screen decides on the press-open signal alone and never compares the pressure
-/// value to anything — the threshold, if the plant has one, lives in the PLC. Sites where
-/// the pressure tag is genuinely analogue can switch to <c>pressure</c> instead.
-/// </summary>
-public sealed class RunStopOptions
-{
-    /// <summary>"pressOpen" (legacy behaviour) or "pressure".</summary>
-    public string From { get; set; } = "pressOpen";
-
-    /// <summary>Pressure at or above which a press counts as running, when From is "pressure".</summary>
-    public double Threshold { get; set; } = 1.0;
-
-    public bool UsesPressure => string.Equals(From, "pressure", StringComparison.OrdinalIgnoreCase);
-}
-
 public sealed class ShiftOptions
 {
     public int AStartHour { get; set; } = 7;
@@ -79,6 +67,32 @@ public sealed class ShiftOptions
     public int BStartHour { get; set; } = 15;
 
     public int CStartHour { get; set; } = 23;
+}
+
+/// <summary>
+/// Where cures are counted. Production is booked in the MES, not read from the PLC, so it
+/// comes from the database rather than from a tag.
+/// </summary>
+public sealed class ProductionOptions
+{
+    /// <summary>"sql" or "simulated".</summary>
+    public string Provider { get; set; } = "simulated";
+
+    public string ConnectionString { get; set; } = string.Empty;
+
+    /// <summary>
+    /// How often production is re-queried. Far slower than the tag poll: a cure takes
+    /// minutes, and this is a database rather than a PLC.
+    /// </summary>
+    public TimeSpan RefreshInterval { get; set; } = TimeSpan.FromSeconds(30);
+
+    /// <summary>Cures in the current shift per work centre. Must return (workCentre, count).</summary>
+    public string ByWorkCentreQuery { get; set; } =
+        "SELECT wcID, SUM(quantity) FROM dbo.CuringProduction WHERE dtandTime >= @from GROUP BY wcID";
+
+    /// <summary>Cures per shift across the production day. Must return (shift, count).</summary>
+    public string ByShiftQuery { get; set; } =
+        "SELECT shift, SUM(quantity) FROM dbo.CuringProduction WHERE dtandTime >= @from GROUP BY shift";
 }
 
 public sealed class OpcOptions

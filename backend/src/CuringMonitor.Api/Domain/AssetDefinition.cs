@@ -38,6 +38,12 @@ public sealed class AssetDefinition
     /// </summary>
     public Dictionary<string, string> Signals { get; init; } = [];
 
+    /// <summary>
+    /// Value the running signal must reach for this item to count as running. Null uses the
+    /// service-wide default, so only equipment that differs needs a figure in the file.
+    /// </summary>
+    public double? RunThreshold { get; init; }
+
     public string DisplayLabel => Label ?? Id;
 
     public string DisplayGroup => Group ?? "Plant";
@@ -58,10 +64,11 @@ public static class SignalNames
     public const string Recipe = "recipe";
     public const string Value = "value";
 
-    public static string Counter(ShiftName shift) => shift switch
-    {
-        ShiftName.A => "counterA",
-        ShiftName.B => "counterB",
-        _ => "counterC"
-    };
+    /// <summary>
+    /// Work centre this item reports production against, used to join it to the MES
+    /// production table. Carried as an attribute rather than a signal — it is identity, not
+    /// a live value.
+    /// </summary>
+    public const string WorkCentreAttribute = "workCentre";
+
 }

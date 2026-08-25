@@ -71,7 +71,7 @@ public sealed class PlantConfiguration
 
         if (Path.GetExtension(path).Equals(".txt", StringComparison.OrdinalIgnoreCase))
         {
-            var legacy = LegacyPressConfig.Read(path, groupLabelFormat);
+            var legacy = EquipmentConfigReader.Read(path, groupLabelFormat);
             assets = legacy.Assets;
             groups = legacy.Groups;
             sourceFiles = legacy.SourceFiles;

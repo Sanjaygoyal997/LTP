@@ -2,6 +2,7 @@ using System.Globalization;
 using CuringMonitor.Api.Configuration;
 using CuringMonitor.Api.Contracts;
 using CuringMonitor.Api.Domain;
+using CuringMonitor.Api.Services.Production;
 using Microsoft.Extensions.Options;
 
 namespace CuringMonitor.Api.Services;
@@ -17,29 +18,26 @@ public sealed class PressStatusEvaluator(IOptions<PlantOptions> options)
     private readonly PlantOptions _options = options.Value;
 
     /// <summary>
-    /// Values the legacy screen treats as true. It compares the tag's text rather than its
-    /// type, and OPC servers surface booleans variously as 1, -1 or True.
+    /// Values treated as true for the alarm signal. The tag's text is compared rather than
+    /// its type, since OPC servers surface booleans variously as 1, -1 or True.
     /// </summary>
     private static readonly HashSet<string> TruthyValues =
         new(["1", "-1", "true"], StringComparer.OrdinalIgnoreCase);
-
-    private static readonly HashSet<string> FalsyValues =
-        new(["0", "false"], StringComparer.OrdinalIgnoreCase);
 
     public PlantSnapshot Evaluate(
         PlantConfiguration plant,
         IReadOnlyDictionary<string, TagValue> tags,
         Shift shift,
         bool sourceConnected,
+        ProductionCounts production,
         DateTimeOffset now)
     {
         var assets = new List<AssetSnapshot>(plant.Assets.Count);
         int running = 0, stopped = 0, alarms = 0, noComm = 0;
-        int productionA = 0, productionB = 0, productionC = 0;
 
         foreach (var definition in plant.Assets)
         {
-            var asset = EvaluateAsset(definition, tags, shift, now);
+            var asset = EvaluateAsset(definition, tags, production, now);
             assets.Add(asset);
 
             switch (asset.Status)
@@ -53,10 +51,6 @@ public sealed class PressStatusEvaluator(IOptions<PlantOptions> options)
             {
                 alarms++;
             }
-
-            productionA += CounterValue(definition, ShiftName.A, tags);
-            productionB += CounterValue(definition, ShiftName.B, tags);
-            productionC += CounterValue(definition, ShiftName.C, tags);
         }
 
         return new PlantSnapshot(
@@ -64,7 +58,10 @@ public sealed class PressStatusEvaluator(IOptions<PlantOptions> options)
             shift.Name.ToString(),
             shift.ProductionDate,
             sourceConnected,
-            new ProductionTotals(productionA, productionB, productionC),
+            new ProductionTotals(
+                production.ForShift(ShiftName.A),
+                production.ForShift(ShiftName.B),
+                production.ForShift(ShiftName.C)),
             new PressTotals(running, stopped, alarms, noComm),
             assets,
             plant.Groups
@@ -75,7 +72,7 @@ public sealed class PressStatusEvaluator(IOptions<PlantOptions> options)
     private AssetSnapshot EvaluateAsset(
         AssetDefinition definition,
         IReadOnlyDictionary<string, TagValue> tags,
-        Shift shift,
+        ProductionCounts production,
         DateTimeOffset now)
     {
         // Every configured signal is published, whether or not the rules use it, so a screen
@@ -87,12 +84,9 @@ public sealed class PressStatusEvaluator(IOptions<PlantOptions> options)
             signals[name] = reading.IsGood ? reading.Value : null;
         }
 
-        // The running shift's counter is also published under a stable name, so a screen does
-        // not have to know which shift it is.
-        if (definition.Signals.ContainsKey(SignalNames.Counter(shift.Name)))
-        {
-            signals["count"] = signals[SignalNames.Counter(shift.Name)] ?? 0;
-        }
+        // Cures come from the MES against this item's work centre, not from a tag.
+        definition.Attributes.TryGetValue(SignalNames.WorkCentreAttribute, out var workCentre);
+        signals["count"] = production.For(workCentre);
 
         return new AssetSnapshot(
             definition.Id,
@@ -108,50 +102,32 @@ public sealed class PressStatusEvaluator(IOptions<PlantOptions> options)
     }
 
     /// <summary>
-    /// The band colour, in the legacy screen's own order of precedence.
+    /// The band state, from the communication-check signal alone.
     ///
-    /// A press that is not reporting its pressure tag at all is grey whatever else is known
-    /// about it. Otherwise the press-open signal decides — and anything that is neither
-    /// clearly open nor clearly closed is grey rather than guessed at.
+    /// The signal does double duty: no reading at all means the equipment is not talking,
+    /// and its value against a threshold separates running from stopped. The threshold is
+    /// per item where the configuration gives one, otherwise the service-wide default.
     /// </summary>
     private PressStatus BandState(AssetDefinition definition, IReadOnlyDictionary<string, TagValue> tags)
     {
-        var pressure = Signal(definition, SignalNames.Pressure, tags);
-        if (!pressure.IsGood || pressure.Value is null)
+        var reading = Signal(definition, SignalNames.Pressure, tags);
+
+        if (!reading.IsGood || reading.Value is null || !reading.TryGetDouble(out var value))
         {
             return PressStatus.NoCommunication;
         }
 
-        if (_options.RunStop.UsesPressure)
-        {
-            return pressure.TryGetDouble(out var value) && value >= _options.RunStop.Threshold
-                ? PressStatus.Running
-                : PressStatus.Stopped;
-        }
+        var threshold = definition.RunThreshold ?? _options.RunThreshold;
 
-        var open = Signal(definition, SignalNames.Open, tags);
-        if (IsTrue(open))
-        {
-            return PressStatus.Stopped;
-        }
-
-        return IsFalse(open) ? PressStatus.Running : PressStatus.NoCommunication;
+        return value >= threshold ? PressStatus.Running : PressStatus.Stopped;
     }
 
     private static bool IsTrue(TagValue tag) => Text(tag) is { } text && TruthyValues.Contains(text);
-
-    private static bool IsFalse(TagValue tag) => Text(tag) is { } text && FalsyValues.Contains(text);
 
     private static string? Text(TagValue tag) =>
         tag.IsGood && tag.Value is not null
             ? Convert.ToString(tag.Value, CultureInfo.InvariantCulture)?.Trim()
             : null;
-
-    private static int CounterValue(
-        AssetDefinition definition,
-        ShiftName shift,
-        IReadOnlyDictionary<string, TagValue> tags) =>
-        Signal(definition, SignalNames.Counter(shift), tags).TryGetInt32(out var value) ? value : 0;
 
     private static TagValue Signal(
         AssetDefinition definition,

@@ -7,6 +7,12 @@ namespace CuringMonitor.Api.Services;
 public interface IShiftService
 {
     Shift Current(DateTimeOffset at);
+
+    /// <summary>When the given shift began — the lower bound for its production.</summary>
+    DateTimeOffset StartOf(Shift shift);
+
+    /// <summary>When the production day began, i.e. the start of that day's shift A.</summary>
+    DateTimeOffset StartOfProductionDay(DateOnly productionDate);
 }
 
 /// <summary>
@@ -16,6 +22,27 @@ public interface IShiftService
 public sealed class ShiftService(IOptions<PlantOptions> options) : IShiftService
 {
     private readonly ShiftOptions _shifts = options.Value.Shifts;
+
+    public DateTimeOffset StartOf(Shift shift)
+    {
+        var hour = shift.Name switch
+        {
+            ShiftName.A => _shifts.AStartHour,
+            ShiftName.B => _shifts.BStartHour,
+            _ => _shifts.CStartHour
+        };
+
+        var day = shift.ProductionDate.ToDateTime(TimeOnly.MinValue).AddHours(hour);
+
+        return new DateTimeOffset(day, TimeZoneInfo.Local.GetUtcOffset(day));
+    }
+
+    public DateTimeOffset StartOfProductionDay(DateOnly productionDate)
+    {
+        var day = productionDate.ToDateTime(TimeOnly.MinValue).AddHours(_shifts.AStartHour);
+
+        return new DateTimeOffset(day, TimeZoneInfo.Local.GetUtcOffset(day));
+    }
 
     public Shift Current(DateTimeOffset at)
     {

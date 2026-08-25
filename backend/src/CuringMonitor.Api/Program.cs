@@ -6,6 +6,7 @@ using CuringMonitor.Api.Realtime;
 using CuringMonitor.Api.Screens;
 using CuringMonitor.Api.Services;
 using CuringMonitor.Api.Services.Opc;
+using CuringMonitor.Api.Services.Production;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Options;
 
@@ -14,7 +15,7 @@ using Microsoft.Extensions.Options;
 if (args is ["import-legacy", var legacyPath, var outputPath, ..])
 {
     var title = args.Length > 3 ? args[3] : "Curing Press Status";
-    File.WriteAllText(outputPath, LegacyPressConfig.ToAssetJson(legacyPath, title));
+    File.WriteAllText(outputPath, EquipmentConfigReader.ToAssetJson(legacyPath, title));
     Console.WriteLine($"Wrote {outputPath}");
     return;
 }
@@ -71,6 +72,15 @@ if (OperatingSystem.IsWindows())
 {
     builder.Services.AddSingleton<IOpcSession, ClassicOpcSession>();
 }
+
+builder.Services.AddSingleton<IProductionSource>(sp =>
+{
+    var production = sp.GetRequiredService<IOptions<PlantOptions>>().Value.Production;
+
+    return string.Equals(production.Provider, "sql", StringComparison.OrdinalIgnoreCase)
+        ? ActivatorUtilities.CreateInstance<SqlProductionSource>(sp)
+        : ActivatorUtilities.CreateInstance<SimulatedProductionSource>(sp);
+});
 
 builder.Services.AddHostedService<PlantPollingService>();
 
