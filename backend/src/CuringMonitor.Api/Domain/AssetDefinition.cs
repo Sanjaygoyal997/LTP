@@ -39,10 +39,16 @@ public sealed class AssetDefinition
     public Dictionary<string, string> Signals { get; init; } = [];
 
     /// <summary>
-    /// Value the running signal must reach for this item to count as running. Null uses the
-    /// service-wide default, so only equipment that differs needs a figure in the file.
+    /// Value the run-check signal must reach for this item to count as running. Null uses
+    /// the service-wide default, so only equipment that differs needs a figure in the file.
     /// </summary>
     public double? RunThreshold { get; init; }
+
+    /// <summary>
+    /// Which signal decides this item's state, when it is not the configured default. Lets
+    /// one file hold equipment judged on different quantities.
+    /// </summary>
+    public string? RunSignal { get; init; }
 
     public string DisplayLabel => Label ?? Id;
 
@@ -55,14 +61,21 @@ public static class AssetKinds
     public const string Gauge = "gauge";
 }
 
-/// <summary>Signal names the status rules understand. Any other name is published as-is.</summary>
+/// <summary>
+/// Default signal names the status rules look for. They are only defaults — which signal
+/// drives which rule is configuration, because the quantity involved is not fixed: a curing
+/// press reports pressure, another machine might report temperature, weight or a state word.
+/// </summary>
 public static class SignalNames
 {
-    public const string Pressure = "pressure";
-    public const string Open = "open";
-    public const string Fault = "fault";
+    /// <summary>
+    /// The signal that decides both communication and run/stop. Named for its role, not for
+    /// what it happens to measure.
+    /// </summary>
+    public const string RunCheck = "runCheck";
+
+    public const string Alarm = "alarm";
     public const string Recipe = "recipe";
-    public const string Value = "value";
 
     /// <summary>
     /// Work centre this item reports production against, used to join it to the MES

@@ -35,7 +35,8 @@ public static class EquipmentConfigReader
         ["Title"] = "title", ["PressTitle"] = "title",
         ["WorkCentre"] = "workCentre", ["WorkCenter"] = "workCentre",
         ["WorkCentreId"] = "workCentre", ["WcID"] = "workCentre",
-        ["Threshold"] = "threshold", ["RunThreshold"] = "threshold"
+        ["Threshold"] = "threshold", ["RunThreshold"] = "threshold",
+        ["RunSignal"] = "runSignal", ["StatusSignal"] = "runSignal"
     };
 
     public sealed record Result(
@@ -89,6 +90,7 @@ public static class EquipmentConfigReader
                 Group = GroupName(item.Group, groupLabelFormat),
                 Position = position,
                 RunThreshold = item.Threshold,
+                RunSignal = item.RunSignal,
                 Attributes = item.Attributes,
                 Signals = item.Signals
             });
@@ -139,6 +141,7 @@ public static class EquipmentConfigReader
         string Name,
         string Title,
         double? Threshold,
+        string? RunSignal,
         Dictionary<string, string> Attributes,
         Dictionary<string, string> Signals);
 
@@ -266,7 +269,14 @@ public static class EquipmentConfigReader
 
             var title = _fields.TryGetValue("title", out var titleColumn) ? Text(columns, titleColumn) : string.Empty;
 
-            return new Item(group, name, title.Length > 0 ? title : name, threshold, attributes, signals);
+            string? runSignal = null;
+            if (_fields.TryGetValue("runSignal", out var runSignalColumn))
+            {
+                var named = Text(columns, runSignalColumn);
+                runSignal = named.Length > 0 ? named : null;
+            }
+
+            return new Item(group, name, title.Length > 0 ? title : name, threshold, runSignal, attributes, signals);
         }
 
         private static Item ReadLegacy(string[] columns, string path, int lineNumber)
@@ -284,10 +294,12 @@ public static class EquipmentConfigReader
                 throw new InvalidOperationException($"{Path.GetFileName(path)} line {lineNumber}: name is blank.");
             }
 
+            // The original columns carry the same three meanings, so they are stored under
+            // the default signal names the rules look for.
             var signals = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-            Add(signals, SignalNames.Pressure, columns, 3);
-            Add(signals, SignalNames.Open, columns, 4);
-            Add(signals, SignalNames.Fault, columns, 5);
+            Add(signals, SignalNames.RunCheck, columns, 3);
+            Add(signals, "open", columns, 4);
+            Add(signals, SignalNames.Alarm, columns, 5);
             Add(signals, SignalNames.Recipe, columns, 6);
 
             var title = Text(columns, 2);
@@ -296,6 +308,7 @@ public static class EquipmentConfigReader
                 group,
                 name,
                 title.Length > 0 ? title : name,
+                null,
                 null,
                 new Dictionary<string, string>
                 {

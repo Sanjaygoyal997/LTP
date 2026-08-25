@@ -6,7 +6,7 @@ named layout is the one to move to.
 ## Named layout (recommended)
 
 ```
-GroupNo#Name#Title#WorkCentre#Threshold#Signal.pressure#Signal.alarm#Signal.recipe
+GroupNo#Name#Title#WorkCentre#Threshold#Signal.runCheck#Signal.alarm#Signal.recipe
 6#4919#4919#193#2.5#DH3.4919.parameters.internal_pressure#DH3.4919.parameters.Press_Fault#4901.4901.RecipeCode
 ```
 
@@ -23,17 +23,30 @@ work; the delimiter is taken from the header.
 | `Title` | `PressTitle` | the caption on the box; defaults to `Name` |
 | `WorkCentre` | `WcID`, `WorkCentreId` | joins this item to the MES production table |
 | `Threshold` | `RunThreshold` | running at or above this value; blank uses `Plant:RunThreshold` |
+| `RunSignal` | `StatusSignal` | which signal decides this item's state, when it is not the default |
 
 ### Signal columns
 
-Any column named **`Signal.<name>`** binds that signal to the address in it. The name is
-yours; the service only attaches meaning to three:
+Any column named **`Signal.<name>`** binds that signal to the address in it. The names are
+yours — the service does not assume what a signal measures. Three *roles* have meaning, and
+which signal fills each role is configuration:
 
-| Signal | Used for |
-|---|---|
-| `Signal.pressure` | the communication check **and** the run/stop threshold |
-| `Signal.alarm` | flashes the box header |
-| `Signal.recipe` | the small line on the box |
+| Role | Default signal | Used for |
+|---|---|---|
+| run check | `Signal.runCheck` | the communication check **and** the run/stop threshold |
+| alarm | `Signal.alarm` | flashes the box header |
+| recipe | `Signal.recipe` | the small line on the box |
+
+The role is named for what it does, not for what it measures: on a curing press the run
+check happens to be internal pressure, but on other equipment it might be temperature,
+weight or a state word. Point the roles elsewhere in settings:
+
+```json
+"Signals": { "RunCheck": "temperature", "Alarm": "fault", "Recipe": "article" }
+```
+
+and override one item with a `RunSignal` column, so a single file can hold equipment judged
+on different quantities.
 
 Anything else — `Signal.mouldId`, `Signal.cureTime` — is read, published, and available to a
 screen as `signal.mouldId`, with no code change. **That is the point of the format:** a new
@@ -49,12 +62,12 @@ filter a screen without the service knowing what it is.
 
 | Result | Rule |
 |---|---|
-| **No communication** (grey) | `Signal.pressure` reads null, bad quality, or is not a number |
-| **Curing run** (green) | `Signal.pressure` ≥ threshold |
-| **Curing stop** (yellow) | `Signal.pressure` < threshold |
-| **Alarm** | `Signal.alarm` is `1`, `-1` or `true` — flashes the header, leaves the band alone |
+| **No communication** (grey) | the run-check signal reads null, bad quality, or is not a number |
+| **Curing run** (green) | run check ≥ threshold |
+| **Curing stop** (yellow) | run check < threshold |
+| **Alarm** | the alarm signal is `1`, `-1` or `true` — flashes the header, leaves the band alone |
 
-`Signal.open` is no longer used for run and stop. The threshold is per item from the
+The press-open signal is no longer used for run and stop. The threshold is per item from the
 `Threshold` column, falling back to `Plant:RunThreshold`.
 
 ## Production counts

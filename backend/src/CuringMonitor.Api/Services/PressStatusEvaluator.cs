@@ -16,6 +16,7 @@ namespace CuringMonitor.Api.Services;
 public sealed class PressStatusEvaluator(IOptions<PlantOptions> options)
 {
     private readonly PlantOptions _options = options.Value;
+    private readonly SignalOptions _signals = options.Value.Signals;
 
     /// <summary>
     /// Values treated as true for the alarm signal. The tag's text is compared rather than
@@ -95,7 +96,7 @@ public sealed class PressStatusEvaluator(IOptions<PlantOptions> options)
             definition.DisplayGroup,
             definition.Position,
             BandState(definition, tags),
-            IsTrue(Signal(definition, SignalNames.Fault, tags)),
+            IsTrue(Signal(definition, _signals.Alarm, tags)),
             definition.Attributes,
             signals,
             now);
@@ -104,13 +105,14 @@ public sealed class PressStatusEvaluator(IOptions<PlantOptions> options)
     /// <summary>
     /// The band state, from the communication-check signal alone.
     ///
-    /// The signal does double duty: no reading at all means the equipment is not talking,
-    /// and its value against a threshold separates running from stopped. The threshold is
-    /// per item where the configuration gives one, otherwise the service-wide default.
+    /// The run-check signal does double duty: no reading at all means the equipment is not
+    /// talking, and its value against a threshold separates running from stopped. Which
+    /// signal that is, and the threshold, are both configuration — per item where the file
+    /// gives one, otherwise the service-wide default.
     /// </summary>
     private PressStatus BandState(AssetDefinition definition, IReadOnlyDictionary<string, TagValue> tags)
     {
-        var reading = Signal(definition, SignalNames.Pressure, tags);
+        var reading = Signal(definition, definition.RunSignal ?? _signals.RunCheck, tags);
 
         if (!reading.IsGood || reading.Value is null || !reading.TryGetDouble(out var value))
         {

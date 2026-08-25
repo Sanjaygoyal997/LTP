@@ -1,4 +1,4 @@
-GroupNo#Name#Title#WorkCentre#Threshold#Signal.pressure#Signal.alarm#Signal.recipe
+GroupNo#Name#Title#WorkCentre#Threshold#Signal.runCheck#Signal.alarm#Signal.recipe
 6#4919#4919###DH3.4919.parameters.internal_pressure#DH3.4919.parameters.Press_Fault#4901.4901.RecipeCode
 6#4918#4918###DH2.4918.parameters.internal_pressure#DH2.4918.parameters.Press_Fault#4901.4901.RecipeCode
 6#4917#4917###DH1.4917.parameters.internal_pressure#DH1.4917.parameters.Press_Fault#4901.4901.RecipeCode

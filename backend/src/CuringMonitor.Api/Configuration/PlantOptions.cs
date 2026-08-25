@@ -1,3 +1,5 @@
+using CuringMonitor.Api.Domain;
+
 namespace CuringMonitor.Api.Configuration;
 
 /// <summary>Runtime behaviour of the polling loop and the status rules.</summary>
@@ -54,6 +56,8 @@ public sealed class PlantOptions
     public OpcOptions Opc { get; set; } = new();
 
     public ProductionOptions Production { get; set; } = new();
+
+    public SignalOptions Signals { get; set; } = new();
 }
 
 /// <summary>
@@ -73,6 +77,23 @@ public sealed class ShiftOptions
 /// Where cures are counted. Production is booked in the MES, not read from the PLC, so it
 /// comes from the database rather than from a tag.
 /// </summary>
+/// <summary>
+/// Which signal each rule reads. The names are the plant's own — this only says which of
+/// them carries which meaning, so equipment judged on temperature or weight rather than
+/// pressure needs a setting rather than a code change.
+/// </summary>
+public sealed class SignalOptions
+{
+    /// <summary>Signal that decides communication and run/stop. Overridable per item.</summary>
+    public string RunCheck { get; set; } = SignalNames.RunCheck;
+
+    /// <summary>Signal that raises the alarm flag.</summary>
+    public string Alarm { get; set; } = SignalNames.Alarm;
+
+    /// <summary>Signal shown on the box's middle line.</summary>
+    public string Recipe { get; set; } = SignalNames.Recipe;
+}
+
 public sealed class ProductionOptions
 {
     /// <summary>"sql" or "simulated".</summary>
