@@ -39,6 +39,15 @@ builder.Services.AddSingleton<PlantStateStore>();
 builder.Services.AddSingleton<IPressDataProvider>(sp =>
 {
     var options = sp.GetRequiredService<IOptions<PlantOptions>>().Value;
+    var log = sp.GetRequiredService<ILoggerFactory>().CreateLogger("Startup");
+
+    // Settings arrive from several files and the environment; naming the winner here turns
+    // "my change did nothing" into something the log answers directly.
+    log.LogInformation(
+        "Environment {Environment}. Process data provider: {Provider}. Production source: {Production}.",
+        builder.Environment.EnvironmentName,
+        options.Provider,
+        options.Production.Provider);
 
     if (string.Equals(options.Provider, "simulated", StringComparison.OrdinalIgnoreCase))
     {

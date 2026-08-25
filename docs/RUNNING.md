@@ -226,6 +226,24 @@ rather than sitting grey.
    that is actually curing.
 4. **Supply the full config.** The committed sample covers trenches 4–6 only.
 
+## Which settings file wins
+
+Settings are layered, later overriding earlier:
+
+1. `appsettings.json`
+2. `appsettings.<Environment>.json` — `Development` when run from `dotnet run`, because
+   `launchSettings.json` sets `ASPNETCORE_ENVIRONMENT`
+3. environment variables (`Plant__Production__ConnectionString=...`)
+
+So a change to `appsettings.json` does nothing if the same key is also set in
+`appsettings.Development.json`. The service logs the winners at start-up:
+
+```
+Environment Development. Process data provider: opc. Production source: sql.
+```
+
+If that line disagrees with the file you edited, a later layer is overriding it.
+
 ## Settings
 
 | Setting | Default | Meaning |
