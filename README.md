@@ -41,15 +41,8 @@ Components** if `Provider` is `opc`, and network access to SQL Server if
 `config_AB.txt`, `trenchSize.txt` and `screens\*.json` sit in the published folder and are
 watched, so edits take effect live. Only `appsettings.json` needs a restart.
 
-Run it as a service if it should survive a reboot:
-
-```powershell
-sc.exe create CuringStatus binPath= "C:\CuringStatus\CuringMonitor.Api.exe" start= auto
-sc.exe start CuringStatus
-```
-
-The service account needs read access to the configuration files, and to the MES database if
-production is enabled — `LocalSystem` will not have the latter.
+For a real installation — service registration, firewall, service account, health check and
+rollback — follow [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
 
 ---
 

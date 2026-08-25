@@ -22,6 +22,11 @@ if (args is ["import-legacy", var legacyPath, var outputPath, ..])
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Lets the same executable run as a Windows service or from a console: the host detects
+// which, answers the service control manager, and sends logs to the event log when there is
+// no console to write to.
+builder.Host.UseWindowsService(options => options.ServiceName = "Curing Equipment Status");
+
 builder.Services.AddOptions<PlantOptions>()
     .Bind(builder.Configuration.GetSection(PlantOptions.SectionName))
     .Validate(o => o.PollInterval > TimeSpan.Zero, "Plant:PollInterval must be positive.")

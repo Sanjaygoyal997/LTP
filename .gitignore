@@ -8,3 +8,6 @@ bin/
 obj/
 *.user
 wwwroot/
+
+# Local production settings — connection strings must not be committed
+appsettings.Production.json
