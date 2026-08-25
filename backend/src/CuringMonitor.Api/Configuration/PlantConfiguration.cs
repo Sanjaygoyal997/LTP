@@ -15,11 +15,13 @@ public sealed class PlantConfiguration
     private PlantConfiguration(
         string title,
         IReadOnlyList<AssetDefinition> assets,
-        IReadOnlyList<GroupDefinition> groups)
+        IReadOnlyList<GroupDefinition> groups,
+        IReadOnlyList<string> sourceFiles)
     {
         Title = title;
         Assets = assets;
         Groups = groups;
+        SourceFiles = sourceFiles;
         _assetsById = assets.ToDictionary(a => a.Id, StringComparer.OrdinalIgnoreCase);
         AllTags = assets
             .SelectMany(a => a.Signals.Values)
@@ -33,6 +35,12 @@ public sealed class PlantConfiguration
     public IReadOnlyList<AssetDefinition> Assets { get; }
 
     public IReadOnlyList<GroupDefinition> Groups { get; }
+
+    /// <summary>
+    /// Every file this definition was read from, including companions that were absent —
+    /// watching those means one appearing later is picked up rather than ignored.
+    /// </summary>
+    public IReadOnlyList<string> SourceFiles { get; }
 
     /// <summary>Every distinct tag address the poller needs to read.</summary>
     public IReadOnlyList<string> AllTags { get; }
@@ -59,18 +67,21 @@ public sealed class PlantConfiguration
 
         IReadOnlyList<AssetDefinition> assets;
         IReadOnlyList<GroupDefinition> groups;
+        IReadOnlyList<string> sourceFiles;
 
         if (Path.GetExtension(path).Equals(".txt", StringComparison.OrdinalIgnoreCase))
         {
             var legacy = LegacyPressConfig.Read(path, groupLabelFormat);
             assets = legacy.Assets;
             groups = legacy.Groups;
+            sourceFiles = legacy.SourceFiles;
         }
         else
         {
             var file = ReadAssetFile(path);
             assets = file.Assets;
             groups = file.Groups.Count > 0 ? file.Groups : GroupsFrom(assets);
+            sourceFiles = [path];
         }
 
         var duplicate = assets
@@ -82,7 +93,7 @@ public sealed class PlantConfiguration
                 $"{Path.GetFileName(path)}: asset '{duplicate.Key}' is defined more than once.");
         }
 
-        return new PlantConfiguration(title, assets, groups);
+        return new PlantConfiguration(title, assets, groups, sourceFiles);
     }
 
     /// <summary>Derives groups from the assets when the source file does not declare them.</summary>

@@ -57,6 +57,15 @@ shrink boxWidth until floor(w/boxWidth) * floor(h/boxHeight) >= boxCount
 boxesPerRow = floor(panelWidth / boxWidth)
 ```
 
+The result is a whole number of boxes, so small edits often change nothing. For a group of
+32 boxes at `h=55`, widths of 600 / 700 / 850 / 1000 / 1200 give 18 / 21 / 25 / 30 / 32 per
+row — and past 1200 nothing changes, because they already fit on one row. **Height moves it
+faster than width**: at `w=850`, heights of 40 / 55 / 80 / 105 give 32 / 25 / 18 / 16 per
+row. A taller panel means larger boxes and fewer of them across.
+
+If an edit appears to do nothing, check the arithmetic above for your box count before
+assuming the file is not being read.
+
 Format is a header line (`id,w,h`), then one comma-separated line per group. **`id` is the
 group number — the same `RowNo` the equipment configuration uses**, so the two files are
 joined on it rather than by row position. A group with no line (group 7 in the plant's
@@ -197,7 +206,8 @@ without restarting anything:
 | Edit | How it reaches the display | Setting |
 |---|---|---|
 | A screen document | the service pushes a change signal over SignalR; every open display re-fetches and re-renders | `Plant:WatchScreens` |
-| The plant configuration (`config_AB.txt`) | reloaded in place; the next poll publishes the new set of boxes, so a renamed press is renamed and a commissioned one appears | `Plant:WatchConfiguration` |
+| The equipment configuration (`config_AB.txt`) | reloaded in place; the next poll publishes the new set of boxes, so a renamed item is renamed and a commissioned one appears | `Plant:WatchConfiguration` |
+| The panel geometry (`trenchSize.txt`) | same reload — the service watches every file the definition was read from, including one that does not exist yet | `Plant:WatchConfiguration` |
 
 Both default to on. A malformed or half-saved file is logged and skipped — the previous
 configuration keeps serving, so a bad edit cannot blank the screen. A reload that changes

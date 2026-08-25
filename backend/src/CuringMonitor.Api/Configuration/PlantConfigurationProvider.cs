@@ -21,6 +21,9 @@ public sealed class PlantConfigurationProvider : IDisposable
 
     private volatile PlantConfiguration _current;
 
+    /// <summary>File names a change should trigger a reload for, from the last load.</summary>
+    private volatile HashSet<string> _watchedNames = new(StringComparer.OrdinalIgnoreCase);
+
     public PlantConfigurationProvider(
         IOptions<PlantOptions> options,
         IHostEnvironment environment,
@@ -36,6 +39,7 @@ public sealed class PlantConfigurationProvider : IDisposable
         // Fail fast on the first load: a display that can never render is worse than a
         // service that refuses to start and says why.
         _current = Load();
+        _watchedNames = NamesOf(_current);
 
         // Editors and file copies save in bursts, so collapse a flurry into one reload.
         _debounce = new System.Timers.Timer(500) { AutoReset = false };
@@ -53,7 +57,10 @@ public sealed class PlantConfigurationProvider : IDisposable
             return;
         }
 
-        _watcher = new FileSystemWatcher(directory, Path.GetFileName(_path))
+        // Watch the directory rather than one file name: the definition is assembled from
+        // the equipment configuration *and* its companion panel-geometry file, and a
+        // companion that appears for the first time has to be noticed too.
+        _watcher = new FileSystemWatcher(directory)
         {
             NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.Size,
             EnableRaisingEvents = true
@@ -62,8 +69,12 @@ public sealed class PlantConfigurationProvider : IDisposable
         _watcher.Changed += OnFileEvent;
         _watcher.Created += OnFileEvent;
         _watcher.Renamed += OnFileEvent;
+        _watcher.Deleted += OnFileEvent;
 
-        _logger.LogInformation("Watching {Path} for changes.", _path);
+        _logger.LogInformation(
+            "Watching {Directory} for changes to {Files}.",
+            directory,
+            string.Join(", ", _watchedNames));
     }
 
     /// <summary>The definition in force right now.</summary>
@@ -71,9 +82,24 @@ public sealed class PlantConfigurationProvider : IDisposable
 
     private void OnFileEvent(object sender, FileSystemEventArgs e)
     {
+        if (e.Name is null || !_watchedNames.Contains(e.Name))
+        {
+            return;
+        }
+
         _debounce.Stop();
         _debounce.Start();
     }
+
+    /// <summary>
+    /// File names to react to. Taken from what the last load actually read, so adding a
+    /// companion file to the loader does not mean remembering to add it here too.
+    /// </summary>
+    private static HashSet<string> NamesOf(PlantConfiguration configuration) =>
+        configuration.SourceFiles
+            .Select(Path.GetFileName)
+            .Where(name => !string.IsNullOrEmpty(name))
+            .ToHashSet(StringComparer.OrdinalIgnoreCase)!;
 
     private void Reload()
     {
@@ -94,6 +120,7 @@ public sealed class PlantConfigurationProvider : IDisposable
 
             var previous = _current;
             _current = next;
+            _watchedNames = NamesOf(next);
 
             _logger.LogInformation(
                 "Reloaded {Path}: {AssetCount} boxes ({Delta:+#;-#;0}), {TagCount} tags.",

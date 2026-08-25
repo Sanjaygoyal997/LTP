@@ -24,13 +24,18 @@ public static class LegacyPressConfig
 {
     private const int MinimumColumns = 10;
     /// <summary>Companion file giving each group's panel geometry, if the site ships one.</summary>
-    private const string PanelSizeFileName = "trenchSize.txt";
+    public const string PanelSizeFileName = "trenchSize.txt";
 
     private static readonly char[] CandidateDelimiters = ['#', ','];
 
+    /// <param name="SourceFiles">
+    /// Every file this definition was read from. The caller watches these, so a companion
+    /// file that changes — or appears for the first time — reaches the display too.
+    /// </param>
     public sealed record Result(
         IReadOnlyList<AssetDefinition> Assets,
-        IReadOnlyList<GroupDefinition> Groups);
+        IReadOnlyList<GroupDefinition> Groups,
+        IReadOnlyList<string> SourceFiles);
 
     public static Result Read(string path, string groupLabelFormat = "Group {0}")
     {
@@ -108,7 +113,8 @@ public static class LegacyPressConfig
             throw new InvalidOperationException($"{Path.GetFileName(path)} defines no equipment.");
         }
 
-        var panels = ReadPanels(Path.Combine(Path.GetDirectoryName(path) ?? ".", PanelSizeFileName));
+        var panelPath = Path.Combine(Path.GetDirectoryName(path) ?? ".", PanelSizeFileName);
+        var panels = ReadPanels(panelPath);
 
         // Groups are drawn in the order the configuration lists them. Panels are matched by
         // group number: the panel file's id column is the RowNo from the equipment
@@ -129,7 +135,7 @@ public static class LegacyPressConfig
             })
             .ToArray();
 
-        return new Result(assets, groups);
+        return new Result(assets, groups, [path, panelPath]);
     }
 
     /// <summary>Exports the same content as an asset file, for sites that would rather edit that.</summary>
