@@ -85,9 +85,10 @@ public sealed class PressStatusEvaluator(IOptions<PlantOptions> options)
             signals[name] = reading.IsGood ? reading.Value : null;
         }
 
-        // Cures come from the MES against this item's work centre, not from a tag.
-        definition.Attributes.TryGetValue(SignalNames.WorkCentreAttribute, out var workCentre);
-        signals["count"] = production.For(workCentre);
+        // Cures come from the MES, matched on the attribute the production query returns —
+        // the equipment name by default, so no work-centre id is maintained in two places.
+        definition.Attributes.TryGetValue(_options.Production.MatchAttribute, out var key);
+        signals["count"] = production.For(key);
 
         return new AssetSnapshot(
             definition.Id,

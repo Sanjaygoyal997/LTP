@@ -78,9 +78,8 @@ public static class SignalNames
     public const string Recipe = "recipe";
 
     /// <summary>
-    /// Work centre this item reports production against, used to join it to the MES
-    /// production table. Carried as an attribute rather than a signal — it is identity, not
-    /// a live value.
+    /// Optional work-centre id, for sites that would rather join production on the id than
+    /// on the equipment name. Identity rather than a live value, so it is an attribute.
     /// </summary>
     public const string WorkCentreAttribute = "workCentre";
 

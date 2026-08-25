@@ -107,13 +107,35 @@ public sealed class ProductionOptions
     /// </summary>
     public TimeSpan RefreshInterval { get; set; } = TimeSpan.FromSeconds(30);
 
-    /// <summary>Cures in the current shift per work centre. Must return (workCentre, count).</summary>
-    public string ByWorkCentreQuery { get; set; } =
-        "SELECT wcID, SUM(quantity) FROM dbo.CuringProduction WHERE dtandTime >= @from GROUP BY wcID";
+    /// <summary>Process the equipment belongs to in the work-centre master. Curing is 2.</summary>
+    public int ProcessId { get; set; } = 2;
+
+    /// <summary>
+    /// Asset attribute the first column of <see cref="ByEquipmentQuery"/> is matched against.
+    /// The default joins on the equipment name, which the configuration already carries, so
+    /// no work-centre id has to be maintained twice.
+    /// </summary>
+    public string MatchAttribute { get; set; } = "name";
+
+    /// <summary>
+    /// Cures in the current shift per item. Must return (key, count), where key matches
+    /// <see cref="MatchAttribute"/> — the master table resolves the production table's
+    /// work-centre id to the equipment name.
+    /// </summary>
+    public string ByEquipmentQuery { get; set; } =
+        "SELECT m.name, SUM(p.quantity) " +
+        "FROM dbo.CuringProduction p " +
+        "INNER JOIN dbo.wcMaster m ON m.iD = p.wcID " +
+        "WHERE p.dtandTime >= @from AND m.processID = @processId " +
+        "GROUP BY m.name";
 
     /// <summary>Cures per shift across the production day. Must return (shift, count).</summary>
     public string ByShiftQuery { get; set; } =
-        "SELECT shift, SUM(quantity) FROM dbo.CuringProduction WHERE dtandTime >= @from GROUP BY shift";
+        "SELECT p.shift, SUM(p.quantity) " +
+        "FROM dbo.CuringProduction p " +
+        "INNER JOIN dbo.wcMaster m ON m.iD = p.wcID " +
+        "WHERE p.dtandTime >= @from AND m.processID = @processId " +
+        "GROUP BY p.shift";
 }
 
 public sealed class OpcOptions

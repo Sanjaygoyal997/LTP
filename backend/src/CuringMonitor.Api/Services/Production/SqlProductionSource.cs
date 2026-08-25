@@ -47,12 +47,12 @@ public sealed class SqlProductionSource(
             await using var connection = new SqlConnection(_options.ConnectionString);
             await connection.OpenAsync(cancellationToken).ConfigureAwait(false);
 
-            var byWorkCentre = await QueryAsync(connection, _options.ByWorkCentreQuery, shiftStart, cancellationToken)
+            var byEquipment = await QueryAsync(connection, _options.ByEquipmentQuery, shiftStart, cancellationToken)
                 .ConfigureAwait(false);
             var byShift = await QueryAsync(connection, _options.ByShiftQuery, dayStart, cancellationToken)
                 .ConfigureAwait(false);
 
-            _cached = new ProductionCounts(byWorkCentre, byShift, true);
+            _cached = new ProductionCounts(byEquipment, byShift, true);
             _refreshedAt = DateTimeOffset.UtcNow;
 
             return _cached;
@@ -74,7 +74,7 @@ public sealed class SqlProductionSource(
         }
     }
 
-    private static async Task<Dictionary<string, int>> QueryAsync(
+    private async Task<Dictionary<string, int>> QueryAsync(
         SqlConnection connection,
         string sql,
         DateTimeOffset from,
@@ -84,6 +84,7 @@ public sealed class SqlProductionSource(
 
         await using var command = new SqlCommand(sql, connection);
         command.Parameters.Add("@from", SqlDbType.DateTime2).Value = from.LocalDateTime;
+        command.Parameters.Add("@processId", SqlDbType.Int).Value = _options.ProcessId;
 
         await using var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
         while (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))

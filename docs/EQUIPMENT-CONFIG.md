@@ -6,8 +6,8 @@ named layout is the one to move to.
 ## Named layout (recommended)
 
 ```
-GroupNo#Name#Title#WorkCentre#Threshold#Signal.runCheck#Signal.alarm#Signal.recipe
-6#4919#4919#193#2.5#DH3.4919.parameters.internal_pressure#DH3.4919.parameters.Press_Fault#4901.4901.RecipeCode
+GroupNo#Name#Title#Threshold#Signal.runCheck#Signal.alarm#Signal.recipe
+6#4919#4919#2.5#DH3.4919.parameters.internal_pressure#DH3.4919.parameters.Press_Fault#4901.4901.RecipeCode
 ```
 
 **Column meaning comes from the header, not its position.** Reorder columns, delete ones you
@@ -21,7 +21,7 @@ work; the delimiter is taken from the header.
 | `GroupNo` | `RowNo`, `Trench` | which group the box is drawn in, and group order |
 | `Name` | `PressName` | identifier, unique within its group |
 | `Title` | `PressTitle` | the caption on the box; defaults to `Name` |
-| `WorkCentre` | `WcID`, `WorkCentreId` | joins this item to the MES production table |
+| `WorkCentre` | `WcID`, `WorkCentreId` | optional — only for sites that would rather join production on the id than on the name |
 | `Threshold` | `RunThreshold` | running at or above this value; blank uses `Plant:RunThreshold` |
 | `RunSignal` | `StatusSignal` | which signal decides this item's state, when it is not the default |
 
@@ -74,18 +74,38 @@ The press-open signal is no longer used for run and stop. The threshold is per i
 
 Cures come from the MES, not from the PLC — `ProdCountA/B/C` are no longer read.
 
+The production table records a **work-centre id**, not an equipment name, so the queries
+resolve it through the work-centre master:
+
+```sql
+SELECT m.name, SUM(p.quantity)
+FROM dbo.CuringProduction p
+INNER JOIN dbo.wcMaster m ON m.iD = p.wcID
+WHERE p.dtandTime >= @from AND m.processID = @processId
+GROUP BY m.name
+```
+
+That is what keeps the mapping out of the configuration file: `wcMaster.name` is the same
+name the equipment file uses, so **no work-centre id is maintained in two places**.
+
 ```json
 "Production": {
   "Provider": "sql",
   "ConnectionString": "Server=...;Database=SMARTMESBTP;...",
   "RefreshInterval": "00:00:30",
-  "ByWorkCentreQuery": "SELECT wcID, SUM(quantity) FROM dbo.CuringProduction WHERE dtandTime >= @from GROUP BY wcID",
-  "ByShiftQuery":      "SELECT shift, SUM(quantity) FROM dbo.CuringProduction WHERE dtandTime >= @from GROUP BY shift"
+  "ProcessId": 2,
+  "MatchAttribute": "name",
+  "ByEquipmentQuery": "SELECT m.name, SUM(p.quantity) FROM dbo.CuringProduction p INNER JOIN dbo.wcMaster m ON m.iD = p.wcID WHERE p.dtandTime >= @from AND m.processID = @processId GROUP BY m.name",
+  "ByShiftQuery":     "SELECT p.shift, SUM(p.quantity) FROM dbo.CuringProduction p INNER JOIN dbo.wcMaster m ON m.iD = p.wcID WHERE p.dtandTime >= @from AND m.processID = @processId GROUP BY p.shift"
 }
 ```
 
-* The **number on the box** is that item's `WorkCentre` count for the current shift —
-  `@from` is the shift start.
+`MatchAttribute` says which asset attribute the query's first column is matched against —
+`name` by default. A site that would rather join on the id sets it to `workCentre`, adds
+that column to the equipment file, and changes the query to return `p.wcID`.
+
+* The **number on the box** is that item's count for the current shift — `@from` is the
+  shift start.
 * The **Production A / B / C** panel is per-shift totals for the production day — `@from` is
   that day's shift-A start.
 * Queried every 30 s rather than every poll: a cure takes minutes, and this is a database

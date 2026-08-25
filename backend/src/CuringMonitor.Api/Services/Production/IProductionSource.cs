@@ -6,11 +6,14 @@ namespace CuringMonitor.Api.Services.Production;
 /// Cures booked in the MES, which is where production is recorded — the PLC counters are
 /// not used.
 /// </summary>
-/// <param name="ByWorkCentre">Cures in the current shift, keyed by work centre id.</param>
+/// <param name="ByEquipment">
+/// Cures in the current shift, keyed by whatever the query returns — the equipment name by
+/// default, resolved from the production table's work-centre id through the master table.
+/// </param>
 /// <param name="ByShift">Cures per shift across the whole production day.</param>
 /// <param name="IsAvailable">False when the query failed, so the display can say so.</param>
 public sealed record ProductionCounts(
-    IReadOnlyDictionary<string, int> ByWorkCentre,
+    IReadOnlyDictionary<string, int> ByEquipment,
     IReadOnlyDictionary<string, int> ByShift,
     bool IsAvailable)
 {
@@ -19,8 +22,8 @@ public sealed record ProductionCounts(
         new Dictionary<string, int>(),
         false);
 
-    public int For(string? workCentre) =>
-        workCentre is not null && ByWorkCentre.TryGetValue(workCentre, out var count) ? count : 0;
+    public int For(string? key) =>
+        key is not null && ByEquipment.TryGetValue(key, out var count) ? count : 0;
 
     public int ForShift(ShiftName shift) =>
         ByShift.TryGetValue(shift.ToString(), out var count) ? count : 0;
