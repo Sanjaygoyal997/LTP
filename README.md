@@ -10,24 +10,66 @@ docs/       architecture, legacy behaviour, data mapping, run notes
 prototype/  the original static mock-up, kept for reference
 ```
 
-## Prerequisites
+There are two ways to run this, and they need different things installed. Pick one.
+
+---
+
+# A. Run it on a plant machine
+
+**Nothing to install but Windows.** No .NET, no Node, no SDK, no `npm`.
+
+Build the package **once on a machine that has the tools**:
+
+```powershell
+.\publish.ps1 -Output C:\CuringStatus
+```
+
+Copy that folder to the plant machine and run:
+
+```powershell
+C:\CuringStatus\CuringMonitor.Api.exe
+```
+
+The display is at <http://localhost:5080>. One process, one port — the service serves the
+screen itself. Wall panels elsewhere on the network open the same address by hostname and
+need only a browser.
+
+Two things are still needed on that machine, but neither is a developer tool: the **OPC Core
+Components** if `Provider` is `opc`, and network access to SQL Server if
+`Production:Provider` is `sql`.
+
+`config_AB.txt`, `trenchSize.txt` and `screens\*.json` sit in the published folder and are
+watched, so edits take effect live. Only `appsettings.json` needs a restart.
+
+Run it as a service if it should survive a reboot:
+
+```powershell
+sc.exe create CuringStatus binPath= "C:\CuringStatus\CuringMonitor.Api.exe" start= auto
+sc.exe start CuringStatus
+```
+
+The service account needs read access to the configuration files, and to the MES database if
+production is enabled — `LocalSystem` will not have the latter.
+
+---
+
+# B. Work on the code
+
+Only for a development machine. Needs:
 
 * [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
-* Node.js 20 or later
-* **Windows**, for the OPC DA client — the simulator provider runs anywhere, but the
-  project targets `net8.0-windows`
+* [Node.js](https://nodejs.org/) 20 or later — this is what provides `npm`
+* Windows, for the OPC DA client
 
-## Run it
+Two terminals. Neither half needs a plant connection — the defaults drive all 137 boxes from
+a simulator.
 
-Two terminals. Neither half needs a plant connection — the backend defaults to a simulator
-that drives all 137 boxes.
-
-```bash
+```powershell
 # 1. backend — http://localhost:5080  (Swagger at /swagger)
 cd backend
 dotnet run --project src/CuringMonitor.Api
 
-# 2. front end — http://localhost:5173
+# 2. display — http://localhost:5173
 cd frontend
 npm install
 npm run dev
@@ -35,47 +77,13 @@ npm run dev
 
 Open <http://localhost:5173>. Press **F** for full screen.
 
-## First build
-
-The code has not been compiled yet — it was written without a .NET SDK available. Expect
-to clear a few errors on the first `dotnet build`. The project has
-`TreatWarningsAsErrors`, which is right for CI but noisy on a first pass; to see genuine
-errors only:
-
-```bash
-dotnet build backend/CuringMonitor.sln -p:TreatWarningsAsErrors=false
-```
-
-Turn it back on once the build is clean.
-
-## Deploy to a machine with nothing installed
-
-`publish.ps1` builds the display into the service and includes the .NET runtime, so the
-target machine needs **neither Node nor .NET** — only Windows.
+If a build is noisy, `TreatWarningsAsErrors` is on by design; to see genuine errors only:
 
 ```powershell
-.\publish.ps1 -Output C:\CuringStatus
+dotnet build backend\CuringMonitor.sln -p:TreatWarningsAsErrors=false
 ```
 
-Copy that folder to the target and run `CuringMonitor.Api.exe`. The display is then at
-<http://localhost:5080> — one process, one port, API and screen together. Other machines on
-the network can open the same address by hostname.
-
-Published as **win-x86**, matching the OPC DA automation wrapper, which is normally
-registered 32-bit only.
-
-The target still needs the **OPC Core Components** for `Provider: opc`, and network access
-to SQL Server for `Production:Provider: sql`. Neither is a .NET dependency.
-
-To run it as a Windows service:
-
-```powershell
-sc.exe create CuringStatus binPath= "C:\CuringStatus\CuringMonitor.Api.exe" start= auto
-sc.exe start CuringStatus
-```
-
-Give the service account read access to the equipment configuration, and to the MES database
-if production is enabled — `LocalSystem` will not have it.
+---
 
 ## Connect it to the plant
 
