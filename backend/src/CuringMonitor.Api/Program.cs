@@ -130,6 +130,14 @@ if (app.Environment.IsDevelopment())
 
 app.UseCors(DisplayCorsPolicy);
 
+// Serve the built display alongside the API when it has been copied into wwwroot, so a
+// deployment is one process on one port rather than a service plus a web server.
+if (Directory.Exists(Path.Combine(app.Environment.WebRootPath ?? string.Empty)))
+{
+    app.UseDefaultFiles();
+    app.UseStaticFiles();
+}
+
 app.MapPlantEndpoints();
 app.MapHub<PressStatusHub>("/hubs/press-status");
 app.MapGet("/health", (PlantStateStore store, IPressDataProvider provider) => Results.Ok(new
@@ -138,5 +146,11 @@ app.MapGet("/health", (PlantStateStore store, IPressDataProvider provider) => Re
     sourceConnected = provider.IsConnected,
     lastSnapshot = store.Current?.Timestamp
 }));
+
+// Anything not matched by an endpoint is a client-side route, so hand back the display.
+if (Directory.Exists(Path.Combine(app.Environment.WebRootPath ?? string.Empty)))
+{
+    app.MapFallbackToFile("index.html");
+}
 
 app.Run();

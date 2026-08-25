@@ -226,6 +226,13 @@ rather than sitting grey.
    that is actually curing.
 4. **Supply the full config.** The committed sample covers trenches 4–6 only.
 
+## Deployment
+
+For development the two halves run separately (`dotnet run` and `npm run dev`). For a real
+installation, `publish.ps1` at the repository root compiles the display into the service's
+`wwwroot` and publishes self-contained, so the target machine needs neither Node nor .NET —
+one folder, one executable, one port. See the README.
+
 ## What the service logs
 
 Changes are logged as they happen; steady state is logged slowly. Logging every cycle would

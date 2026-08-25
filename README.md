@@ -48,6 +48,35 @@ dotnet build backend/CuringMonitor.sln -p:TreatWarningsAsErrors=false
 
 Turn it back on once the build is clean.
 
+## Deploy to a machine with nothing installed
+
+`publish.ps1` builds the display into the service and includes the .NET runtime, so the
+target machine needs **neither Node nor .NET** — only Windows.
+
+```powershell
+.\publish.ps1 -Output C:\CuringStatus
+```
+
+Copy that folder to the target and run `CuringMonitor.Api.exe`. The display is then at
+<http://localhost:5080> — one process, one port, API and screen together. Other machines on
+the network can open the same address by hostname.
+
+Published as **win-x86**, matching the OPC DA automation wrapper, which is normally
+registered 32-bit only.
+
+The target still needs the **OPC Core Components** for `Provider: opc`, and network access
+to SQL Server for `Production:Provider: sql`. Neither is a .NET dependency.
+
+To run it as a Windows service:
+
+```powershell
+sc.exe create CuringStatus binPath= "C:\CuringStatus\CuringMonitor.Api.exe" start= auto
+sc.exe start CuringStatus
+```
+
+Give the service account read access to the equipment configuration, and to the MES database
+if production is enabled — `LocalSystem` will not have it.
+
 ## Connect it to the plant
 
 1. Point `Plant:LayoutFile` at the real configuration:
