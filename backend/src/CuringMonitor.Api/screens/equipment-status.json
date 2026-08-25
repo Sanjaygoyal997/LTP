@@ -13,7 +13,7 @@
       "noCommunication": "#9a9a9a"
     },
     "tile": {
-      "minWidth": 52,
+      "minWidth": 44,
       "maxWidth": 112
     },
     "alarmPulse": true

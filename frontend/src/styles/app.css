@@ -115,10 +115,17 @@
 /* ---------- stage ---------- */
 /* The stage holds whatever floor-region widgets the screen document lists. */
 .stage {
+  /*
+   * The sizing container for the grids inside it. Boxes are sized from this rather than
+   * from the viewport: 100vw includes the scrollbar, so a viewport-based width overflows by
+   * exactly the scrollbar on any screen that has one.
+   */
+  container-type: inline-size;
   display: flex;
   flex: 1 1 auto;
   flex-direction: column;
   overflow: hidden;
+  padding: 0 12px;
   background: var(--floor-bg);
 }
 
@@ -145,10 +152,13 @@
 }
 
 .floor {
-  /* Declared here so var(--columns), set per grid, resolves against the real count. */
+  /*
+   * Declared here so var(--columns), set per grid, resolves against the real count.
+   * 100cqw is the stage's content width, so a full row lands exactly inside it.
+   */
   --tile-width: clamp(
     var(--tile-min),
-    calc((100vw - 3rem - (var(--columns) - 1) * var(--tile-gap)) / var(--columns)),
+    calc((100cqw - (var(--columns) - 1) * var(--tile-gap)) / var(--columns)),
     var(--tile-max)
   );
   display: flex;
@@ -156,7 +166,7 @@
   flex-direction: column;
   justify-content: space-evenly;
   gap: clamp(10px, 1.6vh, 26px);
-  padding: 10px 12px;
+  padding: 10px 0;
   overflow: auto;
   background: var(--floor-bg);
 }
@@ -186,9 +196,12 @@
 }
 
 .tile__no {
-  padding: 1px 0;
+  padding: 1px 2px;
   font-size: clamp(9px, 0.82vw, 14px);
   font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   background: #f2f2f2;
   border-bottom: 1px solid var(--tile-border);
 }
@@ -205,7 +218,10 @@
 }
 
 .tile__value {
-  padding: 1px 0 2px;
+  padding: 1px 2px 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   font-size: clamp(9px, 0.85vw, 14px);
   font-weight: 700;
   border-top: 1px solid var(--tile-border);
