@@ -226,6 +226,34 @@ rather than sitting grey.
    that is actually curing.
 4. **Supply the full config.** The committed sample covers trenches 4–6 only.
 
+## What the service logs
+
+Changes are logged as they happen; steady state is logged slowly. Logging every cycle would
+bury the changes, and logging only changes would make silence ambiguous — a healthy plant
+and a stopped service would look identical.
+
+| Event | Logged |
+|---|---|
+| Start-up | environment, effective providers, tag and box counts |
+| Health change | immediately — process data or production going up or down |
+| Steady state | once every `Plant:HeartbeatInterval` (5 minutes) |
+| OPC connect failure | in full the first time, then at 1, 5, 15 and 60-minute intervals while it persists |
+| OPC recovery | once, with how long it was down and how many attempts it took |
+| Configuration reload | once per change, with the new box count |
+
+A healthy heartbeat looks like:
+
+```
+Shift A: 126 running, 9 stopped, 0 in alarm, 2 not communicating.
+Production 5216 (source ok). Process data ok.
+```
+
+The same line is logged as a warning rather than information when either source is down, so
+a log filtered to warnings shows the whole history of a fault and nothing else.
+
+For monitoring, prefer `GET /health` over the log — it reports the same state as JSON
+without anything having to parse text.
+
 ## Which settings file wins
 
 Settings are layered, later overriding earlier:

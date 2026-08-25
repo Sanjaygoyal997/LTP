@@ -1,4 +1,5 @@
 using CuringMonitor.Api.Configuration;
+using CuringMonitor.Api.Contracts;
 using CuringMonitor.Api.Realtime;
 using CuringMonitor.Api.Services.Production;
 using Microsoft.AspNetCore.SignalR;
@@ -23,6 +24,11 @@ public sealed class PlantPollingService(
     ILogger<PlantPollingService> logger) : BackgroundService
 {
     private readonly PlantOptions _options = options.Value;
+
+    /// <summary>Last reported health, so a change is logged the moment it happens.</summary>
+    private bool? _lastSourceConnected;
+    private bool? _lastProductionAvailable;
+    private DateTimeOffset _nextHeartbeat = DateTimeOffset.MinValue;
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
@@ -77,5 +83,52 @@ public sealed class PlantPollingService(
 
         store.Publish(snapshot);
         await hub.Clients.All.Snapshot(snapshot).ConfigureAwait(false);
+
+        ReportHealth(snapshot, counts.IsAvailable, now);
+    }
+
+    /// <summary>
+    /// Says something when health changes, and otherwise once in a while.
+    ///
+    /// Logging every cycle would bury the changes; logging only changes would make silence
+    /// ambiguous — a healthy plant and a dead service look identical. A slow heartbeat
+    /// separates the two, and carries enough to see at a glance whether the picture is sane.
+    /// </summary>
+    private void ReportHealth(PlantSnapshot snapshot, bool productionAvailable, DateTimeOffset now)
+    {
+        var connected = snapshot.SourceConnected;
+        var changed = connected != _lastSourceConnected || productionAvailable != _lastProductionAvailable;
+
+        if (!changed && now < _nextHeartbeat)
+        {
+            return;
+        }
+
+        var totals = snapshot.Totals;
+
+        if (changed && _lastSourceConnected is not null)
+        {
+            logger.LogWarning(
+                "Health changed — process data {Process}, production {Production}.",
+                connected ? "connected" : "disconnected",
+                productionAvailable ? "available" : "unavailable");
+        }
+
+        logger.Log(
+            connected && productionAvailable ? LogLevel.Information : LogLevel.Warning,
+            "Shift {Shift}: {Running} running, {Stopped} stopped, {Alarm} in alarm, {NoComm} not communicating. " +
+            "Production {ProductionTotal} (source {Production}). Process data {Process}.",
+            snapshot.Shift,
+            totals.Running,
+            totals.Stopped,
+            totals.Alarm,
+            totals.NoCommunication,
+            snapshot.Production.Total,
+            productionAvailable ? "ok" : "unavailable",
+            connected ? "ok" : "down");
+
+        _lastSourceConnected = connected;
+        _lastProductionAvailable = productionAvailable;
+        _nextHeartbeat = now + _options.HeartbeatInterval;
     }
 }

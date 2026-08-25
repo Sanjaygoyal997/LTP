@@ -37,9 +37,11 @@ public sealed class OpcPressDataProvider : IPressDataProvider, IDisposable
 
     private DateTimeOffset _nextConnectAttempt = DateTimeOffset.MinValue;
 
-    /// <summary>Last connect failure, so a retry loop reports a repeat briefly.</summary>
+    /// <summary>Connect-failure state, so a retry loop reports a change rather than a repeat.</summary>
     private string? _lastConnectError;
-    private int _repeatedFailures;
+    private int _failedAttempts;
+    private DateTimeOffset _failingSince;
+    private DateTimeOffset _nextFailureLog;
 
     /// <summary>Tags currently subscribed, so a configuration reload triggers a resubscribe.</summary>
     private HashSet<string>? _subscribedTags;
@@ -119,9 +121,20 @@ public sealed class OpcPressDataProvider : IPressDataProvider, IDisposable
             {
                 await _session.SubscribeAsync(tags, cancellationToken).ConfigureAwait(false);
                 _subscribedTags = new HashSet<string>(tags, StringComparer.OrdinalIgnoreCase);
-                _lastConnectError = null;
-                _repeatedFailures = 0;
                 _logger.LogInformation("Subscribed to {TagCount} tags.", tags.Count);
+
+                // Recovery is the other half of the transition: without it the log shows a
+                // fault starting and never ending.
+                if (_lastConnectError is not null)
+                {
+                    _logger.LogInformation(
+                        "OPC recovered after {Attempts} failed attempts over {Duration:hh\\:mm\\:ss}.",
+                        _failedAttempts,
+                        DateTimeOffset.UtcNow - _failingSince);
+                }
+
+                _lastConnectError = null;
+                _failedAttempts = 0;
             }
 
             return true;
@@ -139,28 +152,58 @@ public sealed class OpcPressDataProvider : IPressDataProvider, IDisposable
     }
 
     /// <summary>
-    /// Logs a connect failure in full the first time, then keeps repeats to one line. A
-    /// five-second retry loop that reprints a stack trace forever buries everything else in
-    /// the log, including the message that says what finally changed.
+    /// Reports a connect failure once, then backs off.
+    ///
+    /// A five-second retry loop that reprints a stack trace forever buries the one line that
+    /// matters — the one saying what finally changed. A new failure is logged in full; the
+    /// same failure repeating is reported at widening intervals, so a fault that lasts all
+    /// weekend leaves a handful of lines rather than fifty thousand.
     /// </summary>
     private void ReportConnectFailure(Exception ex)
     {
+        var now = DateTimeOffset.UtcNow;
         var message = ex.Message;
 
-        if (message == _lastConnectError)
+        if (message != _lastConnectError)
         {
-            _repeatedFailures++;
-            _logger.LogWarning(
-                "OPC connect still failing after {Count} attempts; retrying in {Delay}.",
-                _repeatedFailures,
-                _options.ReconnectDelay);
+            _lastConnectError = message;
+            _failedAttempts = 1;
+            _failingSince = now;
+            _nextFailureLog = now + FailureLogIntervals[0];
+            _logger.LogError(ex, "OPC connect failed; retrying every {Delay}.", _options.ReconnectDelay);
             return;
         }
 
-        _lastConnectError = message;
-        _repeatedFailures = 1;
-        _logger.LogError(ex, "OPC connect failed; retrying in {Delay}.", _options.ReconnectDelay);
+        _failedAttempts++;
+        if (now < _nextFailureLog)
+        {
+            return;
+        }
+
+        _logger.LogWarning(
+            "OPC still unreachable: {Attempts} attempts over {Duration:hh\\:mm\\:ss}. Last error: {Error}",
+            _failedAttempts,
+            now - _failingSince,
+            message);
+
+        _nextFailureLog = now + NextInterval(now - _failingSince);
     }
+
+    /// <summary>How long to stay quiet between repeats of the same failure.</summary>
+    private static readonly TimeSpan[] FailureLogIntervals =
+    [
+        TimeSpan.FromMinutes(1),
+        TimeSpan.FromMinutes(5),
+        TimeSpan.FromMinutes(15),
+        TimeSpan.FromHours(1)
+    ];
+
+    private static TimeSpan NextInterval(TimeSpan failingFor) => failingFor switch
+    {
+        { TotalMinutes: < 5 } => FailureLogIntervals[1],
+        { TotalMinutes: < 15 } => FailureLogIntervals[2],
+        _ => FailureLogIntervals[3]
+    };
 
     private static IReadOnlyDictionary<string, TagValue> AllBad(IReadOnlyList<string> tags)
     {

@@ -48,6 +48,13 @@ public sealed class PlantOptions
     public double RunThreshold { get; set; } = 1.0;
 
     /// <summary>
+    /// How often a healthy service says so. Health changes are logged as they happen; this
+    /// is the heartbeat in between, so silence in the log means the service is gone rather
+    /// than merely quiet.
+    /// </summary>
+    public TimeSpan HeartbeatInterval { get; set; } = TimeSpan.FromMinutes(5);
+
+    /// <summary>
     /// How an equipment group is labelled, given the group number from the configuration.
     /// Sites call these bays, lines or trenches; the screen should use the plant's word.
     /// </summary>
