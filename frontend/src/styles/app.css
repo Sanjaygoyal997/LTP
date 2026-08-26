@@ -177,6 +177,18 @@
   gap: var(--tile-gap);
 }
 
+.trench__label {
+  margin: 0;
+  font-size: clamp(11px, 1vw, 16px);
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+.trench__count {
+  font-weight: 400;
+  color: #555;
+}
+
 .trench__row {
   display: grid;
   grid-template-columns: repeat(var(--cells), var(--tile-width));

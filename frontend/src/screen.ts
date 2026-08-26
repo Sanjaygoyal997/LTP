@@ -56,6 +56,8 @@ export interface TileGridWidget extends WidgetBase {
   type: 'tile-grid';
   source?: AssetQuery;
   showGroupLabel?: boolean;
+  /** Show each block's own running/total count next to its label. */
+  showGroupRunningCount?: boolean;
   tile?: TileSpec;
   /** Per-kind overrides, e.g. a gauge showing its reading instead of a cure count. */
   tileByKind?: Record<string, TileSpec>;

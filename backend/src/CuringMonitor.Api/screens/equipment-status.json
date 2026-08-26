@@ -22,6 +22,8 @@
     {
       "type": "tile-grid",
       "region": "floor",
+      "showGroupLabel": true,
+      "showGroupRunningCount": true,
       "source": {
         "groupBy": "asset.group",
         "orderBy": "asset.position",
@@ -97,6 +99,10 @@
         {
           "label": "Total Curing Stop",
           "field": "totals.stopped"
+        },
+        {
+          "label": "Total Not Communicating",
+          "field": "totals.noCommunication"
         }
       ]
     },

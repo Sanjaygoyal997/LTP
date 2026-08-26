@@ -34,7 +34,17 @@ export function TileGrid({ widget, snapshot }: TileGridProps) {
     <div className="floor" style={{ ['--columns' as string]: widestRow }}>
       {groups.map((group) => (
         <section className="trench" key={group.key} aria-label={group.label}>
-          {widget.showGroupLabel && <h2 className="trench__label">{group.label}</h2>}
+          {widget.showGroupLabel && (
+            <h2 className="trench__label">
+              {group.label}
+              {widget.showGroupRunningCount && (
+                <span className="trench__count">
+                  {' '}
+                  {group.assets.filter((asset) => asset.status === 'running').length}/{group.assets.length} running
+                </span>
+              )}
+            </h2>
+          )}
 
           {group.rows.map((row, rowIndex) => (
             <div

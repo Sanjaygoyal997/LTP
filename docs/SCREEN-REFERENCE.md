@@ -45,6 +45,7 @@ under that name. `signal.count` always resolves to the running shift's counter.
   "type": "tile-grid",
   "region": "floor",
   "showGroupLabel": false,
+  "showGroupRunningCount": false,
 
   "source": {
     "where":      { "asset.attributes.group": "6" },
@@ -146,10 +147,18 @@ on one line, as the running/stop totals are). `unit` on an item appends a suffix
 "showGroupLabel": true
 ```
 
-**Add an alarm count** to the totals panel:
+**Show each block's own running count** next to its label, e.g. "Trench 6 — 28/32 running":
 
 ```json
-{ "label": "Alarms", "field": "totals.alarm" }
+"showGroupLabel": true,
+"showGroupRunningCount": true
+```
+
+**Add an alarm or not-communicating count** to the totals panel:
+
+```json
+{ "label": "Alarms", "field": "totals.alarm" },
+{ "label": "Not Communicating", "field": "totals.noCommunication" }
 ```
 
 **A night theme** — a second screen file with the same widgets and a darker `floor`.
