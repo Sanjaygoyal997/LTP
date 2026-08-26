@@ -22,6 +22,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <!--
+      The connection string uses Windows Authentication (Trusted_Connection=True), which
+      only Microsoft.Data.SqlClient's native SNI backend supports — its managed backend
+      refuses it outright, throwing PlatformNotSupportedException from the SqlConnection
+      constructor with no mention of why. Forcing native here trades that unhelpful message
+      for a plain "file not found" if the native component is genuinely missing.
+    -->
+    <RuntimeHostConfigurationOption Include="Switch.Microsoft.Data.SqlClient.UseManagedNetworkingOnWindows" Value="false" />
+  </ItemGroup>
+
+  <ItemGroup>
     <!-- OPC DA Automation 2.0 interop, as the plant's other services reference it. -->
     <Reference Include="Interop.OPCAutomation">
       <HintPath>..\..\lib\Interop.OPCAutomation.dll</HintPath>
