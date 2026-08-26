@@ -46,21 +46,26 @@ public sealed class ShiftService(IOptions<PlantOptions> options) : IShiftService
 
     public Shift Current(DateTimeOffset at)
     {
-        var hour = at.Hour;
+        // The start hours are wall-clock hours at the plant, and callers pass an instant —
+        // UtcNow from the poller. Comparing that instant's UTC hour against them puts the
+        // shift out by the machine's offset, so convert first: at 16:00 in UTC+05:30 the
+        // untranslated hour is 10, which reads as shift A well into shift B.
+        var local = at.ToLocalTime();
+        var hour = local.Hour;
 
         if (hour >= _shifts.AStartHour && hour < _shifts.BStartHour)
         {
-            return new Shift(ShiftName.A, DateOnly.FromDateTime(at.Date));
+            return new Shift(ShiftName.A, DateOnly.FromDateTime(local.Date));
         }
 
         if (hour >= _shifts.BStartHour && hour < _shifts.CStartHour)
         {
-            return new Shift(ShiftName.B, DateOnly.FromDateTime(at.Date));
+            return new Shift(ShiftName.B, DateOnly.FromDateTime(local.Date));
         }
 
         // Shift C: from CStartHour to midnight is today's production day; after midnight,
         // up to AStartHour, it still belongs to yesterday.
-        var productionDay = hour >= _shifts.CStartHour ? at.Date : at.Date.AddDays(-1);
+        var productionDay = hour >= _shifts.CStartHour ? local.Date : local.Date.AddDays(-1);
         return new Shift(ShiftName.C, DateOnly.FromDateTime(productionDay));
     }
 }
