@@ -11,6 +11,14 @@
       "class not registered". Sites with the x64 Core Components can remove this.
     -->
     <PlatformTarget>x86</PlatformTarget>
+    <!--
+      Fixed here rather than only on the publish command line: Microsoft.Data.SqlClient
+      ships its native networking component (SNI) as a runtime-specific asset, and restore
+      only pulls it in when it already knows the target RID. A `dotnet publish -r win-x86`
+      without this can produce a package that silently falls back to the managed-only SNI,
+      which refuses Windows Authentication and throws PlatformNotSupportedException.
+    -->
+    <RuntimeIdentifiers>win-x86</RuntimeIdentifiers>
   </PropertyGroup>
 
   <ItemGroup>
