@@ -25,6 +25,19 @@ public sealed class SqlProductionSource(
     private ProductionCounts _cached = ProductionCounts.Empty;
     private DateTimeOffset _refreshedAt = DateTimeOffset.MinValue;
 
+    static SqlProductionSource()
+    {
+        // Microsoft.Data.SqlClient is not supported on this platform, thrown from the
+        // SqlConnection constructor with no attempt to even parse the connection string, is
+        // the signature of NuGet having resolved a reference/placeholder assembly instead of
+        // the real implementation — every member of that stub throws exactly this. Logging
+        // where the loaded assembly actually came from turns "unsupported platform" into
+        // "here is the wrong DLL" the first time this runs.
+        var assembly = typeof(SqlConnection).Assembly;
+        Console.WriteLine(
+            $"Microsoft.Data.SqlClient loaded from {assembly.Location} (version {assembly.GetName().Version}).");
+    }
+
     public async Task<ProductionCounts> GetAsync(Shift shift, CancellationToken cancellationToken)
     {
         if (DateTimeOffset.UtcNow - _refreshedAt < _options.RefreshInterval)
