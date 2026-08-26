@@ -23,7 +23,7 @@
       "type": "tile-grid",
       "region": "floor",
       "showGroupLabel": true,
-      "showGroupRunningCount": true,
+      "showGroupShiftCount": true,
       "source": {
         "groupBy": "asset.group",
         "orderBy": "asset.position",

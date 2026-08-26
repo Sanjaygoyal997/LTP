@@ -37,11 +37,8 @@ export function TileGrid({ widget, snapshot }: TileGridProps) {
           {widget.showGroupLabel && (
             <h2 className="trench__label">
               {group.label}
-              {widget.showGroupRunningCount && (
-                <span className="trench__count">
-                  {' '}
-                  {group.assets.filter((asset) => asset.status === 'running').length}/{group.assets.length} running
-                </span>
+              {widget.showGroupShiftCount && (
+                <span className="trench__count"> {shiftCount(group.assets)} this shift</span>
               )}
             </h2>
           )}
@@ -61,6 +58,14 @@ export function TileGrid({ widget, snapshot }: TileGridProps) {
       ))}
     </div>
   );
+}
+
+/** Sum of the running shift's cure count over a block, from the same field a tile shows. */
+function shiftCount(assets: AssetSnapshot[]): number {
+  return assets.reduce((total, asset) => {
+    const value = asset.signals?.count;
+    return total + (typeof value === 'number' ? value : 0);
+  }, 0);
 }
 
 interface TileProps {
