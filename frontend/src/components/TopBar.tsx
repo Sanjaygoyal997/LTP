@@ -37,7 +37,8 @@ export function TopBar({ title, snapshot, feed }: TopBarProps) {
           <i className="feed__dot" />
           {label}
         </span>
-        <span className="topbar__clock">{clock}</span>
+        <span className="topbar__date">{clock.date}</span>
+        <span className="topbar__clock">{clock.time}</span>
         <button type="button" className="topbar__button" onClick={toggleFullscreen} title="Full screen (F)">
           ⛶
         </button>

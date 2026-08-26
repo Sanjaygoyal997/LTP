@@ -70,9 +70,15 @@
   gap: 14px;
 }
 
+.topbar__date {
+  font-size: clamp(14px, 1.4vw, 22px);
+  font-weight: 600;
+}
+
 .topbar__clock {
   font-size: clamp(14px, 1.4vw, 22px);
   font-weight: 600;
+  /* Fixed-width digits so the seconds ticking over does not shuffle the bar. */
   font-variant-numeric: tabular-nums;
 }
 
