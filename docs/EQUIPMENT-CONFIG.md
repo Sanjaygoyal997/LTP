@@ -95,6 +95,7 @@ name the equipment file uses, so **no work-centre id is maintained in two places
   "RefreshInterval": "00:00:30",
   "ProcessId": 2,
   "MatchAttribute": "name",
+  "ShiftKeys": { "1": "A", "2": "B", "3": "C" },
   "ByEquipmentQuery": "SELECT m.name, SUM(p.quantity) FROM dbo.CuringProduction p INNER JOIN dbo.wcMaster m ON m.iD = p.wcID WHERE p.dtandTime >= @from AND m.processID = @processId GROUP BY m.name",
   "ByShiftQuery":     "SELECT p.shift, SUM(p.quantity) FROM dbo.CuringProduction p INNER JOIN dbo.wcMaster m ON m.iD = p.wcID WHERE p.dtandTime >= @from AND m.processID = @processId GROUP BY p.shift"
 }
@@ -103,6 +104,15 @@ name the equipment file uses, so **no work-centre id is maintained in two places
 `MatchAttribute` says which asset attribute the query's first column is matched against —
 `name` by default. A site that would rather join on the id sets it to `workCentre`, adds
 that column to the equipment file, and changes the query to return `p.wcID`.
+
+`ProcessId` has **no default**: which id means curing belongs to the site's MES, and a
+guessed value would return another process's figures instead of failing. Startup refuses to
+run if the queries filter on `@processId` while it is unset. A site selecting its equipment
+some other way can drop `@processId` from both queries and leave it out entirely.
+
+`ShiftKeys` maps whatever `ByShiftQuery` returns in its first column onto A, B and C, since
+some sites record the shift as a number and others as a letter. Keys not listed are taken as
+they come back, so a query already returning `A`/`B`/`C` needs nothing here.
 
 * The **number on the box** is that item's count for the current shift — `@from` is the
   shift start.

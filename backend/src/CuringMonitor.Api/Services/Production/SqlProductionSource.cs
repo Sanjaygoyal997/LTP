@@ -25,19 +25,6 @@ public sealed class SqlProductionSource(
     private ProductionCounts _cached = ProductionCounts.Empty;
     private DateTimeOffset _refreshedAt = DateTimeOffset.MinValue;
 
-    static SqlProductionSource()
-    {
-        // Microsoft.Data.SqlClient is not supported on this platform, thrown from the
-        // SqlConnection constructor with no attempt to even parse the connection string, is
-        // the signature of NuGet having resolved a reference/placeholder assembly instead of
-        // the real implementation — every member of that stub throws exactly this. Logging
-        // where the loaded assembly actually came from turns "unsupported platform" into
-        // "here is the wrong DLL" the first time this runs.
-        var assembly = typeof(SqlConnection).Assembly;
-        Console.WriteLine(
-            $"Microsoft.Data.SqlClient loaded from {assembly.Location} (version {assembly.GetName().Version}).");
-    }
-
     public async Task<ProductionCounts> GetAsync(Shift shift, CancellationToken cancellationToken)
     {
         if (DateTimeOffset.UtcNow - _refreshedAt < _options.RefreshInterval)
@@ -60,12 +47,16 @@ public sealed class SqlProductionSource(
             await using var connection = new SqlConnection(_options.ConnectionString);
             await connection.OpenAsync(cancellationToken).ConfigureAwait(false);
 
+            // Per item, the running shift only: this is what each box shows.
             var byEquipment = await QueryAsync(connection, _options.ByEquipmentQuery, shiftStart, cancellationToken)
                 .ConfigureAwait(false);
+
+            // Per shift, the whole production day: this fills the three shift boxes, so it
+            // has to reach back past the running shift's start.
             var byShift = await QueryAsync(connection, _options.ByShiftQuery, dayStart, cancellationToken)
                 .ConfigureAwait(false);
 
-            _cached = new ProductionCounts(byEquipment, byShift, true);
+            _cached = new ProductionCounts(byEquipment, NormaliseShiftKeys(byShift), true);
             _refreshedAt = DateTimeOffset.UtcNow;
 
             return _cached;
@@ -87,6 +78,23 @@ public sealed class SqlProductionSource(
         }
     }
 
+    /// <summary>
+    /// Rewrites the shift keys the query returned into A, B and C, so the three shift boxes
+    /// find their figures whether the MES records the shift as a letter or as a number.
+    /// </summary>
+    private Dictionary<string, int> NormaliseShiftKeys(Dictionary<string, int> counts)
+    {
+        var mapped = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+
+        foreach (var (key, value) in counts)
+        {
+            var name = _options.ShiftKeys.TryGetValue(key, out var mappedKey) ? mappedKey : key;
+            mapped[name] = mapped.GetValueOrDefault(name) + value;
+        }
+
+        return mapped;
+    }
+
     private async Task<Dictionary<string, int>> QueryAsync(
         SqlConnection connection,
         string sql,
@@ -97,7 +105,13 @@ public sealed class SqlProductionSource(
 
         await using var command = new SqlCommand(sql, connection);
         command.Parameters.Add("@from", SqlDbType.DateTime2).Value = from.LocalDateTime;
-        command.Parameters.Add("@processId", SqlDbType.Int).Value = _options.ProcessId;
+
+        // Only bound when the site configured it: a query rewritten to select its equipment
+        // some other way should not have to carry a parameter it never mentions.
+        if (_options.ProcessId is { } processId)
+        {
+            command.Parameters.Add("@processId", SqlDbType.Int).Value = processId;
+        }
 
         await using var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
         while (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))

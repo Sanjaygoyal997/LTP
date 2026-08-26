@@ -43,6 +43,16 @@ builder.Host.UseWindowsService(options => options.ServiceName = "Curing Equipmen
 builder.Services.AddOptions<PlantOptions>()
     .Bind(builder.Configuration.GetSection(PlantOptions.SectionName))
     .Validate(o => o.PollInterval > TimeSpan.Zero, "Plant:PollInterval must be positive.")
+    // A query filtering on @processId with nothing bound to it would fail on every refresh
+    // with SQL's own "must declare the scalar variable" — true, but said at the wrong level.
+    .Validate(
+        o => o.Production.ProcessId.HasValue
+             || string.Equals(o.Production.Provider, "simulated", StringComparison.OrdinalIgnoreCase)
+             || !(o.Production.ByEquipmentQuery.Contains("@processId", StringComparison.OrdinalIgnoreCase)
+                  || o.Production.ByShiftQuery.Contains("@processId", StringComparison.OrdinalIgnoreCase)),
+        "Plant:Production:ProcessId must be set: the configured queries filter on @processId. "
+        + "Set it to the work-centre master's process id for curing, or rewrite the queries "
+        + "to select the equipment without it.")
     .ValidateOnStart();
 
 // The plant definition is loaded at start-up and reloaded whenever the file changes.

@@ -114,8 +114,24 @@ public sealed class ProductionOptions
     /// </summary>
     public TimeSpan RefreshInterval { get; set; } = TimeSpan.FromSeconds(30);
 
-    /// <summary>Process the equipment belongs to in the work-centre master. Curing is 2.</summary>
-    public int ProcessId { get; set; } = 2;
+    /// <summary>
+    /// Process the equipment belongs to in the work-centre master, bound to <c>@processId</c>
+    /// in the queries. Deliberately without a default: which id means curing is a property of
+    /// the site's MES, not of this service, and a wrong guess returns another process's
+    /// figures rather than failing. Startup rejects a query that uses it while it is unset.
+    /// </summary>
+    public int? ProcessId { get; set; }
+
+    /// <summary>
+    /// Maps the shift key <see cref="ByShiftQuery"/> returns to A, B or C. Sites record the
+    /// shift as a letter or as a number, so the mapping is configuration rather than an
+    /// assumption; keys not listed are used as they come back.
+    /// </summary>
+    public Dictionary<string, string> ShiftKeys { get; set; } = new(StringComparer.OrdinalIgnoreCase)
+    {
+        ["1"] = "A", ["2"] = "B", ["3"] = "C",
+        ["A"] = "A", ["B"] = "B", ["C"] = "C"
+    };
 
     /// <summary>
     /// Asset attribute the first column of <see cref="ByEquipmentQuery"/> is matched against.
